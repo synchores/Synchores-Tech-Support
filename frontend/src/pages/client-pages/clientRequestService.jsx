@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { colors } from '../colors';
-import { Icons } from '../components/Icons';
+import { colors } from '../../colors';
+import { Icons } from '../../components/Icons';
 
 export default function ClientRequestService() {
   const [formData, setFormData] = useState({

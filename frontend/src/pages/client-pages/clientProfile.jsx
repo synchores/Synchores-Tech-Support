@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { colors } from '../colors';
+import { colors } from '../../colors';
 
 export default function ClientProfile() {
   const [isEditing, setIsEditing] = useState(false);

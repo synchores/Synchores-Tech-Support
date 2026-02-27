@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { colors } from '../colors';
-import { Icons } from '../components/Icons';
+import { colors } from '../../colors';
+import { Icons } from '../../components/Icons';
 
 export default function ClientFAQ() {
   const [expandedId, setExpandedId] = useState(null);

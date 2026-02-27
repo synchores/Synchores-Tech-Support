@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { colors } from '../colors';
-import { Icons } from '../components/Icons';
-import AddTicketModal from '../components/AddTicketModal';
-import RequestServiceModal from '../components/RequestServiceModal';
-import { SERVICE_TYPES } from '../serviceConfig';
+import { colors } from '../../colors';
+import { Icons } from '../../components/Icons';
+import AddTicketModal from '../../components/AddTicketModal';
+import RequestServiceModal from '../../components/RequestServiceModal';
+import { SERVICE_TYPES } from '../../serviceConfig';
 
 export default function ClientDashboard() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);

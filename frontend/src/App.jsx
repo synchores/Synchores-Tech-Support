@@ -1,7 +1,11 @@
-import AppClient from './pages/AppClient'
+import AppRouter from './pages/AppRouter'
 
 function App() {
-  return <AppClient />
+  return (
+    <div>
+      <AppRouter />
+    </div>
+  )
 }
 
 export default App
