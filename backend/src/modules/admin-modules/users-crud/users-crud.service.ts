@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
 import { Repository } from 'typeorm';
@@ -17,8 +17,7 @@ export class UsersCrudService {
         const newUser = this.usersRepository.create(createUserDto);
 
         if(!newUser){
-            console.log('Failed to create user');
-            return null;
+            throw new NotFoundException('Failed to create user');
         }
 
         return await this.usersRepository.save(newUser);
@@ -26,19 +25,20 @@ export class UsersCrudService {
 
     async updateUser(updateUserDto: UpdateUserDto){
         const user = await this.usersRepository.findOne({ where: { userId: updateUserDto.userId } });
+
         if (!user) {
-            console.log('User not found');
-            return null;
+            throw new NotFoundException(`User with ID ${updateUserDto.userId} not found`);
         }
+
         this.usersRepository.merge(user, updateUserDto);
         return await this.usersRepository.save(user);
     }
 
     async deleteUser(userId: number){
         const user = await this.usersRepository.findOne({ where: { userId } });
+        
         if (!user) {
-            console.log('User not found');
-            return null;
+            throw new NotFoundException(`User with ID ${userId} not found`);
         }
         return await this.usersRepository.remove(user);
     }

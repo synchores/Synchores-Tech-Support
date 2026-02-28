@@ -36,7 +36,7 @@ export class TicketsTbl {
     @Field()
     attachments: string;
 
-    @Column()
+    @Column({ default: 'pending' })
     @Field()
     status: string; 
 

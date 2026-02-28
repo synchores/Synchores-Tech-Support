@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServicesTbl } from './entity/service.tbl';
 import { Repository } from 'typeorm/repository/Repository.js';
@@ -17,8 +17,7 @@ export class ServicesService {
         const newService = this.servicesRepo.create(createServiceDto);
 
         if(!newService){
-            console.log('Failed to create service');
-            return null;
+            throw new NotFoundException('Failed to create service');
         }
 
         return await this.servicesRepo.save(newService);
@@ -28,8 +27,7 @@ export class ServicesService {
         const service = await this.servicesRepo.findOne({ where: { serviceId: updateServiceDto.serviceId } });
 
         if(!service){
-            console.log('Service not found');
-            return null;
+            throw new NotFoundException(`Service with ID ${updateServiceDto.serviceId} not found`);
         }
 
         const updatedService = Object.assign(service, updateServiceDto);
@@ -40,8 +38,7 @@ export class ServicesService {
         const deleteService = await this.servicesRepo.findOne({ where: { serviceId } });
 
         if(!deleteService){
-            console.log('Service not found');
-            return null;
+            throw new NotFoundException(`Service with ID ${serviceId} not found`);
         }
 
         return await this.servicesRepo.remove(deleteService);

@@ -8,27 +8,24 @@ import { UpdateUserDto } from './dto/update.user.dto';
 export class UsersCrudResolver {
     constructor(private readonly usersCrudService: UsersCrudService){}
 
-    @Query(() => [UsersTbl])
+    @Query(() => [UsersTbl], { name: 'getAllUsers' })
     async getAllUsers(){
-        const users = await this.usersCrudService.allUsers();
-        return users;
+        return await this.usersCrudService.allUsers();
     }
 
-    @Mutation(() => UsersTbl)
+    @Mutation(() => UsersTbl, { name: 'createUser' })
     async createUser(@Args('input') input: CreateUserDto){
-        const user = await this.usersCrudService.createUser(input);
-        return user;
+        return await this.usersCrudService.createUser(input);
     }
 
-    @Mutation(() => UsersTbl)
+    @Mutation(() => UsersTbl, { name: 'updateUser' })
     async updateUser(@Args('input') input: UpdateUserDto){
-        const user = await this.usersCrudService.updateUser(input);
-        return user;
+        return await this.usersCrudService.updateUser(input);
+         
     }
 
-    @Mutation(() => UsersTbl)
+    @Mutation(() => UsersTbl, { name: 'deleteUser' })
     async deleteUser(@Args('userId') userId: number){
-        const user = await this.usersCrudService.deleteUser(userId);
-        return user;
+        return await this.usersCrudService.deleteUser(userId);
     }
 }
