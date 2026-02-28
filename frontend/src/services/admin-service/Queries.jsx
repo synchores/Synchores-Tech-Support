@@ -13,3 +13,15 @@ export const USER_QUERY = gql`
         }
     }
 `;
+
+export const SERVICES_QUERY = gql`
+    query getAllServices {
+        getAllServices {
+        serviceId
+        serviceName
+        description
+        category
+        image
+        }
+    }
+`;

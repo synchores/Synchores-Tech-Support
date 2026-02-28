@@ -1,5 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { UsersTbl } from "src/modules/general/auth/entity/users.tbl";
+import { ServicesTbl } from "src/modules/admin-modules/services/entity/service.tbl";
 
 @Entity('tickets_tbl')
 @ObjectType()
@@ -28,13 +30,13 @@ export class TicketsTbl {
     @Field()
     priority: string;
 
-    @Column()
+    @Column({ type: 'datetime' })
     @Field()
     deadline: Date;
 
-    @Column({ type: "text"})
-    @Field()
-    attachments: string;
+    @Column({ type: "text", nullable: true })
+    @Field({ nullable: true })
+    attachments?: string;
 
     @Column({ default: 'pending' })
     @Field()
@@ -47,4 +49,12 @@ export class TicketsTbl {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     @Field()
     updatedAt: Date;
+
+    @ManyToOne(() => UsersTbl, (user) => user.tickets, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'userId' })
+    user: UsersTbl;
+
+    @ManyToOne(() => ServicesTbl, (service) => service.tickets, { onDelete: 'RESTRICT' })
+    @JoinColumn({ name: 'serviceId' })
+    service: ServicesTbl;
 }

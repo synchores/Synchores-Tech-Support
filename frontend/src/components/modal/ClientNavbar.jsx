@@ -8,7 +8,7 @@ export default function ClientNavbar() {
   const location = useLocation();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', path: '/' },
+    { id: 'dashboard', label: 'Dashboard', path: '/dashboard' },
     { id: 'tickets', label: 'Tickets', path: '/tickets' },
     { id: 'history', label: 'Service History', path: '/history' },
     { id: 'faq', label: 'FAQ', path: '/faq' },

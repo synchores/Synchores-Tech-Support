@@ -1,8 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateTicketDto {
+
+    @Field()
+    @IsNotEmpty()
+    @IsInt()
+    serviceId: number;
 
     @Field()
     @IsNotEmpty()
@@ -14,19 +19,17 @@ export class CreateTicketDto {
     @IsString()
     description: string;
 
-    @Field()
-    @IsNotEmpty()
-    @IsString()
+    @Field({ nullable: true })
     @IsOptional()
+    @IsString()
     priority?: string;
 
     @Field()
     @IsNotEmpty()
-    @IsString()
-    deadline: Date;
+    @IsDateString()
+    deadline: string;
 
-    @Field()
-    @IsNotEmpty()
+    @Field({ nullable: true })
     @IsString()
     @IsOptional()
     attachments?: string;

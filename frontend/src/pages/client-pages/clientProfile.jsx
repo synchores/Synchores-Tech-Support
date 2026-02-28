@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { colors } from '../../colors';
 
 export default function ClientProfile() {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
@@ -109,6 +111,13 @@ export default function ClientProfile() {
     { label: 'Member Since', value: '2025' },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
@@ -126,6 +135,7 @@ export default function ClientProfile() {
               color: '#ef4444',
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
             }}
+            onClick={handleLogout}
             onMouseEnter={(e) => {
               e.target.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
               e.target.style.borderColor = 'rgba(239, 68, 68, 0.5)';

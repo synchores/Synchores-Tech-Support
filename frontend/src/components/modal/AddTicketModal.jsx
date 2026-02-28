@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { colors } from '../../colors';
 import { Icons } from '../Icons';
+import { SUBMIT_TICKET_MUTATION } from '../../services/client-service/Mutation';
+import { SERVICES_QUERY } from '../../services/admin-service/Queries';
 
 // Add styles for select options
 const selectOptionStyles = `
@@ -16,12 +19,17 @@ const selectOptionStyles = `
 `;
 
 export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
+  const [submitTicket, { loading, error }] = useMutation(SUBMIT_TICKET_MUTATION);
+  const { data: servicesData, loading: servicesLoading } = useQuery(SERVICES_QUERY);
+  const services = servicesData?.getAllServices || [];
+
   const [formData, setFormData] = useState({
+    serviceId: '',
     title: '',
     description: '',
     priority: 'Medium',
-    category: 'General',
-    image: null,
+    deadline: '',
+    attachments: '',
   });
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -36,14 +44,13 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      setFormData(prev => ({
-        ...prev,
-        image: file,
-      }));
-      
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
+        setFormData(prev => ({
+          ...prev,
+          attachments: reader.result,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -52,16 +59,36 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
   const removeImage = () => {
     setFormData(prev => ({
       ...prev,
-      image: null,
+      attachments: '',
     }));
     setImagePreview(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
-    setFormData({ title: '', description: '', priority: 'Medium', category: 'General', image: null });
-    setImagePreview(null);
+    const ticketInput = {
+      serviceId: Number(formData.serviceId),
+      title: formData.title,
+      description: formData.description,
+      priority: formData.priority,
+      deadline: new Date(`${formData.deadline}T00:00:00.000Z`).toISOString(),
+      attachments: formData.attachments || undefined,
+    };
+
+    try {
+      const response = await submitTicket({
+        variables: {
+          input: ticketInput,
+        },
+      });
+
+      onSubmit?.(response?.data?.createTicket || ticketInput);
+      setFormData({ serviceId: '', title: '', description: '', priority: 'Medium', deadline: '', attachments: '' });
+      setImagePreview(null);
+      onClose();
+    } catch (submitError) {
+      console.error('Error submitting ticket:', submitError);
+    }
   };
 
   if (!isOpen) return null;
@@ -161,16 +188,17 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
             />
           </div>
 
-          {/* Priority and Category */}
+          {/* Service and Deadline */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold mb-2.5" style={{ color: colors.textPrimary }}>
-                Priority
+                Service
               </label>
               <select
-                name="priority"
-                value={formData.priority}
+                name="serviceId"
+                value={formData.serviceId}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
                   background: `rgba(25, 51, 87, 0.6)`,
@@ -186,21 +214,27 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                   e.target.style.background = 'rgba(25, 51, 87, 0.6)';
                 }}
               >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-                <option value="Critical">Critical</option>
+                <option value="" disabled>
+                  {servicesLoading ? 'Loading services...' : 'Select a service'}
+                </option>
+                {services.map((service) => (
+                  <option key={service.serviceId} value={service.serviceId}>
+                    {service.serviceName}
+                  </option>
+                ))}
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-bold mb-2.5" style={{ color: colors.textPrimary }}>
-                Category
+                Deadline
               </label>
-              <select
-                name="category"
-                value={formData.category}
+              <input
+                type="date"
+                name="deadline"
+                value={formData.deadline}
                 onChange={handleChange}
+                required
                 className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
                   background: `rgba(25, 51, 87, 0.6)`,
@@ -215,14 +249,46 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                   e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
                   e.target.style.background = 'rgba(25, 51, 87, 0.6)';
                 }}
-              >
-                <option value="General">General</option>
-                <option value="Technical">Technical</option>
-                <option value="Billing">Billing</option>
-                <option value="Feature Request">Feature Request</option>
-              </select>
+              />
             </div>
           </div>
+
+          {/* Priority */}
+          <div>
+            <label className="block text-sm font-bold mb-2.5" style={{ color: colors.textPrimary }}>
+              Priority
+            </label>
+            <select
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
+              style={{
+                background: `rgba(25, 51, 87, 0.6)`,
+                border: `1px solid rgba(6, 182, 212, 0.3)`,
+                color: colors.textPrimary,
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'rgba(6, 182, 212, 0.6)';
+                e.target.style.background = 'rgba(6, 182, 212, 0.18)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+                e.target.style.background = 'rgba(25, 51, 87, 0.6)';
+              }}
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+
+          {error && (
+            <div className="text-sm font-semibold" style={{ color: '#ef4444' }}>
+              Failed to create ticket. Please check your inputs and try again.
+            </div>
+          )}
 
           {/* Image Upload */}
           <div>
@@ -316,6 +382,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
               style={{
                 background: `linear-gradient(135deg, ${colors.cyan} 0%, ${colors.cyanMuted} 100%)`,
@@ -332,7 +399,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
               }}
             >
               <Icons.Send size={18} color={colors.primary} />
-              Create Ticket
+              {loading ? 'Creating...' : 'Create Ticket'}
             </button>
           </div>
         </form>

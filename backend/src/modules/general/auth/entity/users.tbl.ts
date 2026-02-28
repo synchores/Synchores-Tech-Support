@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TicketsTbl } from "src/modules/client-modules/tickets/entity/tickets.tbl";
 
 @Entity('users_tbl')
 @ObjectType()
@@ -42,4 +43,7 @@ export class UsersTbl {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     @Field()
     updatedAt: Date;
+
+    @OneToMany(() => TicketsTbl, (ticket) => ticket.user)
+    tickets: TicketsTbl[];
 }

@@ -1,10 +1,18 @@
 ﻿import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { LOGIN_MUTATION } from "../../services/authService";
+import { useMutation } from "@apollo/client/react";
 
 export default function LoginCard({ onSwitch }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: [], password: [] });
   const [touched, setTouched] = useState({ email: false, password: false });
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
 
   const validate = () => {
     const newErrors = { email: [], password: [] };
@@ -20,12 +28,39 @@ export default function LoginCard({ onSwitch }) {
     setErrors(validate());
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validation = validate();
     setErrors(validation);
     setTouched({ email: true, password: true });
     // If no errors, proceed with login logic
+
+    // Step 2: Check if there are errors
+    const hasValidationErrors = Object.values(validation).some((fieldErrors) => fieldErrors.length > 0);
+
+    if (!hasValidationErrors) {
+        try {
+            // Step 3: Call GraphQL mutation
+            const response = await login({
+                variables: {
+                    emailAddress: email.trim(),     // or userName if your backend expects it
+                    password: password
+                }
+            });
+
+            // Step 4: Handle successful login
+            const accessToken = response.data.login.accessToken;
+
+            localStorage.setItem("accessToken", accessToken);
+
+            const redirectTo = location.state?.from?.pathname || "/dashboard";
+            navigate(redirectTo);
+            
+        } catch (err) {
+            // Step 5: Handle mutation errors
+            console.error(err.message);
+        }
+    }
   };
 
   const getInputProps = (field) => {

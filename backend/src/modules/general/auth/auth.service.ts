@@ -30,7 +30,12 @@ export class AuthService {
     }
 
     async login(users: UsersTbl): Promise<{ accessToken: string }> {
-        const payload = { emailAddress: users.emailAddress, role: users.role };
+        const payload = {
+            sub: users.userId,
+            userId: users.userId,
+            emailAddress: users.emailAddress,
+            role: users.role,
+        };
 
         const accessToken = this.jwtService.sign(payload);
 

@@ -21,6 +21,7 @@ import { UsersCrudModule } from './modules/admin-modules/users-crud/users-crud.m
       driver: ApolloDriver,
       autoSchemaFile: process.env.AUTO_SCHEMA === 'true',
       playground: process.env.PLAYGROUND === 'true',
+      context: ({ req }) => ({ req }),
     }),
     AuthModule,
     TicketsModule,
