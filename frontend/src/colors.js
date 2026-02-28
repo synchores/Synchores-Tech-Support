@@ -26,6 +26,7 @@ export const colors = {
   textSecondary: '#d1d5db',
   textMuted: '#9ca3af',
   textDark: '#6b7280',
+  textHiglight: '#179CF9',
   
   // Status colors - Darker, more muted
   success: '#10b981',

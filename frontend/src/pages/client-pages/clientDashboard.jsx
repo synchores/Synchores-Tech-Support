@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { colors } from '../../colors';
 import { Icons } from '../../components/Icons';
-import AddTicketModal from '../../components/AddTicketModal';
-import RequestServiceModal from '../../components/RequestServiceModal';
+import AddTicketModal from '../../components/modal/AddTicketModal';
+import RequestServiceModal from '../../components/modal/RequestServiceModal';
 import { SERVICE_TYPES } from '../../serviceConfig';
 
 export default function ClientDashboard() {

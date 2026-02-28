@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { colors } from '../colors';
-import { Icons } from './Icons';
+import { colors } from '../../colors';
+import { Icons } from '../Icons';
 
 export default function ClientNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

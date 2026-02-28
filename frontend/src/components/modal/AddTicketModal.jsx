@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { colors } from '../colors';
-import { Icons } from './Icons';
+import { colors } from '../../colors';
+import { Icons } from '../Icons';
 
 // Add styles for select options
 const selectOptionStyles = `

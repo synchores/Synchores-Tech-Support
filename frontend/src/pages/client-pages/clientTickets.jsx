@@ -1,25 +1,38 @@
 import { useState } from 'react';
 import { colors } from '../../colors';
 import { Icons } from '../../components/Icons';
+import AddTicketModal from '../../components/modal/AddTicketModal';
 
 export default function ClientTickets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
-
-  const allTickets = [
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [tickets, setTickets] = useState([
     { id: 1, title: 'Website Redesign - Phase 1', status: 'In Progress', date: '2026-02-25', priority: 'High' },
     { id: 2, title: 'Server Maintenance', status: 'Pending', date: '2026-02-24', priority: 'Medium' },
     { id: 3, title: 'Database Optimization', status: 'In Progress', date: '2026-02-23', priority: 'High' },
     { id: 4, title: 'Security Audit', status: 'Completed', date: '2026-02-20', priority: 'Medium' },
     { id: 5, title: 'Mobile App Development', status: 'In Progress', date: '2026-02-18', priority: 'High' },
     { id: 6, title: 'Email Campaign Setup', status: 'Completed', date: '2026-02-15', priority: 'Low' },
-  ];
+  ]);
 
-  const filteredTickets = allTickets.filter(ticket => {
+  const filteredTickets = tickets.filter(ticket => {
     const matchesSearch = ticket.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'All' || ticket.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const handleAddTicket = (formData) => {
+    const newTicket = {
+      id: tickets.length + 1,
+      title: formData.title,
+      status: 'Pending',
+      date: new Date().toISOString().split('T')[0],
+      priority: formData.priority,
+    };
+    setTickets([newTicket, ...tickets]);
+    setIsTicketModalOpen(false);
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -89,6 +102,7 @@ export default function ClientTickets() {
                 e.target.style.transform = 'translateY(0)';
                 e.target.style.boxShadow = '0 10px 30px rgba(6, 182, 212, 0.22)';
               }}
+              onClick={() => setIsTicketModalOpen(true)}
             >
               <Icons.Plus size={19} color={colors.primary} />
               <span className="text-sm">New Ticket</span>
@@ -181,6 +195,12 @@ export default function ClientTickets() {
           )}
         </div>
       </div>
+      {/* Add Ticket Modal */}
+      <AddTicketModal 
+        isOpen={isTicketModalOpen} 
+        onClose={() => setIsTicketModalOpen(false)}
+        onSubmit={handleAddTicket}
+      />
     </div>
   );
 }
