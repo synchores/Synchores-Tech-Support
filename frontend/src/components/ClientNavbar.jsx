@@ -1,16 +1,18 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { colors } from '../colors';
 import { Icons } from './Icons';
 
-export default function ClientNavbar({ currentPage, onNavigate }) {
+export default function ClientNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'tickets', label: 'Tickets' },
-    { id: 'history', label: 'Service History' },
-    { id: 'faq', label: 'FAQ' },
-    { id: 'request', label: 'Request Service' },
+    { id: 'dashboard', label: 'Dashboard', path: '/' },
+    { id: 'tickets', label: 'Tickets', path: '/tickets' },
+    { id: 'history', label: 'Service History', path: '/history' },
+    { id: 'faq', label: 'FAQ', path: '/faq' },
+    { id: 'request', label: 'Request Service', path: '/request' },
   ];
 
   return (
@@ -24,38 +26,26 @@ export default function ClientNavbar({ currentPage, onNavigate }) {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-2">
+          <Link to="/" className="flex-shrink-0 flex items-center gap-2">
             <div className="text-white text-2xl font-black tracking-tight">
               <span style={{ color: colors.cyan }}>S</span>ynchores
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map(item => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => onNavigate(item.id)}
+                to={item.path}
                 className="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300"
                 style={{
-                  color: currentPage === item.id ? colors.cyan : colors.textSecondary,
-                  backgroundColor: currentPage === item.id ? `rgba(6, 182, 212, 0.15)` : 'transparent',
-                }}
-                onMouseEnter={(e) => {
-                  if (currentPage !== item.id) {
-                    e.target.style.color = colors.cyan;
-                    e.target.style.backgroundColor = 'rgba(6, 182, 212, 0.08)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (currentPage !== item.id) {
-                    e.target.style.color = colors.textSecondary;
-                    e.target.style.backgroundColor = 'transparent';
-                  }
+                  color: location.pathname === item.path ? colors.cyan : colors.textSecondary,
+                  backgroundColor: location.pathname === item.path ? `rgba(6, 182, 212, 0.15)` : 'transparent',
                 }}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -81,30 +71,18 @@ export default function ClientNavbar({ currentPage, onNavigate }) {
             </button>
 
             {/* User Icon - Profile */}
-            <button
-              onClick={() => onNavigate('profile')}
+            <Link
+              to="/profile"
               className="p-2.5 rounded-lg transition-all duration-300"
               style={{
-                backgroundColor: currentPage === 'profile' ? 'rgba(6, 182, 212, 0.25)' : 'rgba(6, 182, 212, 0.08)',
-                boxShadow: currentPage === 'profile' 
+                backgroundColor: location.pathname === '/profile' ? 'rgba(6, 182, 212, 0.25)' : 'rgba(6, 182, 212, 0.08)',
+                boxShadow: location.pathname === '/profile' 
                   ? '0 8px 20px rgba(6, 182, 212, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08)' 
                   : '0 4px 12px rgba(6, 182, 212, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
               }}
-              onMouseEnter={(e) => {
-                if (currentPage !== 'profile') {
-                  e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.15)';
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(6, 182, 212, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (currentPage !== 'profile') {
-                  e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.08)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(6, 182, 212, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)';
-                }
-              }}
             >
               <Icons.User size={22} color={colors.cyan} />
-            </button>
+            </Link>
 
             {/* Mobile Menu Button */}
             <button
@@ -113,16 +91,6 @@ export default function ClientNavbar({ currentPage, onNavigate }) {
               style={{
                 backgroundColor: mobileMenuOpen ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.08)',
                 boxShadow: '0 4px 12px rgba(6, 182, 212, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
-              }}
-              onMouseEnter={(e) => {
-                if (!mobileMenuOpen) {
-                  e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.15)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!mobileMenuOpen) {
-                  e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.08)';
-                }
               }}
             >
               <Icons.Menu size={22} color={colors.cyan} />
@@ -134,20 +102,18 @@ export default function ClientNavbar({ currentPage, onNavigate }) {
         {mobileMenuOpen && (
           <div className="md:hidden pb-4 space-y-1 border-t" style={{ borderColor: 'rgba(6, 182, 212, 0.1)' }}>
             {navItems.map(item => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => {
-                  onNavigate(item.id);
-                  setMobileMenuOpen(false);
-                }}
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
                 className="block w-full text-left px-4 py-2.5 rounded-lg transition-all"
                 style={{
-                  backgroundColor: currentPage === item.id ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
-                  color: currentPage === item.id ? colors.cyan : colors.textSecondary
+                  backgroundColor: location.pathname === item.path ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
+                  color: location.pathname === item.path ? colors.cyan : colors.textSecondary
                 }}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
           </div>
         )}

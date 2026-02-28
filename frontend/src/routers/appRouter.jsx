@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { colors } from '../colors';
 import ClientNavbar from '../components/ClientNavbar';
-import ClientDashboard from './ClientDashboard';
-import ClientTickets from './clientTickets';
-import ClientServiceHistory from './clientServiceHistory';
-import ClientFAQ from './ClientFAQ';
-import ClientRequestService from './clientRequestService';
-import ClientProfile from './clientProfile';
+import ClientDashboard from '../pages/client-pages/clientDashboard';
+import ClientTickets from '../pages/client-pages/clientTickets';
+import ClientServiceHistory from '../pages/client-pages/clientServiceHistory';
+import ClientFAQ from '../pages/client-pages/clientFAQ';
+import ClientRequestService from '../pages/client-pages/clientRequestService';
+import ClientProfile from '../pages/client-pages/clientProfile';
 
 function AppRouter() {
   // const [currentPage, setCurrentPage] = useState('dashboard');
@@ -31,25 +32,24 @@ function AppRouter() {
   // };
 
   return (
-      // <div style={{ backgroundColor: colors.bgDark }}>
-      //   <ClientNavbar currentPage={currentPage} onNavigate={setCurrentPage} />
-      //   {renderPage()}
-      // </div>
-
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<ClientDashboard />} />
-          <Route path="/tickets" element={<ClientTickets />} />
-          <Route path="/history" element={<ClientServiceHistory />} />
-          <Route path="/faq" element={<ClientFAQ />} />
-          <Route path="/request" element={<ClientRequestService />} />
-          <Route path="/profile" element={<ClientProfile />} />
-          
-          {/* Private Routes */}
-
-        </Routes>
-      </Router>
+    <Router>
+      <div style={{ backgroundColor: colors.bgDark, minHeight: '100vh' }}>
+        <ClientNavbar />
+        <div style={{ paddingTop: '80px' }}> {/* Space for fixed navbar */}
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<ClientDashboard />} />
+            <Route path="/tickets" element={<ClientTickets />} />
+            <Route path="/history" element={<ClientServiceHistory />} />
+            <Route path="/faq" element={<ClientFAQ />} />
+            <Route path="/request" element={<ClientRequestService />} />
+            <Route path="/profile" element={<ClientProfile />} />
+            
+            {/* Private Routes */}
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
 
