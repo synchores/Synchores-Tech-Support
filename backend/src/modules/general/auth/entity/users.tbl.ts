@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType, Int } from "@nestjs/graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TicketsTbl } from "src/modules/client-modules/tickets/entity/tickets.tbl";
 
@@ -8,6 +8,10 @@ export class UsersTbl {
     @PrimaryGeneratedColumn()
     @Field()
     userId: number;
+
+    @Column({ type: 'json', nullable: true })
+    @Field(() => [Int], { nullable: true })
+    clientServicesId?: number[];
 
     @Column({ unique: true })
     @Field()

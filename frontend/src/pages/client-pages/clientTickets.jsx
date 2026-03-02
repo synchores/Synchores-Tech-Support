@@ -1,37 +1,58 @@
 import { useState } from 'react';
+import { useQuery } from '@apollo/client/react';
 import { colors } from '../../colors';
 import { Icons } from '../../components/Icons';
 import AddTicketModal from '../../components/modal/AddTicketModal';
+import { CLIENTS_TICKETS } from '../../services/client-service/Queries';
+import TicketDetailsCard from '../../components/modal/TicketDetailsCard';
 
 export default function ClientTickets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
-  const [tickets, setTickets] = useState([
-    { id: 1, title: 'Website Redesign - Phase 1', status: 'In Progress', date: '2026-02-25', priority: 'High' },
-    { id: 2, title: 'Server Maintenance', status: 'Pending', date: '2026-02-24', priority: 'Medium' },
-    { id: 3, title: 'Database Optimization', status: 'In Progress', date: '2026-02-23', priority: 'High' },
-    { id: 4, title: 'Security Audit', status: 'Completed', date: '2026-02-20', priority: 'Medium' },
-    { id: 5, title: 'Mobile App Development', status: 'In Progress', date: '2026-02-18', priority: 'High' },
-    { id: 6, title: 'Email Campaign Setup', status: 'Completed', date: '2026-02-15', priority: 'Low' },
-  ]);
+  const [expandedTicketId, setExpandedTicketId] = useState(null);
+  const { data, loading, error } = useQuery(CLIENTS_TICKETS);
 
-  const filteredTickets = tickets.filter(ticket => {
+  const formatDisplayDate = (value) => {
+    if (!value) return '';
+    const parsedDate = new Date(value);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return value;
+    }
+
+    return parsedDate.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const fetchedTickets = (data?.getMyTickets || []).map((ticket) => ({
+    id: ticket.ticketId,
+    title: ticket.title,
+    status: ticket.status === 'pending' ? 'Pending' : ticket.status === 'completed' ? 'Completed' : 'In Progress',
+    date: ticket.deadline ? formatDisplayDate(ticket.deadline) : '',
+    priority: ticket.priority,
+    description: ticket.description,
+    serviceId: ticket.serviceId,
+    deadline: ticket.deadline ? formatDisplayDate(ticket.deadline) : '',
+  }));
+
+  const displayTickets = fetchedTickets;
+
+  const filteredTickets = displayTickets.filter(ticket => {
     const matchesSearch = ticket.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'All' || ticket.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
-  const handleAddTicket = (formData) => {
-    const newTicket = {
-      id: tickets.length + 1,
-      title: formData.title,
-      status: 'Pending',
-      date: new Date().toISOString().split('T')[0],
-      priority: formData.priority,
-    };
-    setTickets([newTicket, ...tickets]);
+  const handleAddTicket = () => {
     setIsTicketModalOpen(false);
+  };
+
+  const toggleTicketDetails = (ticketId) => {
+    setExpandedTicketId((current) => (current === ticketId ? null : ticketId));
   };
 
   const getStatusColor = (status) => {
@@ -46,6 +67,14 @@ export default function ClientTickets() {
         return { bg: 'rgba(107, 114, 128, 0.1)', text: colors.textMuted, border: 'rgba(107, 114, 128, 0.2)' };
     }
   };
+
+  if (loading) {
+    return <div className="min-h-screen pt-24 pb-16 text-center text-white">Loading tickets...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen pt-24 pb-16 text-center text-red-400">Failed to load your tickets.</div>;
+  }
 
   return (
     <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
@@ -157,6 +186,15 @@ export default function ClientTickets() {
                     e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.15)';
                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
                   }}
+                  onClick={() => toggleTicketDetails(ticket.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleTicketDetails(ticket.id);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-1 min-w-0">
@@ -183,8 +221,16 @@ export default function ClientTickets() {
                       }`}>
                         {ticket.priority}
                       </span>
+                      <span
+                        className="transition-transform duration-300"
+                        style={{ transform: expandedTicketId === ticket.id ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                      >
+                        <Icons.ChevronDown size={16} color={colors.textMuted} />
+                      </span>
                     </div>
                   </div>
+
+                  {expandedTicketId === ticket.id && <TicketDetailsCard ticket={ticket} />}
                 </div>
               );
             })

@@ -30,6 +30,8 @@ function AppContent() {
           {" "}
           {/* Space for fixed navbar */}
           <Routes>
+            <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} replace />} />
+
             {/* Public Routes */}
             <Route path="/login" element={token ? <Navigate to="/dashboard" replace /> : <AuthWrapper />} />
 
@@ -52,6 +54,8 @@ function AppContent() {
             <Route path="/profile" element={
               <ProtectedRoute><ClientProfile /></ProtectedRoute>
               } />
+
+            <Route path="*" element={<Navigate to={token ? "/dashboard" : "/login"} replace />} />
           </Routes>
         </div>
       </div>

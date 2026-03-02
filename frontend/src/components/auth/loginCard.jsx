@@ -8,11 +8,12 @@ export default function LoginCard({ onSwitch }) {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: [], password: [] });
   const [touched, setTouched] = useState({ email: false, password: false });
+  const [authError, setAuthError] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [login, { data, loading, error }] = useMutation(LOGIN_MUTATION);
+  const [login, { loading }] = useMutation(LOGIN_MUTATION);
 
   const validate = () => {
     const newErrors = { email: [], password: [] };
@@ -30,6 +31,7 @@ export default function LoginCard({ onSwitch }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setAuthError("");
     const validation = validate();
     setErrors(validation);
     setTouched({ email: true, password: true });
@@ -57,7 +59,15 @@ export default function LoginCard({ onSwitch }) {
             navigate(redirectTo);
             
         } catch (err) {
-            // Step 5: Handle mutation errors
+            const errMessage = err?.graphQLErrors?.[0]?.message || err?.message || "Login failed. Please try again.";
+            const isInvalidCredentials = /invalid credentials|unauthorized|wrong password|invalid/i.test(errMessage);
+
+            setAuthError(isInvalidCredentials ? "Incorrect email or password. Please try again." : "Unable to log in right now. Please try again.");
+            setErrors((prev) => ({
+              ...prev,
+              password: isInvalidCredentials ? ["Wrong password or email"] : prev.password,
+            }));
+            setTouched((prev) => ({ ...prev, password: true }));
             console.error(err.message);
         }
     }
@@ -76,6 +86,7 @@ export default function LoginCard({ onSwitch }) {
       value: singleError ? "" : field === "email" ? email : password,
       placeholder: singleError ? errors[field][0] : field === "email" ? "you@company.com" : "password",
       onChange: (e) => {
+        if (authError) setAuthError("");
         if (field === "email") setEmail(e.target.value);
         else setPassword(e.target.value);
       },
@@ -97,6 +108,12 @@ export default function LoginCard({ onSwitch }) {
   return (
     <form className="w-full" onSubmit={handleSubmit} autoComplete="off">
       <h1 className="text-2xl font-bold mb-6 text-gray-900">Log in</h1>
+
+      {authError && (
+        <div className="mb-4 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-600">
+          {authError}
+        </div>
+      )}
 
       <label className="block text-gray-500 text-sm mb-1">Email</label>
       <div className="relative mb-4">
@@ -130,9 +147,21 @@ export default function LoginCard({ onSwitch }) {
 
       <button
         type="submit"
-        className="w-full py-2.5 bg-gray-900 text-white rounded-md font-semibold hover:bg-gray-700 transition-colors"
+        disabled={loading}
+        className={`w-full py-2.5 rounded-md font-semibold transition-colors flex items-center justify-center gap-2 ${
+          loading
+            ? "bg-gray-700 text-white cursor-not-allowed"
+            : "bg-gray-900 text-white hover:bg-gray-700"
+        }`}
       >
-        Login
+        {loading ? (
+          <>
+            <span className="inline-block h-4 w-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+            Logging in...
+          </>
+        ) : (
+          "Login"
+        )}
       </button>
 
       <p className="mt-4 text-sm text-gray-400">

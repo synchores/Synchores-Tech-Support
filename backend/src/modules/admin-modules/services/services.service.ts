@@ -4,13 +4,36 @@ import { ServicesTbl } from './entity/service.tbl';
 import { Repository } from 'typeorm/repository/Repository.js';
 import { CreateServiceDto } from './dto/create.services';
 import { UpdateServiceDto } from './dto/update.services';
+import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ServicesService {
-    constructor(@InjectRepository(ServicesTbl) private readonly servicesRepo: Repository<ServicesTbl>){}
+    constructor(
+        @InjectRepository(ServicesTbl) private readonly servicesRepo: Repository<ServicesTbl>,
+        @InjectRepository(UsersTbl) private readonly usersRepo: Repository<UsersTbl>,
+    ){}
 
     async readServices(){
         return await this.servicesRepo.find();
+    }
+
+    async readServicesForClient(userId: number){
+        const user = await this.usersRepo.findOne({ where: { userId } });
+
+        if(!user){
+            return [];
+        }
+
+        const serviceIds = user.clientServicesId ?? [];
+
+        if(serviceIds.length === 0){
+            return [];
+        }
+
+        return await this.servicesRepo.find({
+            where: { serviceId: In(serviceIds) },
+        });
     }
 
     async createService(createServiceDto: CreateServiceDto){
@@ -42,6 +65,34 @@ export class ServicesService {
         }
 
         return await this.servicesRepo.remove(deleteService);
+    }
+
+    async setClientServices(userId: number, clientServicesId: number[]){
+        const user = await this.usersRepo.findOne({ where: { userId } });
+
+        if(!user){
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        const uniqueServiceIds = [...new Set(clientServicesId)];
+
+        if(uniqueServiceIds.length === 0){
+            user.clientServicesId = [];
+            await this.usersRepo.save(user);
+            return [];
+        }
+
+        const services = await this.servicesRepo.find({
+            where: { serviceId: In(uniqueServiceIds) },
+        });
+
+        if(services.length !== uniqueServiceIds.length){
+            throw new NotFoundException('One or more service IDs were not found');
+        }
+
+        user.clientServicesId = uniqueServiceIds;
+        await this.usersRepo.save(user);
+        return services;
     }
 
 }

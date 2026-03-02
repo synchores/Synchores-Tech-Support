@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { sileo } from 'sileo';
 import { colors } from '../../colors';
 import { Icons } from '../Icons';
 import { SUBMIT_TICKET_MUTATION } from '../../services/client-service/Mutation';
-import { SERVICES_QUERY } from '../../services/admin-service/Queries';
+import { CLIENTS_SERVICE, CLIENTS_TICKETS } from '../../services/client-service/Queries';
 
 // Add styles for select options
 const selectOptionStyles = `
@@ -18,10 +19,44 @@ const selectOptionStyles = `
   }
 `;
 
-export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
-  const [submitTicket, { loading, error }] = useMutation(SUBMIT_TICKET_MUTATION);
-  const { data: servicesData, loading: servicesLoading } = useQuery(SERVICES_QUERY);
-  const services = servicesData?.getAllServices || [];
+export default function AddTicketModal({ isOpen, onClose, onSubmit, services: providedServices }) {
+  const [submitTicket, { loading }] = useMutation(SUBMIT_TICKET_MUTATION, {
+    update(cache, { data }) {
+      const createdTicket = data?.createTicket;
+
+      if (!createdTicket) {
+        return;
+      }
+
+      try {
+        const existing = cache.readQuery({ query: CLIENTS_TICKETS });
+        const existingTickets = existing?.getMyTickets || [];
+        const alreadyExists = existingTickets.some((ticket) => ticket.ticketId === createdTicket.ticketId);
+
+        if (alreadyExists) {
+          return;
+        }
+
+        cache.writeQuery({
+          query: CLIENTS_TICKETS,
+          data: {
+            getMyTickets: [createdTicket, ...existingTickets],
+          },
+        });
+      } catch {
+        cache.writeQuery({
+          query: CLIENTS_TICKETS,
+          data: {
+            getMyTickets: [createdTicket],
+          },
+        });
+      }
+    },
+  });
+  const { data: servicesData, loading: servicesLoading } = useQuery(CLIENTS_SERVICE, {
+    skip: Array.isArray(providedServices),
+  });
+  const services = providedServices ?? servicesData?.getMyServices ?? [];
 
   const [formData, setFormData] = useState({
     serviceId: '',
@@ -32,6 +67,33 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
     attachments: '',
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const minDeadlineDate = new Date().toISOString().split('T')[0];
+
+  const validateForm = (values) => {
+    const errors = {};
+
+    if (!values.title?.trim()) {
+      errors.title = 'Ticket title is required.';
+    }
+
+    if (!values.description?.trim()) {
+      errors.description = 'Description is required.';
+    }
+
+    if (!values.serviceId) {
+      errors.serviceId = 'Please select a service.';
+    }
+
+    if (!values.deadline) {
+      errors.deadline = 'Please choose a deadline.';
+    } else if (values.deadline < minDeadlineDate) {
+      errors.deadline = 'Deadline cannot be in the past.';
+    }
+
+    return errors;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,6 +101,13 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
       ...prev,
       [name]: value,
     }));
+
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -65,7 +134,12 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();    
+    setHasSubmitted(true);
+
+    const validationErrors = validateForm(formData);
+    setFormErrors(validationErrors);
+    
     const ticketInput = {
       serviceId: Number(formData.serviceId),
       title: formData.title,
@@ -85,8 +159,19 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
       onSubmit?.(response?.data?.createTicket || ticketInput);
       setFormData({ serviceId: '', title: '', description: '', priority: 'Medium', deadline: '', attachments: '' });
       setImagePreview(null);
+      setFormErrors({});
+      setHasSubmitted(false);
+      sileo.success({
+        title: 'Ticket created',
+        description: 'Your ticket has been submitted successfully.',
+      });
       onClose();
     } catch (submitError) {
+      const apiMessage = submitError?.graphQLErrors?.[0]?.message || submitError?.message || 'Failed to create ticket. Please review your input and try again.';
+      sileo.error({
+        title: 'Failed to create ticket',
+        description: apiMessage,
+      });
       console.error('Error submitting ticket:', submitError);
     }
   };
@@ -131,7 +216,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
+        <form noValidate onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
           {/* Title */}
           <div>
             <label className="block text-sm font-bold mb-2.5" style={{ color: colors.textPrimary }}>
@@ -147,7 +232,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
               style={{
                 background: `rgba(20, 40, 70, 0.6)`,
-                border: `1px solid rgba(6, 182, 212, 0.15)`,
+                border: formErrors.title ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.15)`,
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.4)';
@@ -158,6 +243,11 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                 e.target.style.background = 'rgba(20, 40, 70, 0.6)';
               }}
             />
+            {hasSubmitted && formErrors.title && (
+              <p className="text-xs mt-2 font-semibold" style={{ color: colors.error }}>
+                {formErrors.title}
+              </p>
+            )}
           </div>
 
           {/* Description */}
@@ -175,7 +265,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300 resize-none"
               style={{
                 background: `rgba(20, 40, 70, 0.6)`,
-                border: `1px solid rgba(6, 182, 212, 0.15)`,
+                border: formErrors.description ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.15)`,
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.4)';
@@ -186,6 +276,11 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                 e.target.style.background = 'rgba(20, 40, 70, 0.6)';
               }}
             />
+            {hasSubmitted && formErrors.description && (
+              <p className="text-xs mt-2 font-semibold" style={{ color: colors.error }}>
+                {formErrors.description}
+              </p>
+            )}
           </div>
 
           {/* Service and Deadline */}
@@ -202,7 +297,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                 className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
                   background: `rgba(25, 51, 87, 0.6)`,
-                  border: `1px solid rgba(6, 182, 212, 0.3)`,
+                  border: formErrors.serviceId ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.3)`,
                   color: colors.textPrimary,
                 }}
                 onFocus={(e) => {
@@ -223,6 +318,11 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                   </option>
                 ))}
               </select>
+              {hasSubmitted && formErrors.serviceId && (
+                <p className="text-xs mt-2 font-semibold" style={{ color: colors.error }}>
+                  {formErrors.serviceId}
+                </p>
+              )}
             </div>
 
             <div>
@@ -233,12 +333,13 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                 type="date"
                 name="deadline"
                 value={formData.deadline}
+                min={minDeadlineDate}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
                   background: `rgba(25, 51, 87, 0.6)`,
-                  border: `1px solid rgba(6, 182, 212, 0.3)`,
+                  border: formErrors.deadline ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.3)`,
                   color: colors.textPrimary,
                 }}
                 onFocus={(e) => {
@@ -250,6 +351,11 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
                   e.target.style.background = 'rgba(25, 51, 87, 0.6)';
                 }}
               />
+              {hasSubmitted && formErrors.deadline && (
+                <p className="text-xs mt-2 font-semibold" style={{ color: colors.error }}>
+                  {formErrors.deadline}
+                </p>
+              )}
             </div>
           </div>
 
@@ -283,12 +389,6 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit }) {
               <option value="Critical">Critical</option>
             </select>
           </div>
-
-          {error && (
-            <div className="text-sm font-semibold" style={{ color: '#ef4444' }}>
-              Failed to create ticket. Please check your inputs and try again.
-            </div>
-          )}
 
           {/* Image Upload */}
           <div>
