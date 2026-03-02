@@ -69,6 +69,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
   const [imagePreview, setImagePreview] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [submitErrorMessage, setSubmitErrorMessage] = useState('');
   const minDeadlineDate = new Date().toISOString().split('T')[0];
 
   const validateForm = (values) => {
@@ -108,6 +109,10 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
         [name]: undefined,
       }));
     }
+
+    if (submitErrorMessage) {
+      setSubmitErrorMessage('');
+    }
   };
 
   const handleImageChange = (e) => {
@@ -136,9 +141,14 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
   const handleSubmit = async (e) => {
     e.preventDefault();    
     setHasSubmitted(true);
+    setSubmitErrorMessage('');
 
     const validationErrors = validateForm(formData);
     setFormErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
     
     const ticketInput = {
       serviceId: Number(formData.serviceId),
@@ -161,6 +171,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
       setImagePreview(null);
       setFormErrors({});
       setHasSubmitted(false);
+      setSubmitErrorMessage('');
       sileo.success({
         title: 'Ticket created',
         description: 'Your ticket has been submitted successfully.',
@@ -168,10 +179,16 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
       onClose();
     } catch (submitError) {
       const apiMessage = submitError?.graphQLErrors?.[0]?.message || submitError?.message || 'Failed to create ticket. Please review your input and try again.';
-      sileo.error({
-        title: 'Failed to create ticket',
-        description: apiMessage,
-      });
+
+      if (/already exists|duplicate/i.test(apiMessage)) {
+        setFormErrors((prev) => ({
+          ...prev,
+          title: apiMessage,
+        }));
+      } else {
+        setSubmitErrorMessage(apiMessage);
+      }
+
       console.error('Error submitting ticket:', submitError);
     }
   };
@@ -460,6 +477,14 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
 
           {/* Buttons */}
           <div className="flex gap-4 pt-4 border-t" style={{ borderColor: 'rgba(107, 114, 128, 0.2)' }}>
+            {submitErrorMessage && (
+              <p className="w-full text-xs font-semibold mb-1" style={{ color: colors.error }}>
+                {submitErrorMessage}
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-4">
             <button
               type="button"
               onClick={onClose}

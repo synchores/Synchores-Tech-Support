@@ -25,7 +25,7 @@ export class TicketsResolver {
             secret: process.env.JWT_SECRET,
         });
 
-        const userId = payload.userId ?? payload.sub;
+        const userId = Number(payload.userId ?? payload.sub);
         if(!userId){
             throw new UnauthorizedException('Invalid token payload');
         }
@@ -46,7 +46,7 @@ export class TicketsResolver {
             secret: process.env.JWT_SECRET,
         });
 
-        const userId = payload.userId ?? payload.sub;
+        const userId = Number(payload.userId ?? payload.sub);
 
         if(!userId){
             throw new UnauthorizedException('Invalid token payload');

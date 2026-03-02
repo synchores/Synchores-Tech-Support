@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { colors } from '../../colors';
 import { Icons } from '../../components/Icons';
@@ -10,7 +10,9 @@ export default function ClientTickets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
-  const [expandedTicketId, setExpandedTicketId] = useState(null);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [recentlyCreatedTicketId, setRecentlyCreatedTicketId] = useState(null);
+  const highlightTimeoutRef = useRef(null);
   const { data, loading, error } = useQuery(CLIENTS_TICKETS);
 
   const formatDisplayDate = (value) => {
@@ -35,6 +37,7 @@ export default function ClientTickets() {
     date: ticket.deadline ? formatDisplayDate(ticket.deadline) : '',
     priority: ticket.priority,
     description: ticket.description,
+    attachments: ticket.attachments,
     serviceId: ticket.serviceId,
     deadline: ticket.deadline ? formatDisplayDate(ticket.deadline) : '',
   }));
@@ -47,12 +50,36 @@ export default function ClientTickets() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleAddTicket = () => {
+  useEffect(() => {
+    return () => {
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleAddTicket = (createdTicket) => {
     setIsTicketModalOpen(false);
+
+    const createdTicketId = createdTicket?.ticketId ?? createdTicket?.id ?? null;
+    if (!createdTicketId) {
+      return;
+    }
+
+    setRecentlyCreatedTicketId(createdTicketId);
+
+    if (highlightTimeoutRef.current) {
+      clearTimeout(highlightTimeoutRef.current);
+    }
+
+    highlightTimeoutRef.current = setTimeout(() => {
+      setRecentlyCreatedTicketId(null);
+      highlightTimeoutRef.current = null;
+    }, 3000);
   };
 
-  const toggleTicketDetails = (ticketId) => {
-    setExpandedTicketId((current) => (current === ticketId ? null : ticketId));
+  const openTicketDetails = (ticket) => {
+    setSelectedTicket(ticket);
   };
 
   const getStatusColor = (status) => {
@@ -167,14 +194,18 @@ export default function ClientTickets() {
           {filteredTickets.length > 0 ? (
             filteredTickets.map(ticket => {
               const statusColors = getStatusColor(ticket.status);
+              const isNewlyCreated = recentlyCreatedTicketId === ticket.id;
+
               return (
                 <div 
                   key={ticket.id}
                   className="group p-5 rounded-xl transition-all duration-300 cursor-pointer"
                   style={{
                     background: `rgba(20, 40, 70, 0.35)`,
-                    border: '1px solid rgba(107, 114, 128, 0.15)',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+                    border: isNewlyCreated ? `1px solid ${colors.cyan}` : '1px solid rgba(107, 114, 128, 0.15)',
+                    boxShadow: isNewlyCreated
+                      ? '0 0 0 1px rgba(6, 182, 212, 0.5), 0 12px 34px rgba(6, 182, 212, 0.24)'
+                      : '0 4px 20px rgba(0, 0, 0, 0.1)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateX(4px)';
@@ -186,11 +217,11 @@ export default function ClientTickets() {
                     e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.15)';
                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
                   }}
-                  onClick={() => toggleTicketDetails(ticket.id)}
+                  onClick={() => openTicketDetails(ticket)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      toggleTicketDetails(ticket.id);
+                      openTicketDetails(ticket);
                     }
                   }}
                   role="button"
@@ -221,16 +252,9 @@ export default function ClientTickets() {
                       }`}>
                         {ticket.priority}
                       </span>
-                      <span
-                        className="transition-transform duration-300"
-                        style={{ transform: expandedTicketId === ticket.id ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                      >
-                        <Icons.ChevronDown size={16} color={colors.textMuted} />
-                      </span>
+                      <Icons.ArrowRight size={16} color={colors.textMuted} />
                     </div>
                   </div>
-
-                  {expandedTicketId === ticket.id && <TicketDetailsCard ticket={ticket} />}
                 </div>
               );
             })
@@ -246,6 +270,11 @@ export default function ClientTickets() {
         isOpen={isTicketModalOpen} 
         onClose={() => setIsTicketModalOpen(false)}
         onSubmit={handleAddTicket}
+      />
+      <TicketDetailsCard
+        ticket={selectedTicket}
+        isOpen={Boolean(selectedTicket)}
+        onClose={() => setSelectedTicket(null)}
       />
     </div>
   );

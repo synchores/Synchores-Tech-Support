@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { colors } from "../colors";
 import ClientNavbar from "../components/modal/ClientNavbar";
 import ClientDashboard from "../pages/client-pages/clientDashboard";
@@ -11,55 +11,39 @@ import AuthWrapper from "../pages/auth/loginPage";
 import { ProtectedRoute } from "./protectedRoute";
 
 function AppRouter() {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-}
-
-function AppContent() {
-  const location = useLocation();
-  const isLoginPage = location.pathname === "/login";
   const token = localStorage.getItem("accessToken") || localStorage.getItem("token");
 
   return (
-    <div style={{ backgroundColor: colors.bgDark, minHeight: "100vh" }}>
-      {!isLoginPage && <ClientNavbar />}
-      <div style={{ paddingTop: isLoginPage ? "0px" : "80px" }}>
-          {" "}
-          {/* Space for fixed navbar */}
-          <Routes>
-            <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} replace />} />
+    <Router>
+      <div style={{ backgroundColor: colors.bgDark, minHeight: "100vh" }}>
+        <Routes>
+          <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} replace />} />
 
-            {/* Public Routes */}
-            <Route path="/login" element={token ? <Navigate to="/dashboard" replace /> : <AuthWrapper />} />
+          <Route path="/login" element={token ? <Navigate to="/dashboard" replace /> : <AuthWrapper />} />
 
-            {/* Private Routes */}            
-            <Route path="/dashboard" element={
-              <ProtectedRoute><ClientDashboard /></ProtectedRoute>
-              } />
-            <Route path="/tickets" element={
-              <ProtectedRoute><ClientTickets /></ProtectedRoute>
-              } />
-            <Route path="/history" element={
-              <ProtectedRoute><ClientServiceHistory /></ProtectedRoute>
-              } />
-            <Route path="/faq" element={
-              <ProtectedRoute><ClientFAQ /></ProtectedRoute>
-              } />
-            <Route path="/request" element={
-              <ProtectedRoute><ClientRequestService /></ProtectedRoute>
-              } />
-            <Route path="/profile" element={
-              <ProtectedRoute><ClientProfile /></ProtectedRoute>
-              } />
+          <Route
+            element={
+              <>
+                <ClientNavbar />
+                <div style={{ paddingTop: "80px" }}>
+                  <Outlet />
+                </div>
+              </>
+            }
+          >
+            <Route path="/dashboard" element={<ProtectedRoute><ClientDashboard /></ProtectedRoute>} />
+            <Route path="/tickets" element={<ProtectedRoute><ClientTickets /></ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute><ClientServiceHistory /></ProtectedRoute>} />
+            <Route path="/faq" element={<ProtectedRoute><ClientFAQ /></ProtectedRoute>} />
+            <Route path="/request" element={<ProtectedRoute><ClientRequestService /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ClientProfile /></ProtectedRoute>} />
+          </Route>
 
-            <Route path="*" element={<Navigate to={token ? "/dashboard" : "/login"} replace />} />
-          </Routes>
+          <Route path="*" element={<Navigate to={token ? "/dashboard" : "/login"} replace />} />
+        </Routes>
         </div>
-      </div>
-    );
-  }
+    </Router>
+  );
+}
 
 export default AppRouter;
