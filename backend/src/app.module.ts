@@ -10,6 +10,11 @@ import { TicketsModule } from './modules/client-modules/tickets/tickets.module';
 import { ServicesModule } from './modules/admin-modules/services/services.module';
 import { NotificationsModule } from './modules/general/notifications/notifications.module';
 import { UsersCrudModule } from './modules/admin-modules/users-crud/users-crud.module';
+import { ProductsModule } from './modules/admin-modules/products/products.module';
+import { InquiryFormModule } from './modules/general/inquiry-form/inquiry-form.module';
+import { TicketStatusModule } from './modules/admin-modules/ticket-status/ticket-status.module';
+import { OrdersModule } from './modules/admin-modules/orders/orders.module';
+import { MailerModule } from './modules/general/mailer/mailer.module';
 
 @Module({
   imports: [
@@ -27,7 +32,12 @@ import { UsersCrudModule } from './modules/admin-modules/users-crud/users-crud.m
     TicketsModule,
     ServicesModule,
     UsersCrudModule,
-    NotificationsModule
+    NotificationsModule,
+    MailerModule,
+    InquiryFormModule,
+    ProductsModule,
+    TicketStatusModule,
+    OrdersModule
   ],
   controllers: [AppController],
   providers: [AppService],
