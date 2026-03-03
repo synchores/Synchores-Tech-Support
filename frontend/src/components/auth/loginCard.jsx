@@ -24,11 +24,6 @@ export default function LoginCard({ onSwitch }) {
     return newErrors;
   };
 
-  const handleBlur = (field) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    setErrors(validate());
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setAuthError("");
@@ -90,7 +85,6 @@ export default function LoginCard({ onSwitch }) {
         if (field === "email") setEmail(e.target.value);
         else setPassword(e.target.value);
       },
-      onBlur: () => handleBlur(field),
       type: field === "password" ? "password" : "email",
       autoComplete: field,
       readOnly: singleError,

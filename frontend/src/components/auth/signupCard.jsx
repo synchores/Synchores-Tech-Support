@@ -15,11 +15,6 @@ export default function SignupCard({ onSwitch }) {
     return newErrors;
   };
 
-  const handleBlur = (field) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    setErrors(validate());
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const validation = validate();
@@ -44,7 +39,6 @@ export default function SignupCard({ onSwitch }) {
         else if (field === "email") setEmail(e.target.value);
         else setPassword(e.target.value);
       },
-      onBlur: () => handleBlur(field),
       type: field === "password" ? "password" : field === "email" ? "email" : "text",
       autoComplete: field,
       readOnly: singleError,
