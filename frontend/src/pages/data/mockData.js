@@ -1,0 +1,168 @@
+export const revenueData = [
+  { month: "Jan", revenue: 45000, expenses: 32000 },
+  { month: "Feb", revenue: 52000, expenses: 35000 },
+  { month: "Mar", revenue: 48000, expenses: 33000 },
+  { month: "Apr", revenue: 61000, expenses: 38000 },
+  { month: "May", revenue: 55000, expenses: 36000 },
+  { month: "Jun", revenue: 67000, expenses: 40000 },
+  { month: "Jul", revenue: 72000, expenses: 42000 },
+];
+
+export const ticketVolumeData = [
+  { day: "Mon", open: 12, inProgress: 8, resolved: 15 },
+  { day: "Tue", open: 15, inProgress: 10, resolved: 12 },
+  { day: "Wed", open: 10, inProgress: 12, resolved: 18 },
+  { day: "Thu", open: 14, inProgress: 9, resolved: 16 },
+  { day: "Fri", open: 18, inProgress: 11, resolved: 14 },
+  { day: "Sat", open: 8, inProgress: 6, resolved: 10 },
+  { day: "Sun", open: 6, inProgress: 4, resolved: 8 },
+];
+
+export const categoryDistribution = [
+  { name: "Hardware", value: 28, color: "#3b82f6" },
+  { name: "Software", value: 35, color: "#8b5cf6" },
+  { name: "Network", value: 22, color: "#f59e0b" },
+  { name: "Security", value: 15, color: "#ef4444" },
+];
+
+export const tickets = [
+  {
+    id: "TKT-001",
+    title: "Laptop screen flickering intermittently",
+    customer: "Alice Johnson",
+    priority: "medium",
+    status: "in-progress",
+    assignedAgent: "Sarah Chen",
+  },
+  {
+    id: "TKT-002",
+    title: "Unable to access shared network drive",
+    customer: "Bob Smith",
+    priority: "high",
+    status: "open",
+    assignedAgent: null,
+  },
+  {
+    id: "TKT-003",
+    title: "Email client not syncing properly",
+    customer: "Carol White",
+    priority: "low",
+    status: "resolved",
+    assignedAgent: "Mike Torres",
+  },
+  {
+    id: "TKT-004",
+    title: "Printer offline error - IT department",
+    customer: "David Lee",
+    priority: "medium",
+    status: "in-progress",
+    assignedAgent: "Emma Davis",
+  },
+  {
+    id: "TKT-005",
+    title: "Software installation permission denied",
+    customer: "Eve Brown",
+    priority: "high",
+    status: "open",
+    assignedAgent: "Sarah Chen",
+  },
+  {
+    id: "TKT-006",
+    title: "VPN connection keeps dropping",
+    customer: "Frank Miller",
+    priority: "critical",
+    status: "open",
+    assignedAgent: null,
+  },
+  {
+    id: "TKT-007",
+    title: "Ransomware alert on endpoint detected",
+    customer: "Grace Taylor",
+    priority: "critical",
+    status: "in-progress",
+    assignedAgent: "Mike Torres",
+  },
+  {
+    id: "TKT-008",
+    title: "Mouse and keyboard not responding",
+    customer: "Henry Wilson",
+    priority: "low",
+    status: "resolved",
+    assignedAgent: "Emma Davis",
+  },
+  {
+    id: "TKT-009",
+    title: "Website loading very slowly",
+    customer: "Iris Moore",
+    priority: "medium",
+    status: "closed",
+    assignedAgent: "Sarah Chen",
+  },
+  {
+    id: "TKT-010",
+    title: "Password reset request - urgent",
+    customer: "Jack Anderson",
+    priority: "high",
+    status: "resolved",
+    assignedAgent: "Mike Torres",
+  },
+];
+
+export const agents = [
+  {
+    id: 1,
+    name: "Sarah Chen",
+    avatar: "SC",
+    status: "online",
+    activeTickets: 5,
+  },
+  {
+    id: 2,
+    name: "Mike Torres",
+    avatar: "MT",
+    status: "busy",
+    activeTickets: 8,
+  },
+  {
+    id: 3,
+    name: "Emma Davis",
+    avatar: "ED",
+    status: "online",
+    activeTickets: 3,
+  },
+  {
+    id: 4,
+    name: "John Kim",
+    avatar: "JK",
+    status: "offline",
+    activeTickets: 0,
+  },
+  {
+    id: 5,
+    name: "Lisa Wang",
+    avatar: "LW",
+    status: "online",
+    activeTickets: 4,
+  },
+  {
+    id: 6,
+    name: "Alex Brown",
+    avatar: "AB",
+    status: "busy",
+    activeTickets: 6,
+  },
+  {
+    id: 7,
+    name: "Nina Patel",
+    avatar: "NP",
+    status: "online",
+    activeTickets: 2,
+  },
+  {
+    id: 8,
+    name: "Tom Garcia",
+    avatar: "TG",
+    status: "offline",
+    activeTickets: 0,
+  },
+];
