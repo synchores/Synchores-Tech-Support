@@ -8,8 +8,8 @@ import {
 
 const navItems = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/tickets", label: "Tickets", icon: Ticket, badge: 9 },
-  { to: "/orders", label: "Orders", icon: ShoppingCart, badge: 3 },
+  { to: "/admin/adminTickets", label: "Tickets", icon: Ticket, badge: 9 },
+  { to: "/admin/orders", label: "Orders", icon: ShoppingCart, badge: 3 },
   { to: "/agents", label: "Agents", icon: Users },
   { to: "/customers", label: "Customers", icon: UserCircle },
   { to: "/reports", label: "Reports", icon: BarChart2 },

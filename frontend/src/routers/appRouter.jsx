@@ -14,7 +14,9 @@ import ClientRequestService from "../pages/client-pages/clientRequestService";
 import ClientProfile from "../pages/client-pages/clientProfile";
 import AuthWrapper from "../pages/auth/loginPage";
 import Header from "../components/layout/header";
-import Dashboard from "../pages/admin-pages/adminDashboard";
+import AdminDashboard from "../pages/admin-pages/adminDashboard";
+import AdminTickets from "../pages/admin-pages/adminTickets";
+import AdminOrders from "../pages/admin-pages/adminOrders";
 import Sidebar from "../components/layout/sidebar";
 import { ProtectedRoute } from "./protectedRoute";
 
@@ -40,29 +42,67 @@ function AppRouter() {
 
           <Route
             element={
-              <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100vh",
+                  width: "100vw",
+                  overflow: "hidden",
+                }}
+              >
                 <Sidebar />
 
                 <div
-                  style={{ flex: 1, display: "flex", flexDirection: "column", width: "100%", overflowX: "hidden" }}
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                    overflowX: "hidden",
+                  }}
                 >
                   {/* <ClientNavbar /> */}
                   <Header />
-                  <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", width: "100%" }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                      width: "100%",
+                    }}
+                  >
                     <Outlet />
                   </div>
                 </div>
               </div>
             }
           >
+            {/* ==================== ADMIN ROUTES ==================== */}
             <Route
               path="/admin/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <AdminDashboard />
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/adminTickets"
+              element={
+                <ProtectedRoute>
+                  <AdminTickets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/orders"
+              element={
+                <ProtectedRoute>
+                  <AdminOrders />
+                </ProtectedRoute>
+              }
+            />
+            {/* ==================== CLIENT ROUTES ==================== */}
             <Route
               path="/dashboard"
               element={

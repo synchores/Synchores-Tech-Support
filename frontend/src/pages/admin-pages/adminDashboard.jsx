@@ -5,7 +5,7 @@ import { ChartsRow } from "../../components/layout/dashboard-card-contents/Chart
 import { TicketsSection } from "../../components/layout/dashboard-card-contents/TicketsSection";
 import { AgentStatusSection } from "../../components/layout/dashboard-card-contents/AgentStatusSection";
 
-export function Dashboard() {
+export function AdminDashboard() {
   const openTickets = tickets.filter(
     (t) => t.status === "open" || t.status === "in-progress",
   ).length;
@@ -31,4 +31,4 @@ export function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;
