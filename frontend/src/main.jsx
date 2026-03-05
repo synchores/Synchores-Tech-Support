@@ -5,12 +5,18 @@ import App from './App.jsx'
 import client from './services/apolloClient';
 import { ApolloProvider } from '@apollo/client/react';
 import { Toaster } from 'sileo';
+import { AuthProvider } from './context/authContext.jsx';
+import { OrderProvider } from './context/OrderContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <Toaster position="top-right" offset={{ top: 96, right: 20 }} />
-      <App />
+      <AuthProvider>
+        <OrderProvider>
+          <Toaster position="top-right" offset={{ top: 96, right: 20 }} />
+          <App />
+        </OrderProvider>
+      </AuthProvider>
     </ApolloProvider>
   </StrictMode>,
 )

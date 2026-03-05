@@ -2,6 +2,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { LOGIN_MUTATION } from "../../services/authService";
 import { useMutation } from "@apollo/client/react";
+import { useAuth } from "../../context/authContext";
 
 export default function LoginCard({ onSwitch }) {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ export default function LoginCard({ onSwitch }) {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { login: loginToContext } = useAuth();
 
   const [login, { loading }] = useMutation(LOGIN_MUTATION);
 
@@ -48,9 +50,9 @@ export default function LoginCard({ onSwitch }) {
             // Step 4: Handle successful login
             const accessToken = response.data.login.accessToken;
 
-            localStorage.setItem("accessToken", accessToken);
-
-            const redirectTo = location.state?.from?.pathname || "/dashboard";
+            const decodedUser = loginToContext(accessToken);
+            const defaultRedirect = decodedUser?.role === "admin" ? "/admin/dashboard" : "/dashboard";
+            const redirectTo = location.state?.from?.pathname || defaultRedirect;
             navigate(redirectTo);
             
         } catch (err) {

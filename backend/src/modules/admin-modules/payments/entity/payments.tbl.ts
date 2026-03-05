@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { InvoicesTbl } from "../../invoices/entity/invoices.tbl";
 
 @Entity('payments_tbl')
 @ObjectType()
@@ -12,9 +13,9 @@ export class PaymentsTbl {
     @Field()
     invoiceId: number;
 
-    @ManyToOne(() => PaymentsTbl)
+    @ManyToOne(() => InvoicesTbl)
     @JoinColumn({ name: 'invoiceId' })
-    invoice: PaymentsTbl;
+    invoice: InvoicesTbl;
 
     @Column()
     @Field()

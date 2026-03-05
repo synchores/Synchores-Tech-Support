@@ -1,23 +1,25 @@
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Ticket, ShoppingCart, Users, UserCircle,
   BarChart2, Settings, ChevronLeft, ChevronRight, Zap,
   Bell, LogOut, HelpCircle
 } from "lucide-react";
+import { useAuth } from "../../context/authContext.jsx";
 
-const navItems = [
-  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/adminTickets", label: "Tickets", icon: Ticket, badge: 9 },
-  { to: "/admin/orders", label: "Orders", icon: ShoppingCart, badge: 3 },
-  { to: "/agents", label: "Agents", icon: Users },
-  { to: "/customers", label: "Customers", icon: UserCircle },
-  { to: "/reports", label: "Reports", icon: BarChart2 },
-];
+  const navItems = [
+    { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard, end: true },
+    { to: "/admin/tickets", label: "Tickets", icon: Ticket, badge: 9 },
+    { to: "/admin/orders", label: "Orders", icon: ShoppingCart, badge: 3 },
+    { to: "/agents", label: "Agents", icon: Users },
+    { to: "/customers", label: "Customers", icon: UserCircle },
+    { to: "/reports", label: "Reports", icon: BarChart2 },
+    
+  ];
 
-const bottomItems = [
-  { to: "/settings", label: "Settings", icon: Settings },
-];
+  const bottomItems = [
+    { to: "/settings", label: "Settings", icon: Settings },
+  ];
 
 /**
  * SidebarProps
@@ -28,6 +30,14 @@ const bottomItems = [
 
 export function Sidebar({ title, subtitle, onMobileMenuToggle }) {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   const onToggle = () => setCollapsed((prev) => !prev);
   return (
     <aside
@@ -165,7 +175,10 @@ export function Sidebar({ title, subtitle, onMobileMenuToggle }) {
               <p style={{ color: "#e2e8f0", fontSize: "13px", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>John Doe</p>
               <p style={{ color: "#64748b", fontSize: "11px", whiteSpace: "nowrap" }}>Administrator</p>
             </div>
-            <button className="text-slate-500 hover:text-slate-300 transition-colors">
+            <button 
+              className="text-slate-500 hover:text-slate-300 transition-colors"
+              onClick={handleLogout}
+              >
               <LogOut size={15} />
             </button>
           </div>

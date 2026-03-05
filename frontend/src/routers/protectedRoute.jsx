@@ -1,13 +1,22 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/authContext.jsx';
 
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { user, isAuthLoading } = useAuth();
   const location = useLocation();
-  const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
 
-  if(!token){
-    return <Navigate to="/login" replace state={{ from: location }} />;
+  if (isAuthLoading) {
+    return null;
   }
-  
+
+  if(!user){
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if(allowedRoles && !allowedRoles.includes(user.role)){
+    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+  }
+
   return children;
 }

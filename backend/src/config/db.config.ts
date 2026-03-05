@@ -4,7 +4,7 @@ import { ServicesTbl } from "src/modules/admin-modules/services/entity/service.t
 import { UsersTbl } from "src/modules/general/auth/entity/users.tbl";
 import { TicketsTbl } from "src/modules/client-modules/tickets/entity/tickets.tbl";
 import { OrdersTbl } from "src/modules/admin-modules/orders/entity/orders.tbl";
-import { InvoicesTbl } from "src/modules/admin-modules/payments/entity/invoices.tbl";
+import { InvoicesTbl } from "src/modules/admin-modules/invoices/entity/invoices.tbl";
 import { ProductsTbl } from "src/modules/admin-modules/products/entity/products.tbl";
 import { PaymentsTbl } from "src/modules/admin-modules/payments/entity/payments.tbl";
 import { InquiryFormTbl } from "src/modules/general/inquiry-form/entity/inquiry.tbl";

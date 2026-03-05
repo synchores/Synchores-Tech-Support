@@ -2,6 +2,7 @@ import { Field, ObjectType, Int } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ProductsTbl } from "../../products/entity/products.tbl";
 import { UsersTbl } from "src/modules/general/auth/entity/users.tbl";
+import { OrderStatus } from "./order-status.enum";
 
 @Entity('orders_tbl')
 @ObjectType()
@@ -30,7 +31,7 @@ export class OrdersTbl {
     @Field()
     totalPrice: number;
 
-    @Column()
+    @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING_APPROVAL })
     @Field()
     status: string;
 

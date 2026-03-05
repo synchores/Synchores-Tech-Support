@@ -15,6 +15,7 @@ import { InquiryFormModule } from './modules/general/inquiry-form/inquiry-form.m
 import { TicketStatusModule } from './modules/admin-modules/ticket-status/ticket-status.module';
 import { OrdersModule } from './modules/admin-modules/orders/orders.module';
 import { MailerModule } from './modules/general/mailer/mailer.module';
+import { InvoicesModule } from './modules/admin-modules/invoices/invoices.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { MailerModule } from './modules/general/mailer/mailer.module';
     InquiryFormModule,
     ProductsModule,
     TicketStatusModule,
-    OrdersModule
+    OrdersModule,
+    InvoicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

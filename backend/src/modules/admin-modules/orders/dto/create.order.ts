@@ -1,5 +1,6 @@
 import { Field, Float, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { OrderStatus } from '../entity/order-status.enum';
 
 @InputType()
 export class CreateOrderDto {
@@ -28,8 +29,8 @@ export class CreateOrderDto {
   @IsNumber()
   totalPrice: number;
 
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  status: string;
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(OrderStatus)
+  status?: OrderStatus;
 }
