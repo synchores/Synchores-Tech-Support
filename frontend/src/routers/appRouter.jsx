@@ -10,6 +10,7 @@ import ClientServiceHistory from "../pages/client-pages/clientServiceHistory";
 import ClientFAQ from "../pages/client-pages/clientFAQ";
 import ClientRequestService from "../pages/client-pages/clientRequestService";
 import ClientProfile from "../pages/client-pages/clientProfile";
+import ClientMyOrders from "../pages/client-pages/clientMyOrders";
 import AuthWrapper from "../pages/auth/loginPage";
 import Dashboard from "../pages/admin-pages/adminDashboard";
 import { ProtectedRoute } from "./protectedRoute";
@@ -20,6 +21,7 @@ import AdminOrders from "../pages/admin-pages/adminOrders";
 import AdminTickets from "../pages/admin-pages/adminTickets";
 import ClientServiceRequestForm from "../pages/client-pages/clientServiceRequestForm";
 import { Shop } from "../pages/client-pages/clientShop";
+import ClientPreOrder from "../pages/client-pages/clientPreOrder";
 
 
 const getRoleBasedHomePath = (user) => {
@@ -114,6 +116,10 @@ function AppRouter() {
               element={<ClientTickets />}
             />
             <Route
+              path="/my-orders"
+              element={<ClientMyOrders />}
+            />
+            <Route
               path="/history"
               element={<ClientServiceHistory />}
             />
@@ -124,6 +130,10 @@ function AppRouter() {
             <Route
               path="/shop"
               element={<Shop />}
+            />
+            <Route
+              path="/shop/pre-order/:productId"
+              element={<ClientPreOrder />}
             />
             <Route
               path="/request"

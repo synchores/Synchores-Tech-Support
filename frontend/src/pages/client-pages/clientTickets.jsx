@@ -104,7 +104,7 @@ export default function ClientTickets() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
+    <div className="min-h-screen pt-24 pb-16" style={{ background: `var(--background, #ffffff)` }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="mb-12">
           <h1 className="text-5xl font-black text-white mb-2 tracking-tight">Tickets</h1>
@@ -123,8 +123,8 @@ export default function ClientTickets() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-5 py-3 pl-12 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
-                  background: 'rgba(20, 40, 70, 0.4)',
-                  border: '1px solid rgba(107, 114, 128, 0.15)',
+                  background: 'var(--card, #ffffff)',
+                  border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
                   backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23999%22%3E%3Cpath d=%22M10 18a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35%22 stroke=%22%23999%22 stroke-width=%222%22 fill=%22none%22/%3E%3C/svg%3E")',
                   backgroundRepeat: 'no-repeat',
@@ -136,7 +136,7 @@ export default function ClientTickets() {
                   e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                  e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
                   e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
                 }}
               />
@@ -175,9 +175,9 @@ export default function ClientTickets() {
                 style={{
                   backgroundColor: filterStatus === status 
                     ? colors.cyan 
-                    : 'rgba(20, 40, 70, 0.4)',
+                    : 'var(--card, #ffffff)',
                   color: filterStatus === status ? colors.primary : colors.textSecondary,
-                  border: `1px solid ${filterStatus === status ? colors.cyan : 'rgba(107, 114, 128, 0.15)'}`,
+                  border: `1px solid ${filterStatus === status ? colors.cyan : 'var(--border, rgba(0, 0, 0, 0.1))'}`,
                   boxShadow: filterStatus === status 
                     ? '0 8px 24px rgba(6, 182, 212, 0.15)' 
                     : '0 4px 20px rgba(0, 0, 0, 0.1)'
@@ -201,8 +201,8 @@ export default function ClientTickets() {
                   key={ticket.id}
                   className="group p-5 rounded-xl transition-all duration-300 cursor-pointer"
                   style={{
-                    background: `rgba(20, 40, 70, 0.35)`,
-                    border: isNewlyCreated ? `1px solid ${colors.cyan}` : '1px solid rgba(107, 114, 128, 0.15)',
+                    background: `var(--card, #ffffff)`,
+                    border: isNewlyCreated ? `1px solid ${colors.cyan}` : '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                     boxShadow: isNewlyCreated
                       ? '0 0 0 1px rgba(6, 182, 212, 0.5), 0 12px 34px rgba(6, 182, 212, 0.24)'
                       : '0 4px 20px rgba(0, 0, 0, 0.1)'
@@ -214,7 +214,7 @@ export default function ClientTickets() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateX(0)';
-                    e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                    e.currentTarget.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
                   }}
                   onClick={() => openTicketDetails(ticket)}
@@ -279,3 +279,5 @@ export default function ClientTickets() {
     </div>
   );
 }
+
+

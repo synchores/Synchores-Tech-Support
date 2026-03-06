@@ -89,7 +89,7 @@ export default function RequestServiceModal({ isOpen, onClose, clientServiceType
         <div
           className="w-full max-w-xl rounded-2xl shadow-2xl flex flex-col"
           style={{
-            background: `linear-gradient(135deg, ${colors.blue700} 0%, ${colors.blue800} 100%)`,
+            background: `var(--card, #ffffff)`,
             border: `1px solid rgba(6, 182, 212, 0.2)`,
             boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
           }}
@@ -127,7 +127,7 @@ export default function RequestServiceModal({ isOpen, onClose, clientServiceType
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                     style={{
-                      background: `rgba(25, 51, 87, 0.6)`,
+                      background: `var(--card, #ffffff)`,
                       border: `1px solid rgba(6, 182, 212, 0.3)`,
                       color: colors.textPrimary,
                     }}
@@ -145,7 +145,7 @@ export default function RequestServiceModal({ isOpen, onClose, clientServiceType
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                     style={{
-                      background: `rgba(20, 40, 70, 0.6)`,
+                      background: `var(--card, #ffffff)`,
                       border: `1px solid rgba(6, 182, 212, 0.15)`
                     }}
                   />
@@ -187,3 +187,5 @@ export default function RequestServiceModal({ isOpen, onClose, clientServiceType
     </>
   );
 }
+
+

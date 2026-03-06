@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update.user.dto';
 export class UsersCrudService {
     constructor(@InjectRepository(UsersTbl) private usersRepository: Repository<UsersTbl>) {}
 
+    // admin side
     async allUsers(){
         return await this.usersRepository.find();
     }
@@ -41,5 +42,11 @@ export class UsersCrudService {
             throw new NotFoundException(`User with ID ${userId} not found`);
         }
         return await this.usersRepository.remove(user);
+    }
+
+    // client side
+    async readProfile(userId: number){
+        const user = await this.usersRepository.findOne({ where: { userId } });
+        return user;
     }
 }    

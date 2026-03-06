@@ -30,6 +30,18 @@ export class UsersTbl {
     emailAddress: string;
 
     @Column()
+    @Field()
+    companyName: string;
+
+    @Column()
+    @Field()
+    address: string;
+
+    @Column()
+    @Field()
+    phoneNumber: string;
+
+    @Column()
     password: string;
 
     @Column({ default: 'client' })
@@ -50,4 +62,9 @@ export class UsersTbl {
 
     @OneToMany(() => TicketsTbl, (ticket) => ticket.user)
     tickets: TicketsTbl[];
+
+    @Field()
+    get fullName(): string {
+        return `${this.firstName} ${this.middleName} ${this.lastName}`;
+    }
 }

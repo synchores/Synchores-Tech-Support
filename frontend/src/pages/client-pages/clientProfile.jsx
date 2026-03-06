@@ -1,32 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@apollo/client/react';
 import { colors } from '../../colors';
 import { useAuth } from '../../context/authContext';
+import { CLIENT_PROFILE } from '../../services/client-service/Queries';
 
 export default function ClientProfile() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, userId } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
-  
-  const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+1 (555) 123-4567',
-    company: 'Tech Innovations Inc.',
-    address: '123 Tech Street, San Francisco, CA 94102',
-    joinDate: '2025-06-15',
-  });
-
-  const [editData, setEditData] = useState(profileData);
-  
+  const [profileData, setProfileData] = useState(null);
+  const [editData, setEditData] = useState(null);
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
+
+  const { data: profileQueryData, loading, error } = useQuery(CLIENT_PROFILE, {
+    variables: { userId: parseInt(userId) },
+    skip: !userId,
+  });
+
+  // Populate profileData when query data arrives
+  useEffect(() => {
+    if (profileQueryData?.readProfile) {
+      const profile = profileQueryData.readProfile;
+      const newProfileData = {
+        fullName: profile.fullName || '',
+        emailAddress: profile.emailAddress || '',
+        phoneNumber: profile.phoneNumber || '',
+        companyName: profile.companyName || '',
+        address: profile.address || '',
+      };
+      setProfileData(newProfileData);
+      setEditData(newProfileData);
+    }
+  }, [profileQueryData]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!profileData) return <div>No profile data</div>;
+
+  const fieldsArray = [
+    { name: 'fullName', label: 'Full Name' },
+    { name: 'emailAddress', label: 'Email Address', type: 'email' },
+    { name: 'phoneNumber', label: 'Phone Number', type: 'tel' },
+    { name: 'companyName', label: 'Company Name' },
+    { name: 'address', label: 'Address' },
+  ];
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -119,7 +144,7 @@ export default function ClientProfile() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
+    <div className="min-h-screen pt-24 pb-16" style={{ background: `var(--background, #ffffff)` }}>
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 flex justify-between items-start">
@@ -158,8 +183,8 @@ export default function ClientProfile() {
               key={idx}
               className="p-6 rounded-xl transition-all duration-500 cursor-pointer group"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.03)'
               }}
               onMouseEnter={(e) => {
@@ -185,8 +210,8 @@ export default function ClientProfile() {
         <div 
           className="rounded-xl p-8"
           style={{
-            background: 'rgba(20, 40, 70, 0.4)',
-            border: '1px solid rgba(107, 114, 128, 0.15)',
+            background: 'var(--card, #ffffff)',
+            border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.03)'
           }}
         >
@@ -217,23 +242,17 @@ export default function ClientProfile() {
 
           {isEditing ? (
             <form className="space-y-6">
-              {[
-                { label: 'Full Name', name: 'name' },
-                { label: 'Email Address', name: 'email', type: 'email' },
-                { label: 'Phone Number', name: 'phone', type: 'tel' },
-                { label: 'Company Name', name: 'company' },
-                { label: 'Address', name: 'address' },
-              ].map(field => (
+              {fieldsArray.map(field => (
                 <div key={field.name}>
                   <label className="block text-gray-300 text-sm font-semibold mb-2">{field.label}</label>
                   <input
                     type={field.type || 'text'}
                     name={field.name}
-                    value={editData[field.name]}
+                    value={editData[field.name] || ''}
                     onChange={handleEditChange}
                     className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                     style={{
-                      background: 'rgba(20, 40, 70, 0.8)',
+                      background: 'var(--card, #ffffff)',
                       border: '1px solid rgba(6, 182, 212, 0.2)',
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                     }}
@@ -295,23 +314,23 @@ export default function ClientProfile() {
           ) : (
             <div className="space-y-5">
               {[
-                { icon: '👤', label: 'Full Name', value: 'name' },
-                { icon: '✉️', label: 'Email Address', value: 'email' },
-                { icon: '☎️', label: 'Phone Number', value: 'phone' },
-                { icon: '🏢', label: 'Company', value: 'company' },
-                { icon: '📍', label: 'Address', value: 'address' },
+                { icon: '👤', label: 'Full Name', key: 'fullName' },
+                { icon: '✉️', label: 'Email Address', key: 'emailAddress' },
+                { icon: '☎️', label: 'Phone Number', key: 'phoneNumber' },
+                { icon: '🏢', label: 'Company', key: 'companyName' },
+                { icon: '📍', label: 'Address', key: 'address' },
               ].map((item, idx) => (
                 <div
-                  key={item.value}
+                  key={item.key}
                   className="flex items-start gap-4 pb-5"
                   style={{
-                    borderBottom: idx !== 4 ? '1px solid rgba(107, 114, 128, 0.15)' : 'none'
+                    borderBottom: idx !== 6 ? '1px solid var(--border, rgba(0, 0, 0, 0.1))' : 'none'
                   }}
                 >
                   <span className="text-lg flex-shrink-0">{item.icon}</span>
                   <div className="flex-1">
                     <p style={{ color: colors.textDark }} className="text-xs font-semibold mb-1">{item.label}</p>
-                    <p className="text-white text-sm font-semibold">{profileData[item.value]}</p>
+                    <p className="text-white text-sm font-semibold">{profileData[item.key]}</p>
                   </div>
                 </div>
               ))}
@@ -329,15 +348,17 @@ export default function ClientProfile() {
           }}
         >
           <p style={{ color: colors.textDark }} className="text-xs font-semibold mb-2">Member Since</p>
-          <p className="text-white font-bold text-lg">{profileData.joinDate}</p>
+          <p className="text-white font-bold text-lg">
+            {profileQueryData?.readProfile?.createdAt ? new Date(profileQueryData.readProfile.createdAt).toLocaleDateString() : 'N/A'}
+          </p>
         </div>
 
         {/* Change Password Section */}
         <div 
           className="rounded-xl p-8 mt-8"
           style={{
-            background: 'rgba(20, 40, 70, 0.4)',
-            border: '1px solid rgba(107, 114, 128, 0.15)',
+            background: 'var(--card, #ffffff)',
+            border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.03)'
           }}
         >
@@ -407,7 +428,7 @@ export default function ClientProfile() {
                     onChange={handlePasswordChange}
                     className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                     style={{
-                      background: 'rgba(20, 40, 70, 0.8)',
+                      background: 'var(--card, #ffffff)',
                       border: '1px solid rgba(6, 182, 212, 0.2)',
                       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                     }}
@@ -483,3 +504,5 @@ export default function ClientProfile() {
     </div>
   );
 }
+
+

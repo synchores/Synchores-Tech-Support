@@ -39,7 +39,7 @@ export default function ClientFAQ() {
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
+    <div className="min-h-screen pt-24 pb-16" style={{ background: `var(--background, #ffffff)` }}>
       <div className="max-w-4xl mx-auto px-6 lg:px-8">
         <div className="mb-12">
           <h1 className="text-5xl font-black text-white mb-2 tracking-tight">FAQ</h1>
@@ -53,15 +53,15 @@ export default function ClientFAQ() {
               key={faq.id}
               className="rounded-xl overflow-hidden transition-all duration-300"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.2)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                e.currentTarget.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
               }}
             >
               <button
@@ -128,3 +128,5 @@ export default function ClientFAQ() {
     </div>
   );
 }
+
+

@@ -1,6 +1,8 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 html, body, #root {
   margin: 0;
@@ -8,6 +10,132 @@ html, body, #root {
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
+}
+
+/* Client-facing pages consume the same color tokens as admin theme.css */
+.client-theme {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.client-theme .surface-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.client-theme .text-muted {
+  color: var(--muted-foreground);
+}
+
+.client-theme .text-white {
+  color: var(--foreground) !important;
+}
+
+.client-theme .text-gray-300 {
+  color: var(--muted-foreground) !important;
+}
+
+.client-theme input,
+.client-theme textarea,
+.client-theme select {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.client-theme input::placeholder,
+.client-theme textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Dark mode overrides for hardcoded color classes */
+/* Only change text-white for content headings and paragraphs, not interactive elements */
+.dark h1.text-white,
+.dark h2.text-white,
+.dark h3.text-white,
+.dark h4.text-white {
+  color: var(--foreground) !important;
+}
+
+.dark p.text-white,
+.dark p:has(> span.text-white) {
+  color: var(--foreground) !important;
+}
+
+/* Input and form fields use dark theme */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder,
+.dark select::placeholder {
+  color: var(--muted-foreground) !important;
+  opacity: 1;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: rgba(6, 182, 212, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12) !important;
+}
+
+/* Labels and regular text convert to foreground */
+.dark label {
+  color: var(--foreground) !important;
+}
+
+/* But keep button text white for contrast on colored backgrounds */
+.dark button.text-white {
+  color: white !important;
+}
+
+/* Status color badges stay colored in dark mode */
+.dark .bg-red-900\/20 {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
+}
+
+.dark .bg-orange-900\/20 {
+  background-color: rgba(249, 115, 22, 0.15) !important;
+  color: #fed7aa !important;
+}
+
+.dark .bg-blue-900\/20 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #93c5fd !important;
+}
+
+.dark .bg-green-900\/20 {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  color: #86efac !important;
+}
+
+.orders-filter-control {
+  color: var(--foreground, #111319);
+}
+
+.orders-filter-control:focus {
+  border-color: rgba(6, 182, 212, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+}
+
+.client-theme .orders-filter-input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+.orders-filter-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364758b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 14px 14px;
 }
 
 /* Global thin scrollbar */

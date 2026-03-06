@@ -1,8 +1,8 @@
-// Color palette from brand assets
+// Shared client palette.
 export const colors = {
   // Primary
-  primary: '#193357',
-  primaryRgb: 'rgb(25, 51, 87)',
+  primary: 'var(--primary, #030213)',
+  primaryRgb: '3, 2, 19',
   
   // Blue scale
   blue50: '#e8eaed',
@@ -16,28 +16,28 @@ export const colors = {
   blue800: '#0b1627',
   blue900: '#08111d',
   
-  // Accent - Muted and refined
-  cyan: '#06b6d4',
-  cyanMuted: '#0891b2',
-  cyanDark: '#06899d',
+  // Accent
+  cyan: 'var(--chart-2, #2f8ec2)',
+  cyanMuted: 'var(--chart-2, #2f8ec2)',
+  cyanDark: 'var(--chart-3, #355a86)',
   
   // Text
-  textPrimary: '#ffffff',
-  textSecondary: '#d1d5db',
-  textMuted: '#9ca3af',
-  textDark: '#6b7280',
-  textHiglight: '#179CF9',
+  textPrimary: 'var(--foreground, #111319)',
+  textSecondary: 'var(--muted-foreground, #717182)',
+  textMuted: 'var(--muted-foreground, #717182)',
+  textDark: 'var(--muted-foreground, #717182)',
+  textHiglight: 'var(--chart-2, #2f8ec2)',
   
-  // Status colors - Darker, more muted
-  success: '#10b981',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  info: '#3b82f6',
+  // Status colors
+  success: '#16a34a',
+  warning: '#d97706',
+  error: 'var(--destructive, #d4183d)',
+  info: '#2563eb',
   
-  // Backgrounds (using blue scale)
-  bgDark: '#08111d',
-  bgDarker: '#0b1627',
-  bgLight: '#0e1c32',
-  bgCard: 'rgba(20, 40, 70, 0.5)',
+  // Backgrounds
+  bgDark: 'var(--background, #ffffff)',
+  bgDarker: 'var(--secondary, #f5f6f8)',
+  bgLight: 'var(--background, #ffffff)',
+  bgCard: 'var(--card, #ffffff)',
 };
 

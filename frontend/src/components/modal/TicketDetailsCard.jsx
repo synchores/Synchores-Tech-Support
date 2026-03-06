@@ -76,7 +76,7 @@ export default function TicketDetailsCard({ ticket, isOpen, onClose }) {
       <div
         className="w-full max-w-2xl rounded-xl p-6"
         style={{
-          background: `linear-gradient(135deg, ${colors.blue700} 0%, ${colors.blue800} 100%)`,
+          background: `var(--card, #ffffff)`,
           border: '1px solid rgba(76, 108, 170, 0.25)',
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
           maxHeight: '85vh',
@@ -174,3 +174,5 @@ export default function TicketDetailsCard({ ticket, isOpen, onClose }) {
     </div>
   );
 }
+
+

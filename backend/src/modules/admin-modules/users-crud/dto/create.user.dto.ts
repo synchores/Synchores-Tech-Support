@@ -27,5 +27,15 @@ export class CreateUserDto {
     @Field()
     @IsNotEmpty()
     @IsString()
+    companyName: string;
+
+    @Field()
+    @IsNotEmpty()
+    @IsString()
+    address: string;
+
+    @Field()
+    @IsNotEmpty()
+    @IsString()
     password: string;
 }

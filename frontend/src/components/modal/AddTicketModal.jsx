@@ -209,7 +209,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
       <div
         className="w-full max-w-lg rounded-2xl shadow-2xl"
         style={{
-          background: `linear-gradient(135deg, ${colors.blue700} 0%, ${colors.blue800} 100%)`,
+          background: `var(--card, #ffffff)`,
           border: `1px solid rgba(6, 182, 212, 0.2)`,
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
         }}
@@ -248,16 +248,16 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
               placeholder="Brief description of your issue"
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
               style={{
-                background: `rgba(20, 40, 70, 0.6)`,
+                background: `var(--card, #ffffff)`,
                 border: formErrors.title ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.15)`,
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.4)';
-                e.target.style.background = 'rgba(20, 40, 70, 0.8)';
+                e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.15)';
-                e.target.style.background = 'rgba(20, 40, 70, 0.6)';
+                e.target.style.background = 'var(--card, #ffffff)';
               }}
             />
             {hasSubmitted && formErrors.title && (
@@ -281,16 +281,16 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
               rows="4"
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300 resize-none"
               style={{
-                background: `rgba(20, 40, 70, 0.6)`,
+                background: `var(--card, #ffffff)`,
                 border: formErrors.description ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.15)`,
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.4)';
-                e.target.style.background = 'rgba(20, 40, 70, 0.8)';
+                e.target.style.background = 'var(--card, #ffffff)';
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.15)';
-                e.target.style.background = 'rgba(20, 40, 70, 0.6)';
+                e.target.style.background = 'var(--card, #ffffff)';
               }}
             />
             {hasSubmitted && formErrors.description && (
@@ -313,7 +313,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
                 required
                 className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
-                  background: `rgba(25, 51, 87, 0.6)`,
+                  background: `var(--card, #ffffff)`,
                   border: formErrors.serviceId ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.3)`,
                   color: colors.textPrimary,
                 }}
@@ -323,7 +323,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
-                  e.target.style.background = 'rgba(25, 51, 87, 0.6)';
+                  e.target.style.background = 'var(--card, #ffffff)';
                 }}
               >
                 <option value="" disabled>
@@ -355,7 +355,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
                 required
                 className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
                 style={{
-                  background: `rgba(25, 51, 87, 0.6)`,
+                  background: `var(--card, #ffffff)`,
                   border: formErrors.deadline ? `1px solid ${colors.error}` : `1px solid rgba(6, 182, 212, 0.3)`,
                   color: colors.textPrimary,
                 }}
@@ -365,7 +365,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
                 }}
                 onBlur={(e) => {
                   e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
-                  e.target.style.background = 'rgba(25, 51, 87, 0.6)';
+                  e.target.style.background = 'var(--card, #ffffff)';
                 }}
               />
               {hasSubmitted && formErrors.deadline && (
@@ -387,7 +387,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
               style={{
-                background: `rgba(25, 51, 87, 0.6)`,
+                background: `var(--card, #ffffff)`,
                 border: `1px solid rgba(6, 182, 212, 0.3)`,
                 color: colors.textPrimary,
               }}
@@ -397,7 +397,7 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
-                e.target.style.background = 'rgba(25, 51, 87, 0.6)';
+                e.target.style.background = 'var(--card, #ffffff)';
               }}
             >
               <option value="Low">Low</option>
@@ -533,3 +533,5 @@ export default function AddTicketModal({ isOpen, onClose, onSubmit, services: pr
     </>
   );
 }
+
+

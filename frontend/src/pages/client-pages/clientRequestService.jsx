@@ -1,15 +1,21 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { colors } from '../../colors';
 import { Icons } from '../../components/Icons';
+import { useAuth } from '../../context/authContext';
 
 export default function ClientRequestService() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     serviceType: '',
+    projectGoals: '',
+    currentSituation: '',
     description: '',
-    budget: '',
     timeline: '',
-    email: '',
-    attachments: '',
+    preferredContact: 'email',
+    additionalNotes: '',
+    attachments: null,
   });
 
   const handleChange = (e) => {
@@ -20,16 +26,25 @@ export default function ClientRequestService() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      attachments: e.target.files[0] || null,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     alert('Service request submitted successfully!');
     setFormData({
       serviceType: '',
+      projectGoals: '',
+      currentSituation: '',
       description: '',
-      budget: '',
       timeline: '',
-      email: '',
-      attachments: '',
+      preferredContact: 'email',
+      additionalNotes: '',
+      attachments: null,
     });
   };
 
@@ -41,15 +56,8 @@ export default function ClientRequestService() {
     'Digital Marketing',
     'Content Writing',
     'Branding',
+    'Consulting',
     'Other',
-  ];
-
-  const budgetRanges = [
-    'Under $5,000',
-    '$5,000 - $10,000',
-    '$10,000 - $25,000',
-    '$25,000 - $50,000',
-    '$50,000+',
   ];
 
   const timelineOptions = [
@@ -59,18 +67,67 @@ export default function ClientRequestService() {
     'Not urgent',
   ];
 
+  const contactMethods = [
+    { value: 'email', label: 'Email' },
+    { value: 'phone', label: 'Phone Call' },
+    { value: 'video', label: 'Video Call' },
+  ];
+
   return (
-    <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
+    <div className="min-h-screen pt-24 pb-16" style={{ background: `var(--background, #ffffff)` }}>
       <div className="max-w-2xl mx-auto px-6 lg:px-8">
         <div className="mb-12">
           <h1 className="text-5xl font-black text-white mb-2 tracking-tight">Request a Service</h1>
           <p className="text-lg" style={{ color: colors.textMuted }}>Tell us what you need and we'll get back to you</p>
         </div>
 
+        {/* Contact Info Preview */}
+        <div
+          className="mb-8 p-6 rounded-xl"
+          style={{
+            background: `var(--card, #ffffff)`,
+            border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <div className="flex justify-between items-start mb-4">
+            <h2 className="text-sm font-bold" style={{ color: colors.textMuted }}>Contact Information</h2>
+            <button
+              onClick={() => navigate('/profile')}
+              className="text-xs px-3 py-1 rounded-lg transition-all"
+              style={{
+                background: 'rgba(6, 182, 212, 0.1)',
+                color: colors.cyan,
+                border: '1px solid rgba(6, 182, 212, 0.3)'
+              }}
+            >
+              Edit Profile
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs" style={{ color: colors.textMuted }}>Full Name</p>
+              <p className="text-sm font-semibold">{user?.firstName} {user?.lastName}</p>
+            </div>
+            <div>
+              <p className="text-xs" style={{ color: colors.textMuted }}>Email</p>
+              <p className="text-sm font-semibold">{user?.email}</p>
+            </div>
+            <div>
+              <p className="text-xs" style={{ color: colors.textMuted }}>Phone</p>
+              <p className="text-sm font-semibold">{user?.phone || 'Not provided'}</p>
+            </div>
+            <div>
+              <p className="text-xs" style={{ color: colors.textMuted }}>Company</p>
+              <p className="text-sm font-semibold">{user?.companyName || 'Not provided'}</p>
+            </div>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Service Type */}
           <div>
-            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Service Type</label>
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Service Type *</label>
             <select
               name="serviceType"
               value={formData.serviceType}
@@ -78,8 +135,8 @@ export default function ClientRequestService() {
               required
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
@@ -87,7 +144,7 @@ export default function ClientRequestService() {
                 e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
                 e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
               }}
             >
@@ -98,9 +155,63 @@ export default function ClientRequestService() {
             </select>
           </div>
 
+          {/* Project Goals */}
+          <div>
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Project Goals *</label>
+            <input
+              type="text"
+              name="projectGoals"
+              value={formData.projectGoals}
+              onChange={handleChange}
+              required
+              placeholder="e.g., Increase sales by 30%, Improve user experience, Migrate to cloud"
+              className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
+              style={{
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+                e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
+                e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+              }}
+            />
+          </div>
+
+          {/* Current Situation */}
+          <div>
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Current Situation / Problem *</label>
+            <textarea
+              name="currentSituation"
+              value={formData.currentSituation}
+              onChange={handleChange}
+              required
+              placeholder="What's the pain point? e.g., Slow website, No mobile app, Outdated system..."
+              rows="4"
+              className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300 resize-none"
+              style={{
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+                e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
+                e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+              }}
+            />
+          </div>
+
           {/* Description */}
           <div>
-            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Project Description</label>
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Project Description *</label>
             <textarea
               name="description"
               value={formData.description}
@@ -110,8 +221,8 @@ export default function ClientRequestService() {
               rows="6"
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300 resize-none"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
@@ -119,45 +230,32 @@ export default function ClientRequestService() {
                 e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
                 e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
               }}
             />
           </div>
 
-          {/* Budget */}
+          {/* File Attachments */}
           <div>
-            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Budget Range</label>
-            <select
-              name="budget"
-              value={formData.budget}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">File Attachments (Optional)</label>
+            <input
+              type="file"
+              name="attachments"
+              onChange={handleFileChange}
+              className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all duration-300"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
               }}
-              onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
-                e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
-                e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
-              }}
-            >
-              <option value="">Select your budget range</option>
-              {budgetRanges.map(range => (
-                <option key={range} value={range}>{range}</option>
-              ))}
-            </select>
+            />
+            <p className="text-xs mt-2" style={{ color: colors.textMuted }}>Upload requirements, wireframes, contracts, or reference materials</p>
           </div>
 
           {/* Timeline */}
           <div>
-            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Timeline</label>
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Timeline *</label>
             <select
               name="timeline"
               value={formData.timeline}
@@ -165,8 +263,8 @@ export default function ClientRequestService() {
               required
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
@@ -174,7 +272,7 @@ export default function ClientRequestService() {
                 e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
                 e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
               }}
             >
@@ -185,46 +283,39 @@ export default function ClientRequestService() {
             </select>
           </div>
 
-          {/* Email */}
+          {/* Preferred Contact Method */}
           <div>
-            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="your@email.com"
-              className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300"
-              style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(6, 182, 212, 0.3)';
-                e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
-                e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
-              }}
-            />
+            <label className="block text-white font-bold text-sm mb-3 tracking-wide">Preferred Contact Method *</label>
+            <div className="space-y-3">
+              {contactMethods.map(method => (
+                <label key={method.value} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="preferredContact"
+                    value={method.value}
+                    checked={formData.preferredContact === method.value}
+                    onChange={handleChange}
+                    className="w-4 h-4"
+                  />
+                  <span className="ml-3 text-sm" style={{ color: colors.textPrimary }}>{method.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           {/* Additional Notes */}
           <div>
             <label className="block text-white font-bold text-sm mb-3 tracking-wide">Additional Notes (Optional)</label>
             <textarea
-              name="attachments"
-              value={formData.attachments}
+              name="additionalNotes"
+              value={formData.additionalNotes}
               onChange={handleChange}
               placeholder="Any additional information or requirements..."
               rows="3"
               className="w-full px-4 py-3 rounded-lg text-white text-sm outline-none transition-all duration-300 resize-none"
               style={{
-                background: `rgba(20, 40, 70, 0.4)`,
-                border: '1px solid rgba(107, 114, 128, 0.15)',
+                background: `var(--card, #ffffff)`,
+                border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
               }}
               onFocus={(e) => {
@@ -232,7 +323,7 @@ export default function ClientRequestService() {
                 e.target.style.boxShadow = '0 8px 32px rgba(6, 182, 212, 0.15)';
               }}
               onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(107, 114, 128, 0.15)';
+                e.target.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
                 e.target.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
               }}
             />
@@ -277,7 +368,7 @@ export default function ClientRequestService() {
             </li>
             <li className="flex items-center gap-2">
               <Icons.Check size={16} color={colors.success} />
-              You'll receive an email confirmation and estimated timeline
+              You'll receive contact via {formData.preferredContact === 'email' ? 'email' : formData.preferredContact === 'phone' ? 'phone call' : 'video call'} with an estimated timeline
             </li>
             <li className="flex items-center gap-2">
               <Icons.Check size={16} color={colors.success} />
@@ -293,3 +384,5 @@ export default function ClientRequestService() {
     </div>
   );
 }
+
+

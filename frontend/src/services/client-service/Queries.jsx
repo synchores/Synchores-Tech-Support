@@ -1,5 +1,19 @@
 import { gql } from "@apollo/client";
 
+export const CLIENT_PROFILE = gql`
+    query ReadProfile($userId: Int!) {
+        readProfile(userId: $userId) {
+            userId
+            fullName
+            emailAddress
+            companyName
+            address
+            phoneNumber
+            createdAt
+        }   
+    }
+`;
+
 export const CLIENTS_SERVICE = gql`
     query GetMyServices {
         getMyServices {

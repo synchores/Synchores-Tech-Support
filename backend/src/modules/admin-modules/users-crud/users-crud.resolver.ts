@@ -1,4 +1,5 @@
-import { Mutation, Query, Resolver, Args } from '@nestjs/graphql';
+import { Mutation, Query, Resolver, Args, ResolveField } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
 import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
 import { UsersCrudService } from './users-crud.service';
 import { CreateUserDto } from './dto/create.user.dto';
@@ -25,7 +26,17 @@ export class UsersCrudResolver {
     }
 
     @Mutation(() => UsersTbl, { name: 'deleteUser' })
-    async deleteUser(@Args('userId') userId: number){
+    async deleteUser(@Args('userId', { type: () => Int }) userId: number){
         return await this.usersCrudService.deleteUser(userId);
+    }
+
+    // client side
+    @Query(() => UsersTbl, { name: 'readProfile' })
+    async readProfile(@Args('userId', { type: () => Int }) userId: number){
+        return await this.usersCrudService.readProfile(userId);
+    }
+    @ResolveField(() => String, { name: 'fullName' })
+    async fullName(parent: UsersTbl): Promise<string> {
+         return `${parent.firstName} ${parent.middleName} ${parent.lastName}`;
     }
 }

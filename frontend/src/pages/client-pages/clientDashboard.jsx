@@ -64,11 +64,11 @@ export default function ClientDashboard() {
 
   return (
     <>
-      <div className="min-h-screen pt-24 pb-16" style={{ background: `linear-gradient(135deg, ${colors.blue900} 0%, ${colors.blue800} 100%)` }}>
+      <div className="min-h-screen pt-24 pb-16" style={{ background: `var(--background, #ffffff)` }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           {/* Welcome Section */}
           <div className="mb-12">
-            <h1 className="text-5xl font-black text-white mb-2 tracking-tight">Welcome back</h1>
+            <h1 className="text-5xl font-black mb-2 tracking-tight" style={{ color: 'var(--foreground, #111319)' }}>Welcome back</h1>
             <p className="text-lg" style={{ color: colors.textMuted }}>Manage your services and track your projects</p>
           </div>
 
@@ -80,24 +80,24 @@ export default function ClientDashboard() {
                 className="group relative p-6 rounded-xl overflow-hidden transition-all duration-500 cursor-pointer"
                 style={{
                   background: stat.highlight 
-                    ? `linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(6, 182, 212, 0.03) 100%)`
-                    : `rgba(20, 40, 70, 0.4)`,
-                  border: `1px solid ${stat.highlight ? 'rgba(6, 182, 212, 0.2)' : 'rgba(107, 114, 128, 0.15)'}`,
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.03)'
+                    ? `linear-gradient(135deg, rgba(6, 182, 212, 0.14) 0%, rgba(6, 182, 212, 0.06) 100%)`
+                    : `var(--card, #ffffff)`,
+                  border: `1px solid ${stat.highlight ? 'rgba(6, 182, 212, 0.3)' : 'var(--border, rgba(0, 0, 0, 0.1))'}`,
+                  boxShadow: '0 10px 24px rgba(3, 2, 19, 0.08)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(6, 182, 212, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)';
+                  e.currentTarget.style.boxShadow = '0 16px 30px rgba(3, 2, 19, 0.12)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.03)';
+                  e.currentTarget.style.boxShadow = '0 10px 24px rgba(3, 2, 19, 0.08)';
                 }}
               >
                 <p className="text-sm font-semibold mb-3 tracking-wide" style={{ color: colors.textMuted }}>
                   {stat.label}
                 </p>
-                <p className="text-4xl font-black" style={{ color: stat.highlight ? colors.cyan : '#f3f4f6' }}>
+                <p className="text-4xl font-black" style={{ color: stat.highlight ? colors.cyan : 'var(--foreground, #111319)' }}>
                   {stat.value}
                 </p>
               </div>
@@ -105,10 +105,16 @@ export default function ClientDashboard() {
           </div>
 
           {/* Recent Tickets Section */}
-          <div className="mb-12">
+          <div
+            className="mb-12 p-6 rounded-2xl"
+            style={{
+              background: 'var(--secondary, #f5f6f8)',
+              border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
+            }}
+          >
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h2 className="text-2xl font-black text-white tracking-tight">Recent Tickets</h2>
+                <h2 className="text-2xl font-black tracking-tight" style={{ color: 'var(--foreground, #111319)' }}>Recent Tickets</h2>
                 <p className="text-sm mt-1" style={{ color: colors.textDark }}>Active and pending support requests</p>
               </div>
               <button 
@@ -141,19 +147,19 @@ export default function ClientDashboard() {
                     key={ticket.id}
                     className="group p-5 rounded-xl transition-all duration-300 cursor-pointer"
                     style={{
-                      background: `rgba(20, 40, 70, 0.35)`,
-                      border: '1px solid rgba(107, 114, 128, 0.15)',
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+                      background: `var(--card, #ffffff)`,
+                      border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
+                      boxShadow: '0 6px 18px rgba(3, 2, 19, 0.08)'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateX(4px)';
                       e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.2)';
-                      e.currentTarget.style.boxShadow = '0 10px 30px rgba(6, 182, 212, 0.08)';
+                      e.currentTarget.style.boxShadow = '0 10px 24px rgba(3, 2, 19, 0.12)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'translateX(0)';
-                      e.currentTarget.style.borderColor = 'rgba(107, 114, 128, 0.15)';
-                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+                      e.currentTarget.style.borderColor = 'var(--border, rgba(0, 0, 0, 0.1))';
+                      e.currentTarget.style.boxShadow = '0 6px 18px rgba(3, 2, 19, 0.08)';
                     }}
                   >
                     <div className="flex justify-between items-start gap-4">
@@ -190,8 +196,14 @@ export default function ClientDashboard() {
           </div>
 
           {/* Service History Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-black text-white tracking-tight mb-8">Recent Services</h2>
+          <div
+            className="mb-12 p-6 rounded-2xl"
+            style={{
+              background: 'var(--secondary, #f5f6f8)',
+              border: '1px solid var(--border, rgba(0, 0, 0, 0.1))',
+            }}
+          >
+            <h2 className="text-2xl font-black tracking-tight mb-8" style={{ color: 'var(--foreground, #111319)' }}>Recent Services</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {serviceHistory.map(service => (
@@ -292,3 +304,5 @@ export default function ClientDashboard() {
     </>
   );
 }
+
+
