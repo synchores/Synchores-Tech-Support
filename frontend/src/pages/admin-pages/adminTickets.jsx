@@ -1,5 +1,8 @@
 import { useState, useMemo } from "react";
-import { tickets as initialTickets } from "../data/mockData";
+import { useQuery, useMutation } from "@apollo/client/react";
+import { GET_ALL_TICKETS_QUERY } from "../../services/admin-service/Queries";
+import { UPDATE_TICKET_STATUS_MUTATION } from "../../services/admin-service/Mutation";
+import { tickets as mockTickets } from "../data/mockData";
 import NewTicketModal from "../../components/modal/NewTicketModal";
 import { AssignModal } from "../../components/layout/adminTickets-contents/AssignModal";
 import { TicketsStats } from "../../components/layout/adminTickets-contents/TicketsStats";
@@ -8,7 +11,11 @@ import { TicketsTable } from "../../components/layout/adminTickets-contents/Tick
 import { TicketsFooter } from "../../components/layout/adminTickets-contents/TicketsFooter";
 
 export function AdminTickets() {
-  const [ticketList, setTicketList] = useState(initialTickets);
+  const { data: ticketsData, loading, error } = useQuery(GET_ALL_TICKETS_QUERY);
+  const [updateTicketStatus] = useMutation(UPDATE_TICKET_STATUS_MUTATION, {
+    refetchQueries: [{ query: GET_ALL_TICKETS_QUERY }],
+  });
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -16,6 +23,32 @@ export function AdminTickets() {
   const [assignModal, setAssignModal] = useState(null);
   const [newModal, setNewModal] = useState(false);
   const [selected, setSelected] = useState([]);
+  const [localTickets, setLocalTickets] = useState(mockTickets);
+
+  // Map backend tickets to frontend format, fallback to mock data
+  const ticketList = useMemo(() => {
+    // If we got data from the backend, use it
+    if (ticketsData?.getAllTickets) {
+      return ticketsData.getAllTickets.map(ticket => ({
+        id: `TKT-${String(ticket.ticketId).padStart(3, "0")}`,
+        title: ticket.title,
+        description: ticket.description,
+        customer: "Client",
+        customerEmail: "",
+        assignedAgent: null,
+        status: ticket.status,
+        priority: ticket.priority,
+        category: "general",
+        createdAt: ticket.createdAt,
+        updatedAt: ticket.updatedAt,
+        ticketId: ticket.ticketId,
+        serviceId: ticket.serviceId,
+        userId: ticket.userId,
+      }));
+    }
+    // Fallback: use local state (which starts with mock data)
+    return localTickets;
+  }, [ticketsData, localTickets]);
 
   const filtered = useMemo(() => ticketList.filter(t => {
     const q = search.toLowerCase();
@@ -27,35 +60,59 @@ export function AdminTickets() {
   }), [ticketList, search, statusFilter, priorityFilter, categoryFilter]);
 
   const stats = useMemo(() => ({
-    open: ticketList.filter(t => t.status === "open").length,
-    inProgress: ticketList.filter(t => t.status === "in-progress").length,
-    resolved: ticketList.filter(t => t.status === "resolved").length,
+    open: ticketList.filter(t => t.status === "pending").length,
+    inProgress: ticketList.filter(t => t.status === "in_progress").length,
+    resolved: ticketList.filter(t => t.status === "completed").length,
     critical: ticketList.filter(t => t.priority === "critical").length,
   }), [ticketList]);
 
-  function handleAssign(ticketId, agentName) {
-    setTicketList(prev => prev.map(t => t.id === ticketId ? { ...t, assignedAgent: agentName, status: "in-progress" } : t));
+  async function handleStatusChange(id, newStatus) {
+    // Update local state optimistically
+    setLocalTickets(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
+    
+    // Try to update via backend
+    const ticket = ticketList.find(t => t.id === id);
+    if (ticket?.ticketId) {
+      try {
+        await updateTicketStatus({
+          variables: {
+            input: {
+              ticketId: ticket.ticketId,
+              status: newStatus,
+            },
+          },
+        });
+      } catch (err) {
+        console.error("Failed to update ticket status:", err);
+        // Local state was already updated optimistically, so the UI will reflect the change
+      }
+    }
   }
 
-  function handleStatusChange(id, status) {
-    setTicketList(prev => prev.map(t => t.id === id ? { ...t, status } : t));
+  function handleAssign(ticketId, agentName) {
+    // TODO: implement assignment if backend supports it
+    const ticket = ticketList.find(t => t.id === ticketId);
+    if (ticket) {
+      handleStatusChange(ticketId, "in_progress");
+    }
   }
 
   function handleNew(data) {
     const newTicket = {
-      id: `TKT-${String(ticketList.length + 1).padStart(3, "0")}`,
+      id: `TKT-${String(localTickets.length + 1).padStart(3, "0")}`,
       title: data.title || "",
       description: data.description || "",
-      customer: data.customer || "",
+      customer: data.customer || "Client",
       customerEmail: "",
       assignedAgent: null,
-      status: "open",
+      status: "pending",
       priority: data.priority || "medium",
-      category: data.category || "network",
+      category: data.category || "general",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    setTicketList(prev => [newTicket, ...prev]);
+    setLocalTickets(prev => [newTicket, ...prev]);
+    setNewModal(false);
   }
 
   function handleSelectAll(isChecked) {
@@ -69,8 +126,26 @@ export function AdminTickets() {
   }
 
   function handleMarkResolved() {
-    selected.forEach(id => handleStatusChange(id, "resolved"));
+    selected.forEach(id => handleStatusChange(id, "completed"));
     setSelected([]);
+  }
+
+  if (error && !localTickets.length) {
+    return (
+      <div className="p-6 flex flex-col gap-5">
+        <div className="rounded-lg p-4 bg-yellow-50 border border-yellow-200">
+          <p className="text-yellow-800 font-semibold">⚠️ Backend Not Ready</p>
+          <p className="text-yellow-700 text-sm">The GraphQL query is not yet available. Please restart your backend server.</p>
+          <p className="text-yellow-700 text-sm mt-2">Using mock data for now. Real data will load after restart.</p>
+        </div>
+        <TicketsStats stats={useMemo(() => ({
+          open: localTickets.filter(t => t.status === "pending").length,
+          inProgress: localTickets.filter(t => t.status === "in_progress").length,
+          resolved: localTickets.filter(t => t.status === "completed").length,
+          critical: localTickets.filter(t => t.priority === "critical").length,
+        }), [localTickets])} />
+      </div>
+    );
   }
 
   return (

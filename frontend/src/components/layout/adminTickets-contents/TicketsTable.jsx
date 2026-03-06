@@ -1,6 +1,13 @@
 import { User } from "lucide-react";
 
 const statusConfig = {
+  // Backend statuses
+  pending: { bg: "#eff6ff", color: "#3b82f6", label: "Pending" },
+  in_progress: { bg: "#fffbeb", color: "#f59e0b", label: "In Progress" },
+  on_hold: { bg: "#fef3c7", color: "#f59e0b", label: "On Hold" },
+  completed: { bg: "#f0fdf4", color: "#22c55e", label: "Completed" },
+  cancelled: { bg: "#f8fafc", color: "#94a3b8", label: "Cancelled" },
+  // Legacy frontend statuses (for compatibility)
   open: { bg: "#eff6ff", color: "#3b82f6", label: "Open" },
   "in-progress": { bg: "#fffbeb", color: "#f59e0b", label: "In Progress" },
   resolved: { bg: "#f0fdf4", color: "#22c55e", label: "Resolved" },
@@ -21,6 +28,7 @@ const categoryColors = {
   security: "#ef4444",
   billing: "#06b6d4",
   cloud: "#6366f1",
+  general: "#8b5cf6",
 };
 
 export function TicketsTable({ 
@@ -95,8 +103,8 @@ export function TicketsTable({
                 </td>
                 <td style={{ padding: "12px 16px" }}>
                   <div className="flex items-center gap-1.5">
-                    <div className="rounded-full" style={{ width: 7, height: 7, background: p.dot, flexShrink: 0 }} />
-                    <span style={{ fontSize: "12px", fontWeight: 600, color: p.color, textTransform: "capitalize" }}>
+                    <div className="rounded-full" style={{ width: 7, height: 7, background: p?.dot || "#94a3b8", flexShrink: 0 }} />
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: p?.color || "#94a3b8", textTransform: "capitalize" }}>
                       {t.priority}
                     </span>
                   </div>
@@ -105,10 +113,10 @@ export function TicketsTable({
                   <select
                     value={t.status}
                     onChange={e => onStatusChange(t.id, e.target.value)}
-                    style={{ padding: "4px 8px", border: `1px solid ${s.color}40`, borderRadius: "20px", fontSize: "11px", fontWeight: 600, color: s.color, background: s.bg, outline: "none", cursor: "pointer" }}
+                    style={{ padding: "4px 8px", border: `1px solid ${s?.color || "#94a3b8"}40`, borderRadius: "20px", fontSize: "11px", fontWeight: 600, color: s?.color || "#94a3b8", background: s?.bg || "#f8fafc", outline: "none", cursor: "pointer" }}
                   >
-                    {["open","in-progress","resolved","closed"].map(st => (
-                      <option key={st} value={st}>{statusConfig[st].label}</option>
+                    {["pending", "in_progress", "on_hold", "completed", "cancelled"].map(st => (
+                      <option key={st} value={st}>{statusConfig[st]?.label || st}</option>
                     ))}
                   </select>
                 </td>

@@ -5,7 +5,7 @@ import { UsersCrudService } from './users-crud.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 
-@Resolver()
+@Resolver(() => UsersTbl)
 export class UsersCrudResolver {
     constructor(private readonly usersCrudService: UsersCrudService){}
 

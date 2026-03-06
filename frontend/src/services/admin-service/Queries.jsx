@@ -73,3 +73,21 @@ export const INVOICE_BY_ORDER_ID_QUERY = gql`
         }
     }
 `;
+
+export const GET_ALL_TICKETS_QUERY = gql`
+    query getAllTickets {
+        getAllTickets {
+            ticketId
+            userId
+            serviceId
+            title
+            description
+            priority
+            status
+            deadline
+            attachments
+            createdAt
+            updatedAt
+        }
+    }
+`;

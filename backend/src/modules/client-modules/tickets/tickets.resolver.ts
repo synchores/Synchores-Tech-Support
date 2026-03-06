@@ -5,12 +5,14 @@ import { Mutation, Args, Context, Query } from '@nestjs/graphql';
 import { CreateTicketDto } from './dto/create.ticket';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
-@Resolver()
+@Resolver(() => TicketsTbl)
 export class TicketsResolver {
     constructor(
         private readonly ticketsService: TicketsService,
         private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
     ){}
 
     @Query(() => [TicketsTbl], { name: 'getMyTickets' })
@@ -21,8 +23,9 @@ export class TicketsResolver {
         }
 
         const token = authHeader.replace('Bearer ', '');
+        const jwtSecret = this.configService.get<string>('JWT_SECRET');
         const payload = this.jwtService.verify<{ userId?: number; sub?: number }>(token, {
-            secret: process.env.JWT_SECRET,
+            secret: jwtSecret,
         });
 
         const userId = Number(payload.userId ?? payload.sub);
@@ -42,8 +45,9 @@ export class TicketsResolver {
         }
 
         const token = authHeader.replace('Bearer ', '');
+        const jwtSecret = this.configService.get<string>('JWT_SECRET');
         const payload = this.jwtService.verify<{ userId?: number; sub?: number }>(token, {
-            secret: process.env.JWT_SECRET,
+            secret: jwtSecret,
         });
 
         const userId = Number(payload.userId ?? payload.sub);
