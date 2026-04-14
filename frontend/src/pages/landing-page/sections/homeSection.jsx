@@ -2,7 +2,7 @@ import TrueFocus from "../../../components/layout/landing-contents/ui/trueFocus"
 
 export default function Home() {
   return (
-    <section id="home" className="relative w-full h-screen flex items-center justify-center overflow-hidden ">
+    <section id="home" className="relative w-full h-[550px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] flex items-center justify-center overflow-hidden">
       {/* Video Background */}
       <video
         autoPlay
@@ -16,7 +16,7 @@ export default function Home() {
       </video>
 
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-#0000007d/40"></div>
 
       {/* Content - 2 Column Grid */}
       <div className="relative z-10 w-full flex items-start md:items-center justify-center px-4 sm:px-6">
@@ -66,7 +66,7 @@ export default function Home() {
 
       {/* Diagonal Slice at Bottom */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-8 sm:h-16 md:h-24"
+        className="absolute bottom-0 left-0 right-0 h-12 sm:h-16 md:h-24 "
         style={{
           backgroundColor: "#ffffff",
           clipPath: "polygon(0 50%, 100% 0, 100% 100%, 0 100%)",
