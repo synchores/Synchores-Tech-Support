@@ -17,6 +17,8 @@ import { ProtectedRoute } from "./protectedRoute";
 import { useAuth } from "../context/authContext";
 import AdminLayout from "./adminLayout/adminLayout";
 import ClientLayout from "./clientLayout/clientLayout";
+import LandingPage from "../pages/landing-page/landingPage";
+import LandingLayout from "./landingLayout/landingLayout";
 import AdminOrders from "../pages/admin-pages/adminOrders";
 import AdminTickets from "../pages/admin-pages/adminTickets";
 import ClientServiceRequestForm from "../pages/client-pages/clientServiceRequestForm";
@@ -51,7 +53,11 @@ function AppRouter() {
         <Routes>
           <Route
             path="/"
-            element={<Navigate to={token ? defaultAuthenticatedPath : "/login"} replace />}
+            element={
+              <LandingLayout>
+                <LandingPage />
+              </LandingLayout>
+            }
           />
 
           <Route

@@ -33,7 +33,7 @@ export function Header({ title, subtitle, onMobileMenuToggle }) {
         
       <div className="flex items-center gap-3">
         <button
-          className="md:hidden text-slate-500 hover:text-slate-700"
+          className="lg:hidden text-slate-500 hover:text-slate-700"
           onClick={onMobileMenuToggle}
         >
           <Menu size={22} />
