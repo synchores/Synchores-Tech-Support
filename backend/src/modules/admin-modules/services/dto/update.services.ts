@@ -6,5 +6,5 @@ import { IsNumber } from 'class-validator';
 export class UpdateServiceDto extends PartialType(CreateServiceDto) {
     @Field()
     @IsNumber()
-    serviceId: number;
+    declare serviceId: number;
 }

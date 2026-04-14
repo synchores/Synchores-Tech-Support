@@ -3,7 +3,7 @@ import { ServicesResolver } from './services.resolver';
 import { ServicesService } from './services.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServicesTbl } from './entity/service.tbl';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 

@@ -19,6 +19,10 @@ import AdminLayout from "./adminLayout/adminLayout";
 import ClientLayout from "./clientLayout/clientLayout";
 import AdminOrders from "../pages/admin-pages/adminOrders";
 import AdminTickets from "../pages/admin-pages/adminTickets";
+import AdminHeroLanding from "../pages/admin-pages/adminHeroLanding";
+import AdminLandingServices from "../pages/admin-pages/adminLandingServices";
+import AdminDeploymentGallery from "../pages/admin-pages/adminDeploymentGallery";
+import AdminCompanySettings from "../pages/admin-pages/adminCompanySettings";
 import ClientServiceRequestForm from "../pages/client-pages/clientServiceRequestForm";
 import { Shop } from "../pages/client-pages/clientShop";
 import ClientPreOrder from "../pages/client-pages/clientPreOrder";
@@ -97,6 +101,22 @@ function AppRouter() {
             <Route
               path="/admin/tickets"
               element={<AdminTickets />}
+            />
+            <Route
+              path="/admin/landing-page/hero"
+              element={<AdminHeroLanding />}
+            />
+            <Route
+              path="/admin/landing-page/services"
+              element={<AdminLandingServices />}
+            />
+            <Route
+              path="/admin/landing-page/gallery"
+              element={<AdminDeploymentGallery />}
+            />
+            <Route
+              path="/admin/landing-page/settings"
+              element={<AdminCompanySettings />}
             />
           </Route>
 

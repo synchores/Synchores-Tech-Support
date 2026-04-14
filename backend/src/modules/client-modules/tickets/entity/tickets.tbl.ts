@@ -1,38 +1,38 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { UsersTbl } from "src/modules/general/auth/entity/users.tbl";
-import { ServicesTbl } from "src/modules/admin-modules/services/entity/service.tbl";
+import { UsersTbl } from "../../../general/auth/entity/users.tbl";
+import { ServicesTbl } from "../../../admin-modules/services/entity/service.tbl";
 
 @Entity('tickets_tbl')
 @ObjectType()
 export class TicketsTbl {
     @PrimaryGeneratedColumn()
     @Field()
-    ticketId: number;
+    declare ticketId: number;
 
     @Column()
     @Field()
-    userId: number;
+    declare userId: number;
 
     @Column()
     @Field()
-    serviceId: number;
+    declare serviceId: number;
 
     @Column()
     @Field()
-    title: string;
+    declare title: string;
 
     @Column()
     @Field()
-    description: string;
+    declare description: string;
 
     @Column()
     @Field()
-    priority: string;
+    declare priority: string;
 
     @Column({ type: 'datetime' })
     @Field()
-    deadline: Date;
+    declare deadline: Date;
 
     @Column({ type: "text", nullable: true })
     @Field({ nullable: true })
@@ -40,21 +40,21 @@ export class TicketsTbl {
 
     @Column({ default: 'pending' })
     @Field()
-    status: string; 
+    declare status: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     @Field()
-    createdAt: Date;
+    declare createdAt: Date;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     @Field()
-    updatedAt: Date;
+    declare updatedAt: Date;
 
     @ManyToOne(() => UsersTbl, (user) => user.tickets, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
-    user: UsersTbl;
+    declare user: UsersTbl;
 
     @ManyToOne(() => ServicesTbl, (service) => service.tickets, { onDelete: 'RESTRICT' })
     @JoinColumn({ name: 'serviceId' })
-    service: ServicesTbl;
+    declare service: ServicesTbl;
 }

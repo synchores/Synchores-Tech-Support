@@ -77,7 +77,7 @@ export function AdminTickets() {
     <div className="p-6 flex flex-col gap-5">
       <TicketsStats stats={stats} />
 
-      <div className="rounded-xl overflow-hidden" style={{ background: "white", border: "1px solid #e2e8f0" }}>
+			<div className="admin-surface-card overflow-hidden">
         <TicketsToolbar
           search={search}
           onSearchChange={setSearch}

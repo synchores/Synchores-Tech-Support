@@ -1,67 +1,69 @@
 import { Field, ObjectType, Int } from "@nestjs/graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TicketsTbl } from "src/modules/client-modules/tickets/entity/tickets.tbl";
+import { TicketsTbl } from "../../../client-modules/tickets/entity/tickets.tbl";
+
 
 @Entity('users_tbl')
 @ObjectType()
 export class UsersTbl {
     @PrimaryGeneratedColumn()
     @Field()
-    userId: number;
+    declare userId: number;
 
     @Column({ type: 'json', nullable: true })
     @Field(() => [Int], { nullable: true })
-    clientServicesId?: number[];
+    declare clientServicesId?: number[];
 
     @Column({ unique: true })
     @Field()
-    firstName: string;
+    declare firstName: string;
 
     @Column({ unique: true })
     @Field()
-    middleName: string;
+    declare middleName: string;
 
     @Column({ unique: true })
     @Field()
-    lastName: string;
+    declare lastName: string;
 
     @Column({ unique: true })
     @Field()
-    emailAddress: string;
+    declare emailAddress: string;
 
     @Column()
     @Field()
-    companyName: string;
+    declare companyName: string;
 
     @Column()
     @Field()
-    address: string;
+    declare address: string;
 
     @Column()
     @Field()
-    phoneNumber: string;
+    declare phoneNumber: string;
 
     @Column()
-    password: string;
+    @Field()
+    declare password: string;
 
     @Column({ default: 'client' })
     @Field()
-    role: string;
+    declare role: string;
 
     @Column()
     @Field()
-    profPicture?: string;
+    declare profPicture?: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     @Field()
-    createdAt: Date;
+    declare createdAt: Date;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     @Field()
-    updatedAt: Date;
+    declare updatedAt: Date;
 
     @OneToMany(() => TicketsTbl, (ticket) => ticket.user)
-    tickets: TicketsTbl[];
+    declare tickets: TicketsTbl[];
 
     @Field()
     get fullName(): string {

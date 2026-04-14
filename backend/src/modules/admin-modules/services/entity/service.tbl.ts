@@ -1,38 +1,38 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TicketsTbl } from "src/modules/client-modules/tickets/entity/tickets.tbl";
+import { TicketsTbl } from "../../../client-modules/tickets/entity/tickets.tbl";
 
 @Entity('services_tbl')
 @ObjectType()
 export class ServicesTbl {
     @PrimaryGeneratedColumn()
     @Field()
-    serviceId: number;
+    declare serviceId: number;
 
     @Column()
     @Field()
-    serviceName: string;
+    declare serviceName: string;
 
     @Column()
     @Field()
-    description: string;
+    declare description: string;
 
     @Column()
     @Field()
-    category: string;
+    declare category: string;
 
     @Column()
     @Field()
-    image: string;
+    declare image: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     @Field()
-    createdAt: Date;
+    declare createdAt: Date;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     @Field()
-    updatedAt: Date;
+    declare updatedAt: Date;
 
     @OneToMany(() => TicketsTbl, (ticket) => ticket.service)
-    tickets: TicketsTbl[];
+    declare tickets: TicketsTbl[];
 }

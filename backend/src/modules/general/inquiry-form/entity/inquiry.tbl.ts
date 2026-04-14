@@ -6,29 +6,29 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 export class InquiryFormTbl {
     @PrimaryGeneratedColumn()
     @Field()
-    inquiryId: number;  
+    declare inquiryId: number;  
 
     @Column()
     @Field()
-    fullName: string;
+    declare fullName: string;
 
     @Column()
     @Field()
-    email: string;
+    declare email: string;
 
     @Column()
     @Field()
-    contactNumber: string;
+    declare contactNumber: string;
 
     @Column()
     @Field()
-    message: string;
+    declare message: string;
 
     @Column()
     @Field()
-    serviceType: string;
+    declare serviceType: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     @Field()
-    createdAt: Date;
+    declare createdAt: Date;
 }

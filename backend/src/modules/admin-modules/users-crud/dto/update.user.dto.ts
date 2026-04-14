@@ -6,5 +6,5 @@ import { CreateUserDto } from './create.user.dto';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     @Field()
     @IsNumber()
-    userId: number;
+    declare userId: number;
 }

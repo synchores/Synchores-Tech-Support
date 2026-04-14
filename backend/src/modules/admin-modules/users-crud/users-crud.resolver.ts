@@ -1,11 +1,11 @@
 import { Mutation, Query, Resolver, Args, ResolveField } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 import { UsersCrudService } from './users-crud.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
 
-@Resolver()
+@Resolver(() => UsersTbl)
 export class UsersCrudResolver {
     constructor(private readonly usersCrudService: UsersCrudService){}
 

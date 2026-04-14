@@ -7,27 +7,27 @@ export class CreateOrderDto {
   @Field(() => Int)
   @IsNotEmpty()
   @IsInt()
-  productId: number;
+  declare productId: number;
 
   @Field(() => Int)
   @IsNotEmpty()
   @IsInt()
-  userId: number;
+  declare userId: number;
 
   @Field(() => Int)
   @IsNotEmpty()
   @IsInt()
-  quantity: number;
+  declare quantity: number;
 
   @Field(() => Float)
   @IsNotEmpty()
   @IsNumber()
-  unitPrice: number;
+  declare unitPrice: number;
 
   @Field(() => Float)
   @IsNotEmpty()
   @IsNumber()
-  totalPrice: number;
+  declare totalPrice: number;
 
   @Field({ nullable: true })
   @IsOptional()

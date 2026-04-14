@@ -4,7 +4,7 @@ import { ServicesTbl } from './entity/service.tbl';
 import { Repository } from 'typeorm/repository/Repository.js';
 import { CreateServiceDto } from './dto/create.services';
 import { UpdateServiceDto } from './dto/update.services';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 import { In } from 'typeorm';
 
 @Injectable()

@@ -7,29 +7,29 @@ import { InvoicesTbl } from "../../invoices/entity/invoices.tbl";
 export class PaymentsTbl {
     @PrimaryGeneratedColumn()
     @Field()
-    paymentId: number;
+    declare paymentId: number;
 
     @Column()
     @Field()
-    invoiceId: number;
+    declare invoiceId: number;
 
     @ManyToOne(() => InvoicesTbl)
     @JoinColumn({ name: 'invoiceId' })
-    invoice: InvoicesTbl;
+    declare invoice: InvoicesTbl;
 
     @Column()
     @Field()
-    paymentAmount: number;
+    declare paymentAmount: number;
 
     @Column()
     @Field()
-    paymentReference: string;
+    declare paymentReference: string;
 
     @Column()
     @Field()
-    paymentDate: Date;
+    declare paymentDate: Date;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     @Field()
-    createdAt: Date;
+    declare createdAt: Date;
 }

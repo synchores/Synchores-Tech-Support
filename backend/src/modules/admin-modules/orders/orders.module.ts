@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrdersTbl } from './entity/orders.tbl';
 import { InvoicesModule } from '../invoices/invoices.module';
 import { ProductsTbl } from '../products/entity/products.tbl';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 
 @Module({
   imports: [

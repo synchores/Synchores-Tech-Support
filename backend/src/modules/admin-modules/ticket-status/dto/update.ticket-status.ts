@@ -17,11 +17,11 @@ registerEnumType(TicketStatus, {
 export class UpdateTicketStatusDto {
   @Field(() => Int)
   @IsInt()
-  ticketId: number;
+  declare ticketId: number;
 
   @Field(() => TicketStatus)
   @IsEnum(TicketStatus)
-  status: TicketStatus;
+  declare status: TicketStatus;
 
   @Field({ nullable: true })
   @IsOptional()

@@ -7,17 +7,17 @@ export class CreateTicketDto {
     @Field()
     @IsNotEmpty()
     @IsInt()
-    serviceId: number;
+    declare serviceId: number;
 
     @Field()
     @IsNotEmpty()
     @IsString()
-    title: string;
+    declare title: string;
 
     @Field()
     @IsNotEmpty()
     @IsString()
-    description: string;
+    declare description: string;
 
     @Field({ nullable: true })
     @IsOptional()
@@ -27,7 +27,7 @@ export class CreateTicketDto {
     @Field()
     @IsNotEmpty()
     @IsDateString()
-    deadline: string;
+    declare deadline: string;
 
     @Field({ nullable: true })
     @IsString()

@@ -6,5 +6,5 @@ import { CreateOrderDto } from './create.order';
 export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @Field()
   @IsNumber()
-  orderId: number;
+  declare orderId: number;
 }

@@ -1,52 +1,52 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { OrdersTbl } from '../../orders/entity/orders.tbl';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../../general/auth/entity/users.tbl';
 
 @Entity('invoices_tbl')
 @ObjectType()
 export class InvoicesTbl {
   @PrimaryGeneratedColumn()
   @Field()
-  invoiceId: number;
+  declare invoiceId: number;
 
   @Column({ unique: true })
   @Field()
-  orderId: number;
+  declare orderId: number;
 
   @Column()
   @Field()
-  userId: number;
+  declare userId: number;
 
   @ManyToOne(() => OrdersTbl)
   @JoinColumn({ name: 'orderId' })
-  order: OrdersTbl;
+  declare order: OrdersTbl;
 
   @ManyToOne(() => UsersTbl)
   @JoinColumn({ name: 'userId' })
-  user: UsersTbl;
+  declare user: UsersTbl;
 
   @Column({ unique: true })
   @Field()
-  invoiceNumber: string;
+  declare invoiceNumber: string;
 
   @Column('decimal', { precision: 10, scale: 2 })
   @Field()
-  totalAmount: number;
+  declare totalAmount: number;
 
   @Column({ type: 'timestamp' })
   @Field()
-  dueDate: Date;
+  declare dueDate: Date;
 
   @Column()
   @Field()
-  paymentStatus: string;
+  declare paymentStatus: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field()
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   @Field()
-  updatedAt: Date;
+  declare updatedAt: Date;
 }
