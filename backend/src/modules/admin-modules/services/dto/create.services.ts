@@ -7,17 +7,17 @@ export class CreateServiceDto {
     @Field()
     @IsNotEmpty()
     @IsString()
-    serviceName: string;
+    declare serviceName: string;
 
     @Field()
     @IsNotEmpty()
     @IsString()
-    description: string;
+    declare description: string;
 
     @Field()
     @IsNotEmpty()
     @IsString()
-    category: string;
+    declare category: string;
 
     @Field()
     @IsNotEmpty()

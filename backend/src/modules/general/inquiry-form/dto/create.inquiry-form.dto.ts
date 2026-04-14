@@ -7,28 +7,28 @@ export class CreateInquiryFormDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(150)
-  fullName: string;
+  declare fullName: string;
 
   @Field()
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  declare email: string;
 
   @Field()
   @IsNotEmpty()
   @IsString()
   @MaxLength(30)
-  contactNumber: string;
+  declare contactNumber: string;
 
   @Field()
   @IsNotEmpty()
   @IsString()
   @MaxLength(1000)
-  message: string;
+  declare message: string;
 
   @Field()
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  serviceType: string;
+  declare serviceType: string;
 }

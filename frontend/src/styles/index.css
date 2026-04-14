@@ -49,6 +49,33 @@ html, body, #root {
   color: var(--muted-foreground);
 }
 
+/* Admin page shell and panels (light-mode friendly, theme based) */
+.admin-page-shell {
+  /* light page background similar to other admin pages */
+  background: #f9fafb; /* slate-50 */
+  min-height: 100vh;
+}
+
+.admin-section-panel {
+  /* neutral wrapper just for spacing; visuals come from inner cards */
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  padding: 0;
+}
+
+/* Shared admin surface card used across Orders, Tickets, Hero, Settings */
+.admin-surface-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.04);
+}
+
+.dark .admin-surface-card {
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.7);
+}
+
 /* Dark mode overrides for hardcoded color classes */
 /* Only change text-white for content headings and paragraphs, not interactive elements */
 .dark h1.text-white,

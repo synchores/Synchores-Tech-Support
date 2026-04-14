@@ -14,7 +14,7 @@ import { useAuth } from "../../context/authContext.jsx";
     { to: "/agents", label: "Agents", icon: Users },
     { to: "/customers", label: "Customers", icon: UserCircle },
     { to: "/reports", label: "Reports", icon: BarChart2 },
-    
+    { to: "/admin/landing-page/hero", label: "Landing Page", icon: Settings },
   ];
 
   const bottomItems = [

@@ -6,15 +6,15 @@ export class CreateProductDto {
   @Field()
   @IsNotEmpty()
   @IsString()
-  productName: string;
+  declare productName: string;
 
   @Field()
   @IsNotEmpty()
   @IsString()
-  productDescription: string;
+  declare productDescription: string;
 
   @Field(() => Float)
   @IsNotEmpty()
   @IsNumber()
-  productPrice: number;
+  declare productPrice: number;
 }

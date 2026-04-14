@@ -7,10 +7,10 @@ export class SignupDto{
     @Field()
     @IsNotEmpty()
     @IsString()
-    emailAddress: string;
+    declare emailAddress: string;
 
     @Field()
     @IsString()
     @IsNotEmpty()
-    password: string;
+    declare password: string;
 }

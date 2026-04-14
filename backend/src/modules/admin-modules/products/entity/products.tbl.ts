@@ -6,25 +6,25 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 export class ProductsTbl {
     @PrimaryGeneratedColumn()
     @Field()
-    productId: number;
+    declare productId: number;
 
     @Column()
     @Field()
-    productName: string;
+    declare productName: string;
 
     @Column()
     @Field()
-    productDescription: string;
+    declare productDescription: string;
 
     @Column('decimal', { precision: 10, scale: 2 })
     @Field()
-    productPrice: number;
+    declare productPrice: number;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     @Field()
-    createdAt: Date;
+    declare createdAt: Date;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     @Field()
-    updatedAt: Date;
+    declare updatedAt: Date;
 }

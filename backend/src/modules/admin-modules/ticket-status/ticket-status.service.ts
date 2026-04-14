@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateTicketStatusDto } from './dto/update.ticket-status';
 import { TicketStatus } from './dto/update.ticket-status';
-import { TicketsTbl } from 'src/modules/client-modules/tickets/entity/tickets.tbl';
+import { TicketsTbl } from '../../client-modules/tickets/entity/tickets.tbl';
 import { Repository } from 'typeorm';
 
 @Injectable()

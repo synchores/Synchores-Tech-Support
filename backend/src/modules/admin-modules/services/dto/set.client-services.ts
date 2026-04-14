@@ -6,12 +6,12 @@ export class SetClientServicesDto {
     @Field(() => Int)
     @IsInt()
     @Min(1)
-    userId: number;
+    declare userId: number;
 
     @Field(() => [Int])
     @IsArray()
     @ArrayUnique()
     @IsInt({ each: true })
     @Min(1, { each: true })
-    clientServicesId: number[];
+    declare clientServicesId: number[];
 }

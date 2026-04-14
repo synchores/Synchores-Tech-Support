@@ -5,7 +5,7 @@ import { InvoicesResolver } from './invoices.resolver';
 import { InvoicesService } from './invoices.service';
 import { OrdersTbl } from '../orders/entity/orders.tbl';
 import { PaymentsTbl } from '../payments/entity/payments.tbl';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 
 @Module({
   imports: [TypeOrmModule.forFeature([InvoicesTbl, OrdersTbl, PaymentsTbl, UsersTbl])],

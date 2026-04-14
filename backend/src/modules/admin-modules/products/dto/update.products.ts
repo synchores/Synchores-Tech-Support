@@ -6,5 +6,5 @@ import { CreateProductDto } from './create.products';
 export class UpdateProductDto extends PartialType(CreateProductDto) {
   @Field()
   @IsNumber()
-  productId: number;
+  declare productId: number;
 }

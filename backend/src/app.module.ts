@@ -16,6 +16,7 @@ import { TicketStatusModule } from './modules/admin-modules/ticket-status/ticket
 import { OrdersModule } from './modules/admin-modules/orders/orders.module';
 import { MailerModule } from './modules/general/mailer/mailer.module';
 import { InvoicesModule } from './modules/admin-modules/invoices/invoices.module';
+import { LandingPageModule } from './modules/admin-modules/landing-page/landing-page.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { InvoicesModule } from './modules/admin-modules/invoices/invoices.module
     TicketStatusModule,
     OrdersModule,
     InvoicesModule,
+    LandingPageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -7,10 +7,10 @@ export class TransitionOrderStatusDto {
   @Field(() => Int)
   @IsNotEmpty()
   @IsInt()
-  orderId: number;
+  declare orderId: number;
 
   @Field(() => String)
   @IsNotEmpty()
   @IsEnum(OrderStatus)
-  nextStatus: OrderStatus;
+  declare nextStatus: OrderStatus;
 }

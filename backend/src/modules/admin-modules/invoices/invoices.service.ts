@@ -5,7 +5,7 @@ import { InvoicesTbl } from './entity/invoices.tbl';
 import { OrdersTbl } from '../orders/entity/orders.tbl';
 import { PaymentsTbl } from '../payments/entity/payments.tbl';
 import { OrderStatus } from '../orders/entity/order-status.enum';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 import { MailerService } from '../../general/mailer/mailer.service';
 
 @Injectable()

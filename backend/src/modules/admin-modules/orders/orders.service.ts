@@ -9,7 +9,7 @@ import { OrderStatus } from './entity/order-status.enum';
 import { TransitionOrderStatusDto } from './dto/transition.order-status';
 import { InvoicesService } from '../invoices/invoices.service';
 import { ProductsTbl } from '../products/entity/products.tbl';
-import { UsersTbl } from 'src/modules/general/auth/entity/users.tbl';
+import { UsersTbl } from '../../general/auth/entity/users.tbl';
 import { InvoicesTbl } from '../invoices/entity/invoices.tbl';
 import { MailerService } from '../../general/mailer/mailer.service';
 
