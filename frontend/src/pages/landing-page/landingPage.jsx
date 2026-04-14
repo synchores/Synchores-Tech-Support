@@ -1,5 +1,5 @@
 import Home from "./sections/homeSection";
-import  OfferingSection  from "./sections/offeringSection";
+import OfferingSection from "./sections/offering";
 
 export default function LandingPage() {
   return (
