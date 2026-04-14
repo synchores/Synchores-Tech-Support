@@ -84,7 +84,7 @@ function AppRouter() {
           />
 
           <Route
-            element={
+            element={ 
               <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminLayout />
               </ProtectedRoute>

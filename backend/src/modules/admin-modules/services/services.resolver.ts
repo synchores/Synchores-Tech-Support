@@ -7,12 +7,14 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { Context } from '@nestjs/graphql';
 import { SetClientServicesDto } from './dto/set.client-services';
+import { ConfigService } from '@nestjs/config';
 
-@Resolver()
+@Resolver(() => ServicesTbl)
 export class ServicesResolver {
     constructor(
         private readonly servicesService: ServicesService,
         private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
     ){}
 
     @Query(() => [ServicesTbl], { name: 'getAllServices' })
@@ -30,8 +32,9 @@ export class ServicesResolver {
         }
 
         const token = authHeader.replace('Bearer ', '');
+        const jwtSecret = this.configService.get<string>('JWT_SECRET');
         const payload = this.jwtService.verify<{ userId?: number; sub?: number }>(token, {
-            secret: process.env.JWT_SECRET,
+            secret: jwtSecret,
         });
 
         const userId = payload.userId ?? payload.sub;

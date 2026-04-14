@@ -29,10 +29,11 @@ export function TicketsToolbar({
         style={{ padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "8px", fontSize: "12px", outline: "none", background: "#fafafa", color: "#374151" }}
       >
         <option value="all">All Status</option>
-        <option value="open">Open</option>
-        <option value="in-progress">In Progress</option>
-        <option value="resolved">Resolved</option>
-        <option value="closed">Closed</option>
+        <option value="pending">Pending</option>
+        <option value="in_progress">In Progress</option>
+        <option value="on_hold">On Hold</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
       </select>
       <select 
         value={priorityFilter} 
@@ -53,7 +54,7 @@ export function TicketsToolbar({
         <option value="all">All Categories</option>
         {["network","hardware","software","security","billing","cloud"].map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase()+c.slice(1)}</option>)}
       </select>
-      <NewTicketButton onClick={onNewClick} />
+      {/* <NewTicketButton onClick={onNewClick} /> */}
     </div>
   );
 }

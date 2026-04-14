@@ -74,3 +74,13 @@ export const TRANSITION_ORDER_STATUS_MUTATION = gql`
     }
   }
 `;
+
+export const UPDATE_TICKET_STATUS_MUTATION = gql`
+  mutation updateTicketStatus($input: UpdateTicketStatusDto!) {
+    updateTicketStatus(input: $input) {
+      ticketId
+      status
+      updatedAt
+    }
+  }
+`;
