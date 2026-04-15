@@ -1,10 +1,8 @@
 import { motion } from 'motion/react';
 
-const THEME_PRIMARY = '#179cf9';
-
 export default function ProcessSection({ offering }) {
   return (
-    <section style={{ backgroundColor: '#0c335e', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
+    <section style={{ backgroundColor: '#060c14', padding: '72px 40px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -13,19 +11,26 @@ export default function ProcessSection({ offering }) {
           transition={{ duration: 0.5 }}
           style={{ marginBottom: '48px' }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
-            <div style={{ width: '28px', height: '2px', background: THEME_PRIMARY }} />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '14px',
+            }}
+          >
+            <div style={{ width: '28px', height: '2px', background: '#1e7fd4' }} />
             <span
               style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: 'clamp(9px, 1.8vw, 11px)',
+                fontSize: '11px',
                 fontWeight: 700,
-                color: THEME_PRIMARY,
+                color: '#1e7fd4',
                 textTransform: 'uppercase',
                 letterSpacing: '0.15em',
               }}
             >
-              Streamlined Approach
+              Our Process
             </span>
           </div>
           <h2
@@ -46,87 +51,70 @@ export default function ProcessSection({ offering }) {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-            gap: '32px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 240px), 1fr))',
+            gap: '24px',
           }}
         >
           {offering.process.map((step, i) => (
             <motion.div
-              key={step.title}
-              initial={{ opacity: 0, y: 16 }}
+              key={step.step}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              style={{ position: 'relative' }}
+              transition={{ duration: 0.45, delay: i * 0.1 }}
+              style={{
+                position: 'relative',
+                padding: '28px 24px',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: '2px',
+                background: 'rgba(255,255,255,0.02)',
+              }}
             >
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                <div
-                  style={{
-                    minWidth: 'fit-content',
-                    width: '56px',
-                    height: '56px',
-                    background: `linear-gradient(135deg, ${THEME_PRIMARY}33 0%, transparent 100%)`,
-                    border: `1px solid ${THEME_PRIMARY}`,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                    zIndex: 2,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'Orbitron', sans-serif",
-                      fontSize: 'clamp(12px, 2vw, 16px)',
-                      fontWeight: 700,
-                      color: THEME_PRIMARY,
-                    }}
-                  >
-                    {i + 1}
-                  </span>
-                </div>
-
-                <div style={{ paddingTop: '6px', flex: 1 }}>
-                  <h3
-                    style={{
-                      fontFamily: "'Orbitron', sans-serif",
-                      fontSize: 'clamp(11px, 2vw, 13px)',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      margin: '0 0 8px 0',
-                    }}
-                  >
-                    {step.title}
-                  </h3>
-                  <p
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: 'clamp(12px, 2vw, 13.5px)',
-                      color: '#ffffff',
-                      lineHeight: 1.65,
-                      margin: 0,
-                    }}
-                  >
-                    {step.description}
-                  </p>
-                </div>
-              </div>
-
+              {/* Connector line (not on last) */}
               {i < offering.process.length - 1 && (
                 <div
                   style={{
-                    position: 'absolute',
-                    left: '27px',
-                    top: '60px',
-                    width: '2px',
-                    height: '32px',
-                    background: `linear-gradient(180deg, ${THEME_PRIMARY} 0%, transparent 100%)`,
+                    display: 'none',
                   }}
                 />
               )}
+              <span
+                style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: 'clamp(2.5rem, 4vw, 3.5rem)',
+                  fontWeight: 900,
+                  color: 'rgba(30,127,212,0.12)',
+                  lineHeight: 1,
+                  display: 'block',
+                  marginBottom: '12px',
+                }}
+              >
+                {step.step}
+              </span>
+              <h4
+                style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  color: '#1e7fd4',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  margin: '0 0 10px 0',
+                }}
+              >
+                {step.label}
+              </h4>
+              <p
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: '13.5px',
+                  color: '#6b7280',
+                  lineHeight: 1.65,
+                  margin: 0,
+                }}
+              >
+                {step.description}
+              </p>
             </motion.div>
           ))}
         </div>

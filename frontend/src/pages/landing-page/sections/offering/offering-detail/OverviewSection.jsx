@@ -6,7 +6,7 @@ const THEME_PRIMARY_HOVER = '#1277d4';
 
 export default function OverviewSection({ offering, onCTA }) {
   return (
-    <section style={{ backgroundColor: '#0c335e', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
+    <section style={{ backgroundColor: '#060c14', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
       <div
         style={{
           maxWidth: '1200px',

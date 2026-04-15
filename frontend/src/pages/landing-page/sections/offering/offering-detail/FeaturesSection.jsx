@@ -4,7 +4,7 @@ const THEME_PRIMARY = '#179cf9';
 
 export default function FeaturesSection({ offering }) {
   return (
-    <section style={{ backgroundColor: '#060c14', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
+    <section style={{ backgroundColor: '#0c335e', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -6,6 +6,7 @@ import OverviewSection from './offering-detail/OverviewSection';
 import FeaturesSection from './offering-detail/FeaturesSection';
 import ProcessSection from './offering-detail/ProcessSection';
 import CTASection from './offering-detail/CTASection';
+import Footer from '../../../../components/layout/footer';
 
 const THEME_PRIMARY = '#179cf9';
 
@@ -87,6 +88,7 @@ export default function OfferingDetail() {
         onConsultation={handleConsultation}
         onNextService={handleNextService}
       />
+      <Footer />
     </div>
   );
 }
