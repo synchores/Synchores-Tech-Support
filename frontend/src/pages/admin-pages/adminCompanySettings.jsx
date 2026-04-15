@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useCompanyInfo } from "../../hooks/useLandingPageData";
 import { SectionCard } from "../../components/admin-ui/section-card";
 import { Field, TextInput, TextArea } from "../../components/admin-ui/field";
-import { Link } from "lucide-react";
 
 export function AdminCompanySettings() {
   const { companyInfo, loading, updateCompanyInfo } = useCompanyInfo();

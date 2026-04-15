@@ -38,14 +38,6 @@ export function AdminHeroLanding() {
     }
   }, [hero]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleImageUpload = (imagePath) => {
     setFormData((prev) => ({
       ...prev,

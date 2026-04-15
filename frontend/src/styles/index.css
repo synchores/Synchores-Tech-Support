@@ -51,9 +51,9 @@ html, body, #root {
 
 /* Admin page shell and panels (light-mode friendly, theme based) */
 .admin-page-shell {
-  /* light page background similar to other admin pages */
-  background: #f9fafb; /* slate-50 */
-  min-height: 100vh;
+  /* Keep a soft admin backdrop without hardcoding route-breaking colors */
+  background: var(--background, #f8fafc);
+  min-height: 100%;
 }
 
 .admin-section-panel {
@@ -66,13 +66,15 @@ html, body, #root {
 
 /* Shared admin surface card used across Orders, Tickets, Hero, Settings */
 .admin-surface-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--card, #ffffff);
+  border: 1px solid var(--border, #e2e8f0);
   border-radius: 0.75rem;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.04);
 }
 
 .dark .admin-surface-card {
+  background: var(--card, #111827);
+  border-color: var(--border, rgba(148, 163, 184, 0.24));
   box-shadow: 0 22px 55px rgba(15, 23, 42, 0.7);
 }
 
