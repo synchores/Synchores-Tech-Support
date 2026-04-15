@@ -1,22 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import ClientNavbar from "../../components/modal/ClientNavbar";
 
 function ClientLayout() {
-  // Light mode always on
-  const themeMode = "light";
-
   useEffect(() => {
-    // Apply light mode
-    document.documentElement.classList.remove("dark");
-    // Set CSS variables for light mode
-    document.documentElement.style.setProperty("--background", "#ffffff");
-    document.documentElement.style.setProperty("--foreground", "#030213");
-    document.documentElement.style.setProperty("--card", "#ffffff");
-    document.documentElement.style.setProperty("--card-foreground", "#030213");
-    document.documentElement.style.setProperty("--border", "rgba(0, 0, 0, 0.1)");
-    document.documentElement.style.setProperty("--muted-foreground", "#717182");
-    document.documentElement.style.setProperty("--chart-2", "#2f8ec2");
+    const root = document.documentElement;
+    root.classList.remove("dark");
+
+    // Remove route-level token overrides so admin pages keep their own palette.
+    [
+      "--background",
+      "--foreground",
+      "--card",
+      "--card-foreground",
+      "--border",
+      "--muted-foreground",
+      "--chart-2",
+    ].forEach((token) => {
+      root.style.removeProperty(token);
+    });
   }, []);
 
   return (

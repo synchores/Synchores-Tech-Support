@@ -24,8 +24,8 @@ export function Header({ title, subtitle, onMobileMenuToggle }) {
     <header
       className="flex items-center justify-between px-6 sticky top-0 z-20"
       style={{
-        background: "#ffffff",
-        borderBottom: "1px solid #e2e8f0",
+        background: "var(--card, #ffffff)",
+        borderBottom: "1px solid var(--border, #e2e8f0)",
         height: "64px",
         minHeight: "64px",
       }}

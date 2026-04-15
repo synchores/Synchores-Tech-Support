@@ -14,7 +14,7 @@ export default function LandingLayout({ children }) {
   };
 
   return (
-    <div className="min-h-full flex flex-col">
+    <div className="landing-layout-shell min-h-full flex flex-col">
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} />
       <main className="pt-0">{children}</main>
     </div>
