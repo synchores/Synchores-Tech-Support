@@ -3,89 +3,108 @@ import ScrollStack, { ScrollStackItem } from './ScrollStack';
 export function FeatureCard() {
   const features = [
     {
-      title: "TAILORED APPLICATIONS",
-      description: "Custom-built solutions designed specifically for your business needs",
-      icon: "tailored"
+      title: "IT INFRASTRUCTURE",
+      subtitle: "Reliable Systems for Modern Workplaces",
+      description: "From cabling to servers and office systems— designed to keep your business connected, secure, and ready for growth.",
+      bullets: ["RELIABLE SYSTEMS FOR MODERN WORKPLACES", "END-TO-END CONNECTIVITY", "COMPREHENSIVE OFFICE SOLUTIONS"],
+      image: "/assets/infa2.png"
     },
     {
-      title: "SEAMLESS USER EXPERIENCES",
-      description: "Intuitive interfaces that users love and adoption rates that soar",
-      icon: "seamless"
+      title: "SOFTWARE AND WEB DEVELOPMENT",
+      subtitle: "End-to-End Connectivity",
+      description: "Custom software and web solutions that streamline workflows, deliver seamless user experiences, and drive digital growth for SMEs",
+      bullets: ["TAILORED APPLICATIONS", "SEAMLESS USER EXPERIENCE", "EMPOWERED WITH DIGITAL GROWTH"],
+      image: "/assets/webdev1.png"
     },
     {
-      title: "EMPOWERED WITH DIGITAL GROWTH",
-      description: "Scalable architecture built for your business expansion",
-      icon: "empowered"
+      title: "TECH CONSULTANCY",
+      subtitle: "Comprehensive Office Solutions",
+      description: "We deliver IT consultancy focused on smart adoption, trusted guidance, and practical results that move your business forward.",
+      bullets: ["STRATEGIC SOLUTION DESIGN", "DEDICATED ADVISORY SUPPORT", "VALUE-DRIVEN IMPLEMENTATION"],
+      image: "/assets/tech-consultancy-2.png"
     },
   ];
 
-  const renderFeatureIcon = (index) => (
+  const renderBulletIcon = () => (
     <svg
-      className="w-8 h-8 text-blue-500"
-      fill="url(#triangleGradient)"
+      className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 flex-shrink-0"
       viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <defs>
-        <linearGradient
-          id={`triangleGradient${index}`}
-          x1="0%"
-          y1="0%"
-          x2="100%"
-          y2="100%"
-        >
-          <stop offset="0%" stopColor="#3b82f6" />
-          <stop offset="50%" stopColor="#1e40af" />
-          <stop offset="100%" stopColor="#1e40af" />
-        </linearGradient>
-      </defs>
-      <polygon points="12,2 22,20 2,20" />
+      <polyline points="20 6 9 17 4 12"></polyline>
+      <path d="M3 6h18v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"></path>
     </svg>
   );
 
+  const renderFeatureIcon = (imagePath) => {
+    return (
+      <img 
+        src={imagePath} 
+        alt="Feature illustration"
+        className="w-full h-full object-cover rounded-xl"
+      />
+    );
+  };
+
   return (
-    <div className="w-full bg-gradient-to-br from-slate-50 to-slate-100 py-4 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="w-full bg-gradient-to-br from-slate-50 to-slate-100 py-2 sm:py-4 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
+      <div className="w-full max-w-[1400px] mx-auto rounded-lg sm:rounded-2xl">
         {/* ScrollStack Features */}
         <ScrollStack
-          className="min-h-screen"
-          itemDistance={50}
+          className="min-h-auto"
+          itemDistance={15}
           itemScale={0.04}
-          itemStackDistance={5}
-          stackPosition="35%"
-          scaleEndPosition="15%"
-          baseScale={0.88}
+          itemStackDistance={10}
+          stackPosition="25%"
+          scaleEndPosition="5%"
+          baseScale={1}
           blurAmount={0}
           useWindowScroll={true}
+          staggerCards={true}
         >
           {features.map((feature, idx) => (
-            <ScrollStackItem key={idx} itemClassName="bg-white hover:shadow-2xl transition-shadow duration-300">
-              <div className="flex gap-6">
-                {/* Icon Section */}
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 group">
-                    <div className="transform group-hover:scale-110 transition-transform duration-300">
-                      {renderFeatureIcon(idx)}
-                    </div>
-                  </div>
+            <ScrollStackItem key={idx} itemClassName="bg-[#002244] hover:shadow-2xl transition-shadow duration-300 border">
+              <div className="flex flex-col md:flex-row h-full w-full gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12">
+                {/* Column 2: Image - Top on mobile, Right on desktop */}
+                <div className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last">
+                  {renderFeatureIcon(feature.image)}
                 </div>
 
-                {/* Content Section */}
-                <div className="flex-1">
-                  <h4 className="text-lg sm:text-xl font-bold text-slate-900 tracking-wide mb-2">
+                {/* Column 1: Text Content - Bottom on mobile, Left on desktop */}
+                <div className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8">
+                  <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-white tracking-wide break-words">
                     {feature.title}
-                  </h4>
-                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  </h2>
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-white leading-relaxed break-words">
                     {feature.description}
                   </p>
-
-                  {/* Visual Placeholder */}
-                  <div className="mt-4 hidden sm:block">
-                    <div className="flex gap-2">
-                      <div className="h-8 w-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded opacity-60"></div>
-                      <div className="h-8 w-12 bg-gradient-to-r from-slate-200 to-slate-300 rounded opacity-40"></div>
-                      <div className="h-8 w-12 bg-gradient-to-r from-slate-200 to-slate-300 rounded opacity-40"></div>
-                    </div>
-                  </div>
+                  
+                  {/* Separator Line */}
+                  <div className="my-1 sm:my-3 md:my-4 h-px bg-white opacity-40"></div>
+                  
+                  {/* Bullets List */}
+                  {feature.bullets && (
+                    <ul className="mt-1 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2 md:space-y-3">
+                      {feature.bullets.map((bullet, bulletIdx) => {
+                        const words = bullet.split(' ');
+                        const firstWord = words[0];
+                        const restWords = words.slice(1).join(' ');
+                        
+                        return (
+                          <li key={bulletIdx} className="flex items-start gap-1.5 sm:gap-2 md:gap-3">
+                            {renderBulletIcon()}
+                            <span className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-white break-words pt-0.5">
+                              <span className="font-bold text-blue-300">{firstWord}</span> {restWords}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
               </div>
             </ScrollStackItem>

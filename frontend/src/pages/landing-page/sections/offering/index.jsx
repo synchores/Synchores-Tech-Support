@@ -54,11 +54,11 @@ export default function OfferingSection() {
         offerings={OFFERINGS_DATA}
       />
 
-      {/* Feature Card */}
-      <FeatureCard />
-
       {/* Description Panel */}
       <DescriptionPanel description={current.description} />
+
+      {/* Feature Card */}
+      <FeatureCard />
     </section>
   );
 }
