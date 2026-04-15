@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import { ContentStatus } from '../../common/content-status.enum';
 
 @InputType()
 export class UpdateDeploymentGalleryDto {
@@ -31,4 +32,8 @@ export class UpdateDeploymentGalleryDto {
   @IsOptional()
   @IsNumber()
   declare order?: number;
+
+  @Field(() => ContentStatus, { nullable: true })
+  @IsOptional()
+  declare status?: ContentStatus;
 }

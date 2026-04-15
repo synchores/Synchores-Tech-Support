@@ -3,6 +3,7 @@ import { LandingServiceCardService } from './landing-service-card.service';
 import { LandingServiceCardTbl } from './entity/landing-service-card.tbl';
 import { CreateLandingServiceCardDto } from './dto/create-landing-service-card.dto';
 import { UpdateLandingServiceCardDto } from './dto/update-landing-service-card.dto';
+import { ContentStatus } from '../common/content-status.enum';
 
 @Resolver()
 export class LandingServiceCardResolver {
@@ -11,8 +12,17 @@ export class LandingServiceCardResolver {
   ) {}
 
   @Query(() => [LandingServiceCardTbl], { name: 'getAllLandingServiceCards' })
-  async getAllServiceCards() {
-    return await this.serviceCardService.getAllServiceCards();
+  async getAllServiceCards(
+    @Args('search', { nullable: true }) search?: string,
+    @Args('status', { type: () => ContentStatus, nullable: true })
+    status?: ContentStatus,
+    @Args('category', { nullable: true }) category?: string,
+  ) {
+    return await this.serviceCardService.getAllServiceCards(
+      search,
+      status,
+      category,
+    );
   }
 
   @Query(() => LandingServiceCardTbl, { name: 'getLandingServiceCard' })
@@ -33,5 +43,32 @@ export class LandingServiceCardResolver {
   @Mutation(() => Boolean, { name: 'deleteLandingServiceCard' })
   async deleteServiceCard(@Args('cardId', { type: () => Int }) cardId: number) {
     return await this.serviceCardService.deleteServiceCard(cardId);
+  }
+
+  @Mutation(() => LandingServiceCardTbl, { name: 'duplicateLandingServiceCard' })
+  async duplicateServiceCard(
+    @Args('cardId', { type: () => Int }) cardId: number,
+  ) {
+    return await this.serviceCardService.duplicateServiceCard(cardId);
+  }
+
+  @Mutation(() => Boolean, { name: 'bulkDeleteLandingServiceCards' })
+  async bulkDeleteServiceCards(
+    @Args({ name: 'cardIds', type: () => [Int] }) cardIds: number[],
+  ) {
+    return await this.serviceCardService.bulkDeleteServiceCards(cardIds);
+  }
+
+  @Mutation(() => [LandingServiceCardTbl], {
+    name: 'bulkUpdateLandingServiceCardStatus',
+  })
+  async bulkUpdateServiceCardStatus(
+    @Args({ name: 'cardIds', type: () => [Int] }) cardIds: number[],
+    @Args('status', { type: () => ContentStatus }) status: ContentStatus,
+  ) {
+    return await this.serviceCardService.bulkUpdateServiceCardStatus(
+      cardIds,
+      status,
+    );
   }
 }

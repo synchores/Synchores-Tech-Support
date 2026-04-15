@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import { ContentStatus } from '../../common/content-status.enum';
 
 @InputType()
 export class CreateLandingServiceCardDto {
@@ -22,6 +23,15 @@ export class CreateLandingServiceCardDto {
   @IsOptional()
   @IsString()
   declare image?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare category?: string;
+
+  @Field(() => ContentStatus, { nullable: true })
+  @IsOptional()
+  declare status?: ContentStatus;
 
   @Field({ nullable: true })
   @IsOptional()

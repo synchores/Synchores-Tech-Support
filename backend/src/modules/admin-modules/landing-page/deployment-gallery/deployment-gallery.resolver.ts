@@ -3,6 +3,7 @@ import { DeploymentGalleryService } from './deployment-gallery.service';
 import { DeploymentGalleryTbl } from './entity/deployment-gallery.tbl';
 import { CreateDeploymentGalleryDto } from './dto/create-deployment-gallery.dto';
 import { UpdateDeploymentGalleryDto } from './dto/update-deployment-gallery.dto';
+import { ContentStatus } from '../common/content-status.enum';
 
 @Resolver()
 export class DeploymentGalleryResolver {
@@ -11,8 +12,17 @@ export class DeploymentGalleryResolver {
   ) {}
 
   @Query(() => [DeploymentGalleryTbl], { name: 'getAllDeployments' })
-  async getAllDeployments() {
-    return await this.deploymentService.getAllDeployments();
+  async getAllDeployments(
+    @Args('search', { nullable: true }) search?: string,
+    @Args('status', { type: () => ContentStatus, nullable: true })
+    status?: ContentStatus,
+    @Args('category', { nullable: true }) category?: string,
+  ) {
+    return await this.deploymentService.getAllDeployments(
+      search,
+      status,
+      category,
+    );
   }
 
   @Query(() => DeploymentGalleryTbl, { name: 'getDeployment' })
@@ -37,5 +47,32 @@ export class DeploymentGalleryResolver {
     @Args('deploymentId', { type: () => Int }) deploymentId: number,
   ) {
     return await this.deploymentService.deleteDeployment(deploymentId);
+  }
+
+  @Mutation(() => DeploymentGalleryTbl, { name: 'duplicateDeployment' })
+  async duplicateDeployment(
+    @Args('deploymentId', { type: () => Int }) deploymentId: number,
+  ) {
+    return await this.deploymentService.duplicateDeployment(deploymentId);
+  }
+
+  @Mutation(() => Boolean, { name: 'bulkDeleteDeployments' })
+  async bulkDeleteDeployments(
+    @Args({ name: 'deploymentIds', type: () => [Int] }) deploymentIds: number[],
+  ) {
+    return await this.deploymentService.bulkDeleteDeployments(deploymentIds);
+  }
+
+  @Mutation(() => [DeploymentGalleryTbl], {
+    name: 'bulkUpdateDeploymentStatus',
+  })
+  async bulkUpdateDeploymentStatus(
+    @Args({ name: 'deploymentIds', type: () => [Int] }) deploymentIds: number[],
+    @Args('status', { type: () => ContentStatus }) status: ContentStatus,
+  ) {
+    return await this.deploymentService.bulkUpdateDeploymentStatus(
+      deploymentIds,
+      status,
+    );
   }
 }

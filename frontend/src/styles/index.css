@@ -190,3 +190,344 @@ html, body, #root {
 *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(71, 85, 105, 0.8);
 }
+
+/* =========== CMS UTILITY LAYER =========== */
+/* Semantic classes for CMS table, toolbar, and form styling */
+
+/* Page background with subtle contrast */
+.cms-page-background {
+  background: #f8fafc;
+}
+
+.dark .cms-page-background {
+  background: #0f172a;
+}
+
+/* CMS surface (card/container) */
+.cms-surface {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+/* CMS table header cell (header band) */
+.cms-table-header {
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dark .cms-table-header {
+  background: #1f2937;
+  border-bottom-color: rgba(148, 163, 184, 0.24);
+}
+
+/* CMS table row with hover state */
+.cms-table-row {
+  border-top: 1px solid var(--border);
+  transition: background-color 0.15s ease-in-out;
+}
+
+.cms-table-row:hover {
+  background: #fafafa;
+}
+
+.dark .cms-table-row:hover {
+  background: #1f2937;
+}
+
+/* CMS table row selected state */
+.cms-table-row.selected {
+  background: #f1f5f9;
+}
+
+.dark .cms-table-row.selected {
+  background: #293548;
+}
+
+/* CMS input field (consistent across all inputs) */
+.cms-input {
+  background: var(--input-background);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.cms-input:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.cms-input:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+}
+
+.cms-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.dark .cms-input:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+/* CMS button primary */
+.cms-button-primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.cms-button-primary:hover {
+  background: #2563eb;
+}
+
+.cms-button-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.cms-button-primary:active {
+  background: #1d4ed8;
+}
+
+.cms-button-primary:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* CMS button secondary/ghost */
+.cms-button-ghost {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.cms-button-ghost:hover {
+  background: var(--accent);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.cms-button-ghost:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.cms-button-ghost:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* CMS button destructive */
+.cms-button-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.cms-button-danger:hover {
+  background: #dc2626;
+}
+
+.cms-button-danger:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* CMS filter chip */
+.cms-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.cms-chip:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.cms-chip.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.dark .cms-chip.active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* CMS toolbar wrapper */
+.cms-toolbar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* CMS action menu item */
+.cms-action-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease-in-out;
+}
+
+.cms-action-menu-item:hover {
+  background: var(--accent);
+}
+
+.cms-action-menu-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.cms-action-menu-item.danger {
+  color: #ef4444;
+}
+
+.cms-action-menu-item.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* CMS drawer overlay with proper opacity */
+.cms-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(2, 6, 23, 0.48);
+  z-index: 39;
+}
+
+/* CMS drawer surface (opaque, solid background) */
+.cms-drawer-surface {
+  background: var(--card);
+  box-shadow: -10px 0 30px rgba(15, 23, 42, 0.1);
+  border-left: 2px solid var(--border);
+}
+
+.dark .cms-drawer-surface {
+  box-shadow: -10px 0 30px rgba(15, 23, 42, 0.3);
+  border-left-color: rgba(148, 163, 184, 0.3);
+}
+
+/* CMS grid card for table/grid toggle view */
+.cms-grid-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.cms-grid-card:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.dark .cms-grid-card:hover {
+  border-color: rgba(148, 163, 184, 0.35);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+}
+
+/* CMS stat card */
+.cms-stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* CMS status badge */
+.cms-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.cms-badge.published {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.cms-badge.draft {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+}
+
+.cms-badge.archived {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+}
+
+.dark .cms-badge.published {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.dark .cms-badge.draft {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.dark .cms-badge.archived {
+  background: rgba(107, 114, 128, 0.2);
+  color: #d1d5db;
+}

@@ -14,13 +14,15 @@ export const GET_HERO_SECTION_QUERY = gql`
 `;
 
 export const GET_ALL_LANDING_SERVICES_QUERY = gql`
-  query GetAllLandingServiceCards {
-    getAllLandingServiceCards {
+  query GetAllLandingServiceCards($search: String, $status: ContentStatus, $category: String) {
+    getAllLandingServiceCards(search: $search, status: $status, category: $category) {
       cardId
       title
       description
       icon
       image
+      category
+      status
       order
       createdAt
       updatedAt
@@ -36,6 +38,8 @@ export const GET_LANDING_SERVICE_CARD_QUERY = gql`
       description
       icon
       image
+      category
+      status
       order
       createdAt
       updatedAt
@@ -44,13 +48,14 @@ export const GET_LANDING_SERVICE_CARD_QUERY = gql`
 `;
 
 export const GET_ALL_DEPLOYMENTS_QUERY = gql`
-  query GetAllDeployments {
-    getAllDeployments {
+  query GetAllDeployments($search: String, $status: ContentStatus, $category: String) {
+    getAllDeployments(search: $search, status: $status, category: $category) {
       deploymentId
       title
       description
       image
       category
+      status
       order
       createdAt
       updatedAt
@@ -66,6 +71,7 @@ export const GET_DEPLOYMENT_QUERY = gql`
       description
       image
       category
+      status
       order
       createdAt
       updatedAt
