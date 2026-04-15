@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ContentStatus } from '../../common/content-status.enum';
 
 @Entity('landing_service_card_tbl')
 @ObjectType()
@@ -23,6 +24,18 @@ export class LandingServiceCardTbl {
   @Column({ nullable: true })
   @Field({ nullable: true })
   declare image?: string;
+
+  @Column({ type: 'varchar', length: 120, nullable: true })
+  @Field({ nullable: true })
+  declare category?: string;
+
+  @Column({
+    type: 'enum',
+    enum: ContentStatus,
+    default: ContentStatus.DRAFT,
+  })
+  @Field(() => ContentStatus)
+  declare status: ContentStatus;
 
   @Column({ type: 'int', default: 0 })
   @Field(() => Int)

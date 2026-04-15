@@ -1,67 +1,84 @@
-import { Package, Clock } from "lucide-react";
+import { Package, Eye, FileEdit, Archive } from "lucide-react";
 
 export function ServiceStatsSection({ stats }) {
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
-        className="rounded-xl p-4 flex items-center gap-4"
-        style={{ background: "white", border: "1px solid #e2e8f0" }}
-      >
-        <div
-          className="rounded-xl flex items-center justify-center"
-          style={{
-            width: 40,
-            height: 40,
-            background: "#eff6ff",
-          }}
-        >
-          <Package size={18} color="#3b82f6" />
-        </div>
-        <div>
-          <p
-            style={{
-              fontSize: "22px",
-              fontWeight: 800,
-              color: "#0f172a",
-              lineHeight: 1,
-            }}
-          >
-            {stats.total}
-          </p>
-          <p style={{ fontSize: "12px", color: "#94a3b8" }}>
-            Total Services
-          </p>
-        </div>
-      </div>
+  const cards = [
+    {
+      label: "Total",
+      value: stats.total,
+      icon: Package,
+      iconBg: "#eff6ff",
+      iconColor: "#3b82f6",
+    },
+    {
+      label: "Published",
+      value: stats.published,
+      icon: Eye,
+      iconBg: "#dcfce7",
+      iconColor: "#16a34a",
+    },
+    {
+      label: "Draft",
+      value: stats.draft,
+      icon: FileEdit,
+      iconBg: "#fef3c7",
+      iconColor: "#d97706",
+    },
+    {
+      label: "Archived",
+      value: stats.archived,
+      icon: Archive,
+      iconBg: "#e2e8f0",
+      iconColor: "#475569",
+    },
+  ];
 
-      <div
-        className="rounded-xl p-4 flex items-center gap-4"
-        style={{ background: "white", border: "1px solid #e2e8f0" }}
-      >
-        <div
-          className="rounded-xl flex items-center justify-center"
-          style={{
-            width: 40,
-            height: 40,
-            background: "#fef3c7",
-          }}
-        >
-          <Clock size={18} color="#f59e0b" />
-        </div>
-        <div>
-          <p
+  return (
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+      {cards.map((card) => {
+        const Icon = card.icon;
+
+        return (
+          <div
+            key={card.label}
             style={{
-              fontSize: "22px",
-              fontWeight: 800,
-              color: "#0f172a",
-              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              padding: "1rem",
+              background: "white",
+              borderRadius: "0.5rem",
+              border: "1px solid var(--border)",
+              boxShadow: "0 1px 3px rgba(15, 23, 42, 0.08)",
             }}
           >
-            {stats.total > 0 ? "Active" : "None"}
-          </p>
-          <p style={{ fontSize: "12px", color: "#94a3b8" }}>Status</p>
-        </div>
-      </div>
+            <div
+              className="rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{
+                width: 44,
+                height: 44,
+                background: card.iconBg,
+              }}
+            >
+              <Icon size={20} color={card.iconColor} />
+            </div>
+            <div>
+              <p
+                style={{
+                  fontSize: "24px",
+                  fontWeight: 800,
+                  color: "var(--foreground)",
+                  lineHeight: 1,
+                }}
+              >
+                {card.value}
+              </p>
+              <p style={{ fontSize: "12px", color: "var(--muted-foreground)", fontWeight: 500 }}>
+                {card.label}
+              </p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

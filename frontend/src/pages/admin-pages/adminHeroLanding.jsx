@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useHeroSection } from "../../hooks/useLandingPageData";
 import { ImageUpload } from "../../components/landing-page/image-upload";
 import { TextInput, TextArea } from "../../components/admin-ui/field";
@@ -10,6 +10,8 @@ import {
   CheckCircle2,
   AlertCircle,
   ImageOff,
+  Info,
+  Loader2,
 } from "lucide-react";
 
 export function AdminHeroLanding() {
@@ -19,7 +21,44 @@ export function AdminHeroLanding() {
     tagline: "",
     backgroundImage: "",
   });
+  const [savedSnapshot, setSavedSnapshot] = useState({
+    headline: "",
+    tagline: "",
+    backgroundImage: "",
+  });
   const [isSaving, setIsSaving] = useState(false);
+  const [saveState, setSaveState] = useState({
+    status: "idle",
+    field: "",
+    message: "Changes auto-save when you leave a field.",
+    lastSavedAt: null,
+  });
+
+  const fieldLabels = {
+    headline: "headline",
+    tagline: "tagline",
+    backgroundImage: "background image",
+  };
+
+  const isDirty = Object.keys(formData).some(
+    (key) => (formData[key] || "") !== (savedSnapshot[key] || "")
+  );
+  const dirtyCount = Object.keys(formData).filter(
+    (key) => (formData[key] || "") !== (savedSnapshot[key] || "")
+  ).length;
+
+  const getDirtyPayload = useCallback(() => {
+    return Object.keys(formData).reduce((acc, key) => {
+      const nextValue = formData[key] || "";
+      const previousValue = savedSnapshot[key] || "";
+
+      if (nextValue !== previousValue) {
+        acc[key] = nextValue;
+      }
+
+      return acc;
+    }, {});
+  }, [formData, savedSnapshot]);
 
 	const isActive = !!hero?.headline;
 	const hasImage = !!formData.backgroundImage;
@@ -30,11 +69,21 @@ export function AdminHeroLanding() {
 
   useEffect(() => {
     if (hero) {
-      setFormData({
+      const nextSnapshot = {
         headline: hero.headline || "",
         tagline: hero.tagline || "",
         backgroundImage: hero.backgroundImage || "",
-      });
+      };
+
+      setFormData(nextSnapshot);
+      setSavedSnapshot(nextSnapshot);
+      setSaveState((prev) => ({
+        ...prev,
+        status: "idle",
+        field: "",
+        message: "Changes auto-save when you leave a field.",
+        lastSavedAt: hero.updatedAt ? new Date(hero.updatedAt) : prev.lastSavedAt,
+      }));
     }
   }, [hero]);
 
@@ -50,22 +99,126 @@ export function AdminHeroLanding() {
   const handleSaveOnBlur = async (fieldName, value) => {
     if (!hero?.heroId) return;
 
+    const nextValue = value || formData[fieldName] || "";
+    const previousValue = savedSnapshot[fieldName] || "";
+
+    if (nextValue === previousValue) return;
+
     try {
       setIsSaving(true);
+      setSaveState((prev) => ({
+        ...prev,
+        status: "saving",
+        field: fieldName,
+        message: `Saving ${fieldLabels[fieldName] || "changes"}...`,
+      }));
+
       await updateHero({
         heroId: hero.heroId,
-        [fieldName]: value || formData[fieldName],
+        [fieldName]: nextValue,
       });
+
+      const savedAt = new Date();
+      setSavedSnapshot((prev) => ({
+        ...prev,
+        [fieldName]: nextValue,
+      }));
+      setSaveState((prev) => ({
+        ...prev,
+        status: "saved",
+        field: fieldName,
+        message: `${fieldLabels[fieldName] || "Field"} saved.`,
+        lastSavedAt: savedAt,
+      }));
     } catch (error) {
       console.error("Save failed:", error);
       setFormData((prev) => ({
         ...prev,
-        [fieldName]: hero[fieldName],
+        [fieldName]: savedSnapshot[fieldName] || "",
+      }));
+      setSaveState((prev) => ({
+        ...prev,
+        status: "error",
+        field: fieldName,
+        message: `Failed to save ${fieldLabels[fieldName] || "this field"}. Please try again.`,
       }));
     } finally {
       setIsSaving(false);
     }
   };
+
+  const handleSaveAll = useCallback(async () => {
+    if (!hero?.heroId) return;
+
+    const dirtyPayload = getDirtyPayload();
+    if (Object.keys(dirtyPayload).length === 0) return;
+
+    try {
+      setIsSaving(true);
+      setSaveState((prev) => ({
+        ...prev,
+        status: "saving",
+        field: "",
+        message: "Saving all changes...",
+      }));
+
+      await updateHero({
+        heroId: hero.heroId,
+        ...dirtyPayload,
+      });
+
+      const savedAt = new Date();
+      setSavedSnapshot((prev) => ({
+        ...prev,
+        ...dirtyPayload,
+      }));
+      setSaveState((prev) => ({
+        ...prev,
+        status: "saved",
+        field: "",
+        message: "All changes saved.",
+        lastSavedAt: savedAt,
+      }));
+    } catch (error) {
+      console.error("Save all failed:", error);
+      setFormData((prev) => ({
+        ...prev,
+        ...savedSnapshot,
+      }));
+      setSaveState((prev) => ({
+        ...prev,
+        status: "error",
+        field: "",
+        message: "Failed to save all changes. Please try again.",
+      }));
+    } finally {
+      setIsSaving(false);
+    }
+  }, [getDirtyPayload, hero?.heroId, savedSnapshot, updateHero]);
+
+  const handleDiscardChanges = useCallback(() => {
+    setFormData(savedSnapshot);
+    setSaveState((prev) => ({
+      ...prev,
+      status: "idle",
+      field: "",
+      message: "Unsaved edits were discarded.",
+    }));
+  }, [savedSnapshot]);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        if (!isSaving && isDirty) {
+          handleSaveAll();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleSaveAll, isDirty, isSaving]);
 
   if (loading) {
     return (
@@ -82,6 +235,100 @@ export function AdminHeroLanding() {
         <p className="text-sm mt-1" style={{ color: "var(--muted-foreground)" }}>
           Edit your landing page hero content
         </p>
+      </div>
+
+      <div
+        className="flex items-center justify-between gap-3 text-sm rounded-lg p-3"
+        style={{
+          background:
+            saveState.status === "saving"
+              ? "#eff6ff"
+              : saveState.status === "saved"
+              ? "#ecfdf5"
+              : saveState.status === "error"
+              ? "#fef2f2"
+              : "var(--accent)",
+          color:
+            saveState.status === "saving"
+              ? "#1d4ed8"
+              : saveState.status === "saved"
+              ? "#166534"
+              : saveState.status === "error"
+              ? "#b91c1c"
+              : "var(--foreground)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        {saveState.status === "saving" && (
+          <Loader2 size={16} className="animate-spin" />
+        )}
+        {saveState.status === "saved" && <CheckCircle2 size={16} />}
+        {saveState.status === "error" && <AlertCircle size={16} />}
+        {saveState.status === "idle" && <Info size={16} />}
+        <div className="flex items-center justify-between gap-3 w-full">
+          <div className="flex flex-col">
+            <span>{saveState.message}</span>
+            {saveState.lastSavedAt && (
+              <span style={{ fontSize: "12px", opacity: 0.85 }}>
+                Last saved at {new Date(saveState.lastSavedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {isDirty ? (
+              <>
+                <button
+                  type="button"
+                  onClick={handleDiscardChanges}
+                  disabled={isSaving}
+                  title="Discard all unsaved edits"
+                  className="h-9 px-3 rounded-lg border text-sm font-medium transition"
+                  style={{
+                    borderColor: "var(--border, #cbd5e1)",
+                    background: "var(--background, #ffffff)",
+                    color: "var(--foreground, #0f172a)",
+                    opacity: isSaving ? 0.55 : 1,
+                    cursor: isSaving ? "not-allowed" : "pointer",
+                  }}
+                >
+                  Discard Unsaved
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAll}
+                  disabled={isSaving}
+                  title="Save all unsaved edits"
+                  className="h-9 px-3 rounded-lg text-sm font-semibold transition"
+                  style={{
+                    background: "var(--primary, #0f172a)",
+                    color: "var(--primary-foreground, #ffffff)",
+                    border: "1px solid var(--primary, #0f172a)",
+                    boxShadow: "0 1px 2px rgba(15, 23, 42, 0.14)",
+                    opacity: isSaving ? 0.55 : 1,
+                    cursor: isSaving ? "not-allowed" : "pointer",
+                  }}
+                >
+                  {isSaving
+                    ? "Saving..."
+                    : `Save ${dirtyCount} Unsaved`}
+                </button>
+              </>
+            ) : (
+              <div
+                className="h-9 px-3 rounded-lg border flex items-center gap-2 text-sm font-medium"
+                style={{
+                  borderColor: "var(--border, #cbd5e1)",
+                  background: "var(--background, #ffffff)",
+                  color: "var(--muted-foreground, #64748b)",
+                }}
+              >
+                <CheckCircle2 size={14} />
+                All changes saved
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Stats Section */}
@@ -349,13 +596,6 @@ export function AdminHeroLanding() {
         </div>
       </div>
 
-      {/* Save Status */}
-      {isSaving && (
-        <div className="flex items-center gap-2 text-sm rounded-lg p-3" style={{ background: "var(--accent)", color: "var(--foreground)" }}>
-          <div className="animate-spin h-4 w-4 border-2" style={{ borderColor: "var(--muted-foreground)", borderTopColor: "var(--foreground)", borderRadius: "50%" }}></div>
-          Saving changes...
-        </div>
-      )}
       </div>
     </div>
   );
