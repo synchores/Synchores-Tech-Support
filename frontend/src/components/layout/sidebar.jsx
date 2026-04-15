@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Ticket, ShoppingCart, Users, UserCircle,
-  BarChart2, Settings, ChevronLeft, ChevronRight, Zap,
+  BarChart2, Settings, ChevronLeft, ChevronRight, ChevronDown, Zap,
   Bell, LogOut, HelpCircle
 } from "lucide-react";
 import { useAuth } from "../../context/authContext.jsx";
@@ -14,7 +14,17 @@ import { useAuth } from "../../context/authContext.jsx";
     { to: "/agents", label: "Agents", icon: Users },
     { to: "/customers", label: "Customers", icon: UserCircle },
     { to: "/reports", label: "Reports", icon: BarChart2 },
-    { to: "/admin/landing-page/hero", label: "Landing Page", icon: Settings },
+    {
+      key: "landing-page",
+      label: "Landing Page",
+      icon: Settings,
+      children: [
+        { to: "/admin/landing-page/hero", label: "Hero" },
+        { to: "/admin/landing-page/services", label: "Services" },
+        { to: "/admin/landing-page/gallery", label: "Gallery" },
+        { to: "/admin/landing-page/settings", label: "Settings" },
+      ],
+    },
   ];
 
   const bottomItems = [
@@ -30,8 +40,21 @@ import { useAuth } from "../../context/authContext.jsx";
 
 export function Sidebar({ title, subtitle, onMobileMenuToggle }) {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [expandedGroups, setExpandedGroups] = useState(() => ({
+    "landing-page": location.pathname.startsWith("/admin/landing-page/"),
+  }));
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin/landing-page/")) {
+      setExpandedGroups((prev) => ({
+        ...prev,
+        "landing-page": true,
+      }));
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -39,6 +62,12 @@ export function Sidebar({ title, subtitle, onMobileMenuToggle }) {
   };
 
   const onToggle = () => setCollapsed((prev) => !prev);
+  const toggleGroup = (key) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
   return (
     <aside
       className="flex flex-col h-screen sticky top-0 transition-all duration-300 z-30"
@@ -69,64 +98,157 @@ export function Sidebar({ title, subtitle, onMobileMenuToggle }) {
             Main Menu
           </p>
         )}
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all relative group ${
-                isActive
-                  ? "text-white"
-                  : "text-slate-400 hover:text-slate-200"
-              }`
-            }
-            style={({ isActive }) => ({
-              background: isActive
-                ? "linear-gradient(90deg, rgba(59,130,246,0.2), rgba(99,102,241,0.1))"
-                : "transparent",
-              borderLeft: isActive ? "2px solid #3b82f6" : "2px solid transparent",
-            })}
-          >
-            {({ isActive }) => (
-              <>
-                <item.icon
-                  size={18}
-                  strokeWidth={isActive ? 2.5 : 2}
-                  style={{ flexShrink: 0, color: isActive ? "#60a5fa" : undefined }}
-                />
-                {!collapsed && (
-                  <span style={{ fontSize: "14px", fontWeight: isActive ? 600 : 400, whiteSpace: "nowrap" }}>
-                    {item.label}
-                  </span>
-                )}
-                {!collapsed && item.badge && (
-                  <span
-                    className="ml-auto flex items-center justify-center rounded-full"
-                    style={{ background: "#ef4444", color: "white", fontSize: "10px", fontWeight: 700, minWidth: "18px", height: "18px", padding: "0 4px" }}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-                {collapsed && item.badge && (
-                  <span
-                    className="absolute top-1.5 right-1.5 rounded-full"
-                    style={{ background: "#ef4444", width: "7px", height: "7px" }}
+        {navItems.map((item) => {
+          if (item.children) {
+            const isExpanded = !!expandedGroups[item.key];
+            const isGroupActive = item.children.some((child) =>
+              location.pathname === child.to || location.pathname.startsWith(`${child.to}/`)
+            );
+
+            return (
+              <div key={item.key} className="relative group">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(item.key)}
+                  className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all relative ${
+                    isGroupActive
+                      ? "text-white"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                  style={{
+                    background: isGroupActive
+                      ? "linear-gradient(90deg, rgba(59,130,246,0.2), rgba(99,102,241,0.1))"
+                      : "transparent",
+                    borderLeft: isGroupActive ? "2px solid #3b82f6" : "2px solid transparent",
+                  }}
+                >
+                  <item.icon
+                    size={18}
+                    strokeWidth={isGroupActive ? 2.5 : 2}
+                    style={{ flexShrink: 0, color: isGroupActive ? "#60a5fa" : undefined }}
                   />
-                )}
-                {/* Tooltip on collapsed */}
-                {collapsed && (
-                  <span
-                    className="absolute left-full ml-3 px-2 py-1 rounded text-white text-xs whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
-                    style={{ background: "#1e2a3b" }}
+                  {!collapsed && (
+                    <span style={{ fontSize: "14px", fontWeight: isGroupActive ? 600 : 400, whiteSpace: "nowrap" }}>
+                      {item.label}
+                    </span>
+                  )}
+                  {!collapsed && (
+                    <ChevronDown
+                      size={15}
+                      style={{
+                        marginLeft: "auto",
+                        color: isGroupActive ? "#93c5fd" : "#64748b",
+                        transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 220ms ease",
+                      }}
+                    />
+                  )}
+                  {collapsed && (
+                    <span
+                      className="absolute left-full ml-3 px-2 py-1 rounded text-white text-xs whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                      style={{ background: "#1e2a3b" }}
+                    >
+                      {item.label}
+                    </span>
+                  )}
+                </button>
+
+                {!collapsed && (
+                  <div
+                    style={{
+                      maxHeight: isExpanded ? `${item.children.length * 42}px` : "0px",
+                      opacity: isExpanded ? 1 : 0,
+                      transform: isExpanded ? "translateY(0)" : "translateY(-6px)",
+                      overflow: "hidden",
+                      transition: "max-height 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease, transform 220ms ease",
+                    }}
                   >
-                    {item.label}
-                  </span>
+                    <div className="pt-1 pl-6 pr-1 flex flex-col gap-1">
+                      {item.children.map((child) => (
+                        <NavLink
+                          key={child.to}
+                          to={child.to}
+                          className={({ isActive }) =>
+                            `rounded-md px-3 py-2 transition-all text-sm relative ${
+                              isActive
+                                ? "text-slate-100"
+                                : "text-slate-400 hover:text-slate-200"
+                            }`
+                          }
+                          style={({ isActive }) => ({
+                            background: isActive ? "rgba(59,130,246,0.16)" : "transparent",
+                            borderLeft: isActive ? "2px solid #3b82f6" : "2px solid transparent",
+                          })}
+                        >
+                          {child.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </>
-            )}
-          </NavLink>
-        ))}
+              </div>
+            );
+          }
+
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all relative group ${
+                  isActive
+                    ? "text-white"
+                    : "text-slate-400 hover:text-slate-200"
+                }`
+              }
+              style={({ isActive }) => ({
+                background: isActive
+                  ? "linear-gradient(90deg, rgba(59,130,246,0.2), rgba(99,102,241,0.1))"
+                  : "transparent",
+                borderLeft: isActive ? "2px solid #3b82f6" : "2px solid transparent",
+              })}
+            >
+              {({ isActive }) => (
+                <>
+                  <item.icon
+                    size={18}
+                    strokeWidth={isActive ? 2.5 : 2}
+                    style={{ flexShrink: 0, color: isActive ? "#60a5fa" : undefined }}
+                  />
+                  {!collapsed && (
+                    <span style={{ fontSize: "14px", fontWeight: isActive ? 600 : 400, whiteSpace: "nowrap" }}>
+                      {item.label}
+                    </span>
+                  )}
+                  {!collapsed && item.badge && (
+                    <span
+                      className="ml-auto flex items-center justify-center rounded-full"
+                      style={{ background: "#ef4444", color: "white", fontSize: "10px", fontWeight: 700, minWidth: "18px", height: "18px", padding: "0 4px" }}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                  {collapsed && item.badge && (
+                    <span
+                      className="absolute top-1.5 right-1.5 rounded-full"
+                      style={{ background: "#ef4444", width: "7px", height: "7px" }}
+                    />
+                  )}
+                  {/* Tooltip on collapsed */}
+                  {collapsed && (
+                    <span
+                      className="absolute left-full ml-3 px-2 py-1 rounded text-white text-xs whitespace-nowrap pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-50"
+                      style={{ background: "#1e2a3b" }}
+                    >
+                      {item.label}
+                    </span>
+                  )}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
 
         {!collapsed && (
           <p style={{ color: "#475569", fontSize: "10px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", paddingLeft: "12px", marginTop: "16px", marginBottom: "6px" }}>
