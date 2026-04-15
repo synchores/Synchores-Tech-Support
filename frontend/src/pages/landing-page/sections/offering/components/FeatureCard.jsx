@@ -1,33 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import ScrollStack, { ScrollStackItem } from './ScrollStack';
+import { offerings } from '../data/offeringsData';
 
 export function FeatureCard() {
-  const features = [
-    {
-      title: "IT INFRASTRUCTURE",
-      subtitle: "Reliable Systems for Modern Workplaces",
-      description: "From cabling to servers and office systems— designed to keep your business connected, secure, and ready for growth.",
-      bullets: ["RELIABLE SYSTEMS FOR MODERN WORKPLACES", "END-TO-END CONNECTIVITY", "COMPREHENSIVE OFFICE SOLUTIONS"],
-      image: "/assets/infa2.png"
-    },
-    {
-      title: "SOFTWARE AND WEB DEVELOPMENT",
-      subtitle: "End-to-End Connectivity",
-      description: "Custom software and web solutions that streamline workflows, deliver seamless user experiences, and drive digital growth for SMEs",
-      bullets: ["TAILORED APPLICATIONS", "SEAMLESS USER EXPERIENCE", "EMPOWERED WITH DIGITAL GROWTH"],
-      image: "/assets/webdev1.png"
-    },
-    {
-      title: "TECH CONSULTANCY",
-      subtitle: "Comprehensive Office Solutions",
-      description: "We deliver IT consultancy focused on smart adoption, trusted guidance, and practical results that move your business forward.",
-      bullets: ["STRATEGIC SOLUTION DESIGN", "DEDICATED ADVISORY SUPPORT", "VALUE-DRIVEN IMPLEMENTATION"],
-      image: "/assets/tech-consultancy-2.png"
-    },
-  ];
+  const navigate = useNavigate();
+  const features = offerings;
 
   const renderBulletIcon = () => (
     <svg
-      className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 flex-shrink-0"
+      className="w-4 h-4 sm:w-5 sm:h-5 text-[#4e7398] flex-shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -51,7 +32,7 @@ export function FeatureCard() {
   };
 
   return (
-    <div className="w-full bg-gradient-to-br from-slate-50 to-slate-100 py-2 sm:py-4 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
+    <div className="w-full bg-gradient-to-br from-[#040a12] via-[#07111f] to-[#040b15] py-2 sm:py-4 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
       <div className="w-full max-w-[1400px] mx-auto rounded-lg sm:rounded-2xl">
         {/* ScrollStack Features */}
         <ScrollStack
@@ -67,24 +48,36 @@ export function FeatureCard() {
           staggerCards={true}
         >
           {features.map((feature, idx) => (
-            <ScrollStackItem key={idx} itemClassName="bg-[#002244] hover:shadow-2xl transition-shadow duration-300 border">
+            <ScrollStackItem
+              key={idx}
+              itemClassName="bg-gradient-to-br from-[#0a213d] to-[#07192e] hover:shadow-[0_24px_50px_rgba(12,51,94,0.28)] transition-shadow duration-300 border border-[#1e3f67] cursor-pointer"
+            >
               <div className="flex flex-col md:flex-row h-full w-full gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12">
                 {/* Column 2: Image - Top on mobile, Right on desktop */}
-                <div className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last">
+                <div
+                  className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last"
+                  onClick={() => navigate(`/offering/${feature.id}`)}
+                >
                   {renderFeatureIcon(feature.image)}
                 </div>
 
                 {/* Column 1: Text Content - Bottom on mobile, Left on desktop */}
-                <div className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8">
-                  <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-white tracking-wide break-words">
+                <div
+                  className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
+                  onClick={() => navigate(`/offering/${feature.id}`)}
+                >
+                  <span className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase text-[#8fb0d4] border border-[#2a4a71] bg-[rgba(12,51,94,0.22)]">
+                    Service {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                  </span>
+                  <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-[#eef5ff] tracking-wide break-words uppercase">
                     {feature.title}
                   </h2>
-                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-white leading-relaxed break-words">
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-[#9eb4cc] leading-relaxed break-words">
                     {feature.description}
                   </p>
                   
                   {/* Separator Line */}
-                  <div className="my-1 sm:my-3 md:my-4 h-px bg-white opacity-40"></div>
+                  <div className="my-1 sm:my-3 md:my-4 h-px bg-gradient-to-r from-[#0c335e] to-transparent opacity-90"></div>
                   
                   {/* Bullets List */}
                   {feature.bullets && (
@@ -97,8 +90,8 @@ export function FeatureCard() {
                         return (
                           <li key={bulletIdx} className="flex items-start gap-1.5 sm:gap-2 md:gap-3">
                             {renderBulletIcon()}
-                            <span className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-white break-words pt-0.5">
-                              <span className="font-bold text-blue-300">{firstWord}</span> {restWords}
+                            <span className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-[#c5d4e6] break-words pt-0.5">
+                              <span className="font-bold text-[#7ea0c4]">{firstWord}</span> {restWords}
                             </span>
                           </li>
                         );

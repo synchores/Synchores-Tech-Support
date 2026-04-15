@@ -1,12 +1,18 @@
+import { useNavigate } from 'react-router-dom';
 import { NavigationArrow } from "./NavigationArrow";
 import { DotIndicators } from "./DotIndicators";
 import { TitleOverlay } from "./TitleOverlay";
 
 export function VideoPlayer({ current, onPrev, onNext, activeIndex, offerings }) {
+  const navigate = useNavigate();
+
   return (
     <div className="relative w-full bg-black overflow-hidden">
       {current.video ? (
-        <div className="relative w-full h-64 sm:h-96 md:h-[500px] lg:h-[600px]">
+        <div
+          className="relative w-full h-64 sm:h-96 md:h-[500px] lg:h-[600px] cursor-pointer"
+          onClick={() => navigate(`/offering/${current.id}`)}
+        >
           <div
             key={current.id}
             className="w-full h-full transition-opacity duration-500 ease-in-out"
@@ -49,9 +55,15 @@ export function VideoPlayer({ current, onPrev, onNext, activeIndex, offerings })
             }}
           />
 
-          <NavigationArrow direction="left" onClick={onPrev} />
-          <NavigationArrow direction="right" onClick={onNext} />
-          <DotIndicators count={offerings.length} activeIndex={activeIndex} onDotClick={(i) => onNext(i)} />
+          <div onClick={(e) => e.stopPropagation()}>
+            <NavigationArrow direction="left" onClick={onPrev} />
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <NavigationArrow direction="right" onClick={onNext} />
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <DotIndicators count={offerings.length} activeIndex={activeIndex} onDotClick={(i) => onNext(i)} />
+          </div>
         </div>
       ) : (
         <div className="w-full h-64 sm:h-96 md:h-[500px] lg:h-[600px] bg-gray-800 flex items-center justify-center text-gray-400">
