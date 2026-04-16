@@ -13,6 +13,36 @@ export function Navbar({ activeSection, onNavigate }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Track which section is in view
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "-50% 0px -50% 0px",
+      threshold: 0
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          onNavigate(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all sections
+    const navLinks = ["home", "offering", "about", "contact", "Tech Support"];
+    navLinks.forEach((linkId) => {
+      const element = document.getElementById(linkId);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [onNavigate]);
+
   const navLinks = [
     { id: "home", label: "HOME" },
     { id: "offering", label: "OFFERINGS" },

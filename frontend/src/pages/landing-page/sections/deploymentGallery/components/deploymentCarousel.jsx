@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { deployments } from "../deploymentsData";
 import { DeploymentHeader } from "./deploymentHeader";
@@ -8,6 +9,7 @@ import { DeploymentDetails } from "./deploymentDetails";
 export function DeploymentCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const navigate = useNavigate();
 
   const goTo = (index, dir) => {
     setDirection(dir);
@@ -88,6 +90,7 @@ export function DeploymentCarousel() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/deployments')}
           style={{
             padding: "clamp(10px, 2vw, 12px) clamp(24px, 4vw, 32px)",
             backgroundColor: "#4da6ff",
