@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react";
+import { GoogleMap, Marker, useLoadScript, OverlayView } from "@react-google-maps/api";
 
 const contactBg = "https://images.unsplash.com/photo-1758611974287-8ca7147860a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMFVJJTIwZGVzaWduJTIwc2NyZWVuJTIwbW9kZXJufGVufDF8fHx8MTc3NjEzOTgwNXww&ixlib=rb-4.1.0&q=80&w=1080";
 
@@ -32,6 +33,24 @@ export function ContactUs() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState(null);
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
+  });
+
+  const mapCenter = { lat: 14.365098137849008, lng: 120.93677433750133 };
+  const mapContainerStyle = {
+    width: "100%",
+    height: "260px",
+    border: "1px solid #1a1a1a",
+    borderRadius: "2px",
+    overflow: "hidden",
+  };
+  const mapOptions = {
+    disableDefaultUI: true,
+    zoomControl: true,
+    gestureHandling: "cooperative",
+    clickableIcons: false,
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -363,6 +382,63 @@ export function ContactUs() {
                     </>
                   )}
                 </button>
+
+                <div style={{ marginTop: "24px" }}>
+                  {loadError ? (
+                    <div style={{
+                      padding: "16px",
+                      border: "1px solid #1a1a1a",
+                      borderRadius: "2px",
+                      color: "#757575",
+                      fontFamily: "'Inter', Arial, sans-serif",
+                      fontSize: "14px",
+                    }}>
+                      Map failed to load. Please check your Google Maps API key.
+                    </div>
+                  ) : (
+                    isLoaded && (
+                      <GoogleMap
+                        mapContainerStyle={mapContainerStyle}
+                        center={mapCenter}
+                        zoom={18}
+                        options={mapOptions}
+                      >
+                        <Marker
+                          position={mapCenter}
+                          title="Synchores Information Technology Solutions"
+                        />
+                        <OverlayView
+                          position={mapCenter}
+                          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                        >
+                          <div
+                            style={{
+                              transform: "translate(14px, -26px)",
+                              color: "#d32f2f",
+                              fontFamily: "'Inter', Arial, sans-serif",
+                              fontSize: "14px",
+                              fontWeight: 700,
+                              background: "transparent",
+                              whiteSpace: "nowrap",
+                              textShadow: "0 0 1px rgba(255,255,255,0.95)",
+                              pointerEvents: "none",
+                            }}
+                          >
+                            Synchores Information Technology Solutions
+                          </div>
+                        </OverlayView>
+                      </GoogleMap>
+                    )
+                  )}
+                  {!loadError && !isLoaded && (
+                    <div style={{
+                      height: mapContainerStyle.height,
+                      border: mapContainerStyle.border,
+                      borderRadius: mapContainerStyle.borderRadius,
+                      background: "#0a0a0a",
+                    }} />
+                  )}
+                </div>
               </form>
             )}
           </motion.div>
