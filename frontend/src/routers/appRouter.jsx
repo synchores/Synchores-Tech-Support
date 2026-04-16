@@ -29,6 +29,7 @@ import ClientServiceRequestForm from "../pages/client-pages/clientServiceRequest
 import { Shop } from "../pages/client-pages/clientShop";
 import ClientPreOrder from "../pages/client-pages/clientPreOrder";
 import OfferingDetail from "../pages/landing-page/sections/offering/offeringDetail";
+import DeploymentsPage from "../pages/landing-page/deploymentsPage";
 
 
 const getRoleBasedHomePath = (user) => {
@@ -68,6 +69,11 @@ function AppRouter() {
           <Route
             path="/offering/:id"
             element={<OfferingDetail />}
+          />
+
+          <Route
+            path="/deployments"
+            element={<DeploymentsPage />}
           />
 
           <Route
