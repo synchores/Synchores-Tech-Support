@@ -6,6 +6,7 @@ import { THEME } from "../../../../constant/theme.js"; // Adjust path to your co
 export function Navbar({ activeSection, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isManualScrolling, setIsManualScrolling] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -22,11 +23,14 @@ export function Navbar({ activeSection, onNavigate }) {
     };
 
     const observerCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          onNavigate(entry.target.id);
-        }
-      });
+      // Only update if not manually scrolling
+      if (!isManualScrolling) {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            onNavigate(entry.target.id);
+          }
+        });
+      }
     };
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
@@ -41,7 +45,7 @@ export function Navbar({ activeSection, onNavigate }) {
     });
 
     return () => observer.disconnect();
-  }, [onNavigate]);
+  }, [onNavigate, isManualScrolling]);
 
   const navLinks = [
     { id: "home", label: "HOME" },
@@ -52,13 +56,19 @@ export function Navbar({ activeSection, onNavigate }) {
   ];
 
   const handleNav = (id) => {
+    setIsManualScrolling(true);
     onNavigate(id);
     setMobileOpen(false);
     
-    // Scroll to the section
+    // Scroll to the section with offset for fixed navbar
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      const navHeight = 64; // h-16 = 64px
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.scrollTo({ top: elementPosition, behavior: "smooth" });
+      
+      // Re-enable observer after scroll completes
+      setTimeout(() => setIsManualScrolling(false), 1000);
     }
   };
 
