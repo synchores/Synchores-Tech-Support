@@ -15,7 +15,7 @@ export function Navbar({ activeSection, onNavigate }) {
 
   const navLinks = [
     { id: "home", label: "HOME" },
-    { id: "offerings", label: "OFFERINGS" },
+    { id: "offering", label: "OFFERINGS" },
     { id: "about", label: "ABOUT US" },
     { id: "contact", label: "CONTACT US" },
     { id: "Tech Support", label: "TECH SUPPORT" },
@@ -24,6 +24,12 @@ export function Navbar({ activeSection, onNavigate }) {
   const handleNav = (id) => {
     onNavigate(id);
     setMobileOpen(false);
+    
+    // Scroll to the section
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   return (

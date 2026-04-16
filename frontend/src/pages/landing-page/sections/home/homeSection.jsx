@@ -1,4 +1,4 @@
-import TrueFocus from "../../../components/layout/landing-contents/ui/trueFocus";
+import TrueFocus from "../../../../components/layout/landing-contents/ui/trueFocus";
 
 export default function Home() {
   return (
@@ -75,4 +75,3 @@ export default function Home() {
     </section>
   );
 }
-
