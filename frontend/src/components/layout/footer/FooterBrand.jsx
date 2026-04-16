@@ -35,28 +35,24 @@ export function FooterBrand() {
             href="#"
             aria-label={label}
             style={{
-              width: 'clamp(36px, 8vw, 40px)',
-              height: 'clamp(36px, 8vw, 40px)',
+              width: 'clamp(44px, 10vw, 50px)',
+              height: 'clamp(44px, 10vw, 50px)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '1px solid #2a2a2a',
-              borderRadius: '2px',
               color: '#ffffff',
-              transition: 'color 0.2s, border-color 0.2s',
+              transition: 'color 0.2s',
               textDecoration: 'none',
               flexShrink: 0,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = '#1e7fd4';
-              e.currentTarget.style.borderColor = '#1e7fd4';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.borderColor = '#2a2a2a';
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path d={path} />
             </svg>
           </a>
