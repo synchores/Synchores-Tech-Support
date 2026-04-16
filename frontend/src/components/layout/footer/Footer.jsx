@@ -261,44 +261,120 @@ export function Footer() {
               CONTACT US
             </h3>
             <div
-              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+              style={{ display: "flex", flexDirection: "column", gap: "clamp(12px, 2vw, 16px)" }}
             >
-              <p
-                style={{
-                  fontFamily: "'Inter', Arial, sans-serif",
-                  fontSize: "clamp(13px, 2vw, 15px)",
-                  fontWeight: 400,
-                  color: "#ffffff",
-                  margin: 0,
-                  lineHeight: 1.6,
-                }}
-              >
-                123 Tech Avenue, Innovation City, 98765
-              </p>
-              <p
-                style={{
-                  fontFamily: "'Inter', Arial, sans-serif",
-                  fontSize: "clamp(13px, 2vw, 15px)",
-                  fontWeight: 400,
-                  color: "#ffffff",
-                  margin: 0,
-                  lineHeight: 1.6,
-                }}
-              >
-                Email: info@synchores.com
-              </p>
-              <p
-                style={{
-                  fontFamily: "'Inter', Arial, sans-serif",
-                  fontSize: "clamp(13px, 2vw, 15px)",
-                  fontWeight: 400,
-                  color: "#ffffff",
-                  margin: 0,
-                  lineHeight: 1.6,
-                }}
-              >
-                Phone: +1 (555) 123-4567
-              </p>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'Rajdhani', sans-serif",
+                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontWeight: 600,
+                    color: "#ffffff",
+                    margin: "0 0 6px 0",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    opacity: 0.9,
+                  }}
+                >
+                  PHONE
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', Arial, sans-serif",
+                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontWeight: 400,
+                    color: "#ffffff",
+                    margin: 0,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  +63 977 322 3796
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'Rajdhani', sans-serif",
+                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontWeight: 600,
+                    color: "#ffffff",
+                    margin: "0 0 6px 0",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    opacity: 0.9,
+                  }}
+                >
+                  LANDLINE
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', Arial, sans-serif",
+                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontWeight: 400,
+                    color: "#ffffff",
+                    margin: 0,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  (046) 884 6572
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'Rajdhani', sans-serif",
+                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontWeight: 600,
+                    color: "#ffffff",
+                    margin: "0 0 6px 0",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    opacity: 0.9,
+                  }}
+                >
+                  EMAIL
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', Arial, sans-serif",
+                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontWeight: 400,
+                    color: "#ffffff",
+                    margin: 0,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  info@synchores.com
+                </p>
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontFamily: "'Rajdhani', sans-serif",
+                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontWeight: 600,
+                    color: "#ffffff",
+                    margin: "0 0 6px 0",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    opacity: 0.9,
+                  }}
+                >
+                  ADDRESS
+                </p>
+                <p
+                  style={{
+                    fontFamily: "'Inter', Arial, sans-serif",
+                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontWeight: 400,
+                    color: "#ffffff",
+                    margin: 0,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  KM 27, Emilio Aguinaldo Highway, Anabu 2F, Imus City, Cavite 4103 PH
+                </p>
+              </div>
             </div>
           </div>
         </div>
