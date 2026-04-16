@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useHeroSection } from "../../../hooks/useLandingPageData";
-import TrueFocus from "../../../components/layout/landing-contents/ui/trueFocus";
+import TrueFocus from "../../../../components/layout/landing-contents/ui/trueFocus";
 
 const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";
 const FALLBACK_BACKGROUND = "/videos/hero_bg_loop_v1.webm";
@@ -165,4 +165,3 @@ export default function Home() {
     </section>
   );
 }
-
