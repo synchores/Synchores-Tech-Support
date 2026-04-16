@@ -22,6 +22,15 @@ export const GET_ALL_LANDING_SERVICES_QUERY = gql`
       description
       icon
       image
+      subtitle
+      longDescription
+      points
+      stats
+      features
+      process
+      ctaTitle
+      ctaDescription
+      ctaButtonLabel
       category
       status
       order
@@ -39,6 +48,15 @@ export const GET_LANDING_SERVICE_CARD_QUERY = gql`
       description
       icon
       image
+      subtitle
+      longDescription
+      points
+      stats
+      features
+      process
+      ctaTitle
+      ctaDescription
+      ctaButtonLabel
       category
       status
       order

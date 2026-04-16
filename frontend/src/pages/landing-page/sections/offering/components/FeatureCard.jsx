@@ -2,9 +2,35 @@ import { useNavigate } from 'react-router-dom';
 import ScrollStack, { ScrollStackItem } from './ScrollStack';
 import { offerings } from '../data/offeringsData';
 
-export function FeatureCard() {
+function toMediaUrl(path = '') {
+  if (!path) return '';
+  if (/^(https?:|data:|blob:)/i.test(path)) return path;
+  if (path.startsWith('/uploads/')) return `http://localhost:3000${path}`;
+  if (path.startsWith('uploads/')) return `http://localhost:3000/${path}`;
+  return path;
+}
+
+function splitLines(value = '') {
+  return String(value)
+    .split(/\r?\n|,/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+export function FeatureCard({ offerings: dynamicOfferings }) {
   const navigate = useNavigate();
-  const features = offerings;
+  const features = dynamicOfferings?.length
+    ? dynamicOfferings.map((item, index) => ({
+        id: item.id || `service-${index + 1}`,
+        title: item.title || 'UNTITLED SERVICE',
+        description:
+          item.description || 'Service details will be available soon.',
+        image: toMediaUrl(item.image) || '/assets/placeholder-service.jpg',
+        bullets: splitLines(item.points).length
+          ? splitLines(item.points)
+          : item.bullets || [item.subtitle || item.description || 'Core business service'],
+      }))
+    : offerings;
 
   const renderBulletIcon = () => (
     <svg
@@ -27,6 +53,9 @@ export function FeatureCard() {
         src={imagePath} 
         alt="Feature illustration"
         className="w-full h-full object-cover rounded-xl"
+        onError={(e) => {
+          e.currentTarget.src = '/assets/placeholder-service.jpg';
+        }}
       />
     );
   };

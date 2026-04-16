@@ -25,6 +25,42 @@ export class LandingServiceCardTbl {
   @Field({ nullable: true })
   declare image?: string;
 
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare subtitle?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare longDescription?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare points?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare stats?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare features?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare process?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare ctaTitle?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  declare ctaDescription?: string;
+
+  @Column({ type: 'varchar', length: 160, nullable: true })
+  @Field({ nullable: true })
+  declare ctaButtonLabel?: string;
+
   @Column({ type: 'varchar', length: 120, nullable: true })
   @Field({ nullable: true })
   declare category?: string;

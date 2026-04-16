@@ -1,9 +1,73 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { Field, TextInput, TextArea } from "../../admin-ui/field";
 import { CmsDrawer } from "../../admin-ui/CmsDrawer";
 
 const FALLBACK_IMAGE = "https://placehold.co/600x300/e2e8f0/64748b?text=Service+Image";
+const THEME_PRIMARY = "#179cf9";
+
+function splitLines(value = "") {
+  return String(value)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function parseLabelValueLines(value = "") {
+  return splitLines(value)
+    .map((line) => {
+      const [label, ...rest] = line.split("|");
+      const normalizedLabel = (label || "").trim();
+      const normalizedValue = rest.join("|").trim();
+
+      if (!normalizedLabel && !normalizedValue) return null;
+      return {
+        label: normalizedLabel || "Metric",
+        value: normalizedValue || normalizedLabel,
+      };
+    })
+    .filter(Boolean);
+}
+
+function parseFeatureLines(value = "") {
+  return splitLines(value)
+    .map((line) => {
+      const [title, ...rest] = line.split("|");
+      const normalizedTitle = (title || "").trim();
+      const description = rest.join("|").trim();
+
+      if (!normalizedTitle && !description) return null;
+      return {
+        title: normalizedTitle || "Feature",
+        description: description || normalizedTitle,
+      };
+    })
+    .filter(Boolean);
+}
+
+function parseProcessLines(value = "") {
+  return splitLines(value)
+    .map((line, index) => {
+      const [label, ...rest] = line.split("|");
+      const normalizedLabel = (label || "").trim();
+      const description = rest.join("|").trim();
+
+      if (!normalizedLabel && !description) return null;
+      return {
+        step: index + 1 < 10 ? `0${index + 1}` : String(index + 1),
+        label: normalizedLabel || "Step",
+        description: description || normalizedLabel,
+      };
+    })
+    .filter(Boolean);
+}
+
+function resolveImageSource(path = "") {
+  if (!path) return FALLBACK_IMAGE;
+  if (/^(https?:|data:|blob:)/i.test(path)) return path;
+  if (path.startsWith("/")) return `http://localhost:3000${path}`;
+  return `http://localhost:3000/${path}`;
+}
 
 function Section({ title, description, children }) {
   return (
@@ -45,18 +109,57 @@ export function ServiceDetailModal({
 
   const [formData, setFormData] = useState({
     title: "",
+    subtitle: "",
     description: "",
+    longDescription: "",
+    points: "",
+    stats: "",
+    features: "",
+    process: "",
+    ctaTitle: "",
+    ctaDescription: "",
+    ctaButtonLabel: "",
     icon: "package",
     image: "",
     category: "General",
     status: "draft",
   });
 
+  const previewImage = useMemo(
+    () => resolveImageSource(formData.image),
+    [formData.image],
+  );
+  const previewPoints = useMemo(
+    () => splitLines(formData.points),
+    [formData.points],
+  );
+  const previewStats = useMemo(
+    () => parseLabelValueLines(formData.stats),
+    [formData.stats],
+  );
+  const previewFeatures = useMemo(
+    () => parseFeatureLines(formData.features),
+    [formData.features],
+  );
+  const previewProcess = useMemo(
+    () => parseProcessLines(formData.process),
+    [formData.process],
+  );
+
   useEffect(() => {
     if (service) {
       setFormData({
         title: service.title || "",
+        subtitle: service.subtitle || "",
         description: service.description || "",
+        longDescription: service.longDescription || "",
+        points: service.points || "",
+        stats: service.stats || "",
+        features: service.features || "",
+        process: service.process || "",
+        ctaTitle: service.ctaTitle || "",
+        ctaDescription: service.ctaDescription || "",
+        ctaButtonLabel: service.ctaButtonLabel || "",
         icon: service.icon || "package",
         image: service.image || "",
         category: service.category || "General",
@@ -67,7 +170,16 @@ export function ServiceDetailModal({
 
     setFormData({
       title: "",
+      subtitle: "",
       description: "",
+      longDescription: "",
+      points: "",
+      stats: "",
+      features: "",
+      process: "",
+      ctaTitle: "",
+      ctaDescription: "",
+      ctaButtonLabel: "",
       icon: "package",
       image: "",
       category: "General",
@@ -168,6 +280,89 @@ export function ServiceDetailModal({
               onChange={(value) => setFormData({ ...formData, description: value })}
               placeholder="Service description"
               rows={4}
+            />
+          </Field>
+
+          <Field label="Subtitle">
+            <TextInput
+              value={formData.subtitle}
+              onChange={(value) => setFormData({ ...formData, subtitle: value })}
+              placeholder="Short subtitle shown under title"
+            />
+          </Field>
+
+          <Field label="Long Description">
+            <TextArea
+              value={formData.longDescription}
+              onChange={(value) => setFormData({ ...formData, longDescription: value })}
+              placeholder="Detailed overview paragraph"
+              rows={5}
+            />
+          </Field>
+
+          <Field label="Overview Points (one per line)">
+            <TextArea
+              value={formData.points}
+              onChange={(value) => setFormData({ ...formData, points: value })}
+              placeholder={"Technology strategy and roadmap planning\nProcess and platform advisory for SMEs\nVendor-neutral recommendations"}
+              rows={4}
+            />
+          </Field>
+        </Section>
+
+        <Section
+          title="Detail Blocks"
+          description="Configure sections used in Offering detail pages."
+        >
+          <Field label="Stats (Label|Value per line)">
+            <TextArea
+              value={formData.stats}
+              onChange={(value) => setFormData({ ...formData, stats: value })}
+              placeholder={"Strategy Clarity|92%\nExecution Accuracy|91%\nCost Optimization|+18%\nTimeline Adherence|88%"}
+              rows={5}
+            />
+          </Field>
+
+          <Field label="Features (Title|Description per line)">
+            <TextArea
+              value={formData.features}
+              onChange={(value) => setFormData({ ...formData, features: value })}
+              placeholder={"Digital Strategy Advisory|Practical strategy aligned with business KPIs.\nTechnology Assessment|Capability and gap analysis."}
+              rows={5}
+            />
+          </Field>
+
+          <Field label="Process (Label|Description per line)">
+            <TextArea
+              value={formData.process}
+              onChange={(value) => setFormData({ ...formData, process: value })}
+              placeholder={"Evaluate|Assess current state and priorities.\nPlan|Define roadmap and phases.\nGuide|Support execution checkpoints.\nMeasure|Track outcomes and optimize."}
+              rows={5}
+            />
+          </Field>
+
+          <Field label="CTA Title">
+            <TextInput
+              value={formData.ctaTitle}
+              onChange={(value) => setFormData({ ...formData, ctaTitle: value })}
+              placeholder="Ready to Get Started?"
+            />
+          </Field>
+
+          <Field label="CTA Description">
+            <TextArea
+              value={formData.ctaDescription}
+              onChange={(value) => setFormData({ ...formData, ctaDescription: value })}
+              placeholder="Describe why users should contact your team."
+              rows={3}
+            />
+          </Field>
+
+          <Field label="CTA Button Label">
+            <TextInput
+              value={formData.ctaButtonLabel}
+              onChange={(value) => setFormData({ ...formData, ctaButtonLabel: value })}
+              placeholder="Schedule Consultation"
             />
           </Field>
         </Section>
@@ -321,7 +516,7 @@ export function ServiceDetailModal({
 
         <div style={{ marginTop: "0.25rem" }}>
           <img
-            src={formData.image ? `http://localhost:3000${formData.image}` : FALLBACK_IMAGE}
+            src={previewImage}
             alt="Service preview"
             className="w-full h-40 rounded-lg object-cover border border-solid"
             style={{
@@ -334,6 +529,177 @@ export function ServiceDetailModal({
             }}
           />
         </div>
+        </Section>
+
+        <Section
+          title="Live Detail Preview"
+          description="This mirrors the front-end offering detail sections using your current form values."
+        >
+          <div
+            style={{
+              borderRadius: "0.75rem",
+              overflow: "hidden",
+              border: "1px solid rgba(148, 163, 184, 0.22)",
+              background: "#060c14",
+              color: "#ffffff",
+            }}
+          >
+            <div style={{ position: "relative", minHeight: "220px" }}>
+              <img
+                src={previewImage}
+                alt="Detail hero preview"
+                style={{ width: "100%", height: "220px", objectFit: "cover", display: "block" }}
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_IMAGE;
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.84) 100%)",
+                }}
+              />
+              <div style={{ position: "absolute", left: "16px", right: "16px", bottom: "16px" }}>
+                <p
+                  style={{
+                    fontSize: "10px",
+                    margin: "0 0 8px 0",
+                    color: THEME_PRIMARY,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    fontWeight: 700,
+                  }}
+                >
+                  Service Preview
+                </p>
+                <h3 style={{ margin: 0, fontSize: "28px", lineHeight: 1.1, textTransform: "uppercase" }}>
+                  {formData.title || "Service Title"}
+                </h3>
+                <p style={{ margin: "10px 0 0 0", color: THEME_PRIMARY, fontSize: "14px" }}>
+                  {formData.subtitle || "Subtitle"}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ padding: "18px", display: "grid", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                <div>
+                  <p style={{ margin: "0 0 8px 0", color: THEME_PRIMARY, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700 }}>
+                    Overview
+                  </p>
+                  <p style={{ margin: "0 0 10px 0", fontSize: "13px", lineHeight: 1.6, color: "#d9e5f5" }}>
+                    {formData.longDescription || formData.description || "Long description will appear here."}
+                  </p>
+                  <div style={{ display: "grid", gap: "6px" }}>
+                    {(previewPoints.length ? previewPoints : ["Overview point one", "Overview point two"]).slice(0, 4).map((point) => (
+                      <p key={point} style={{ margin: 0, fontSize: "12px", color: "#f8fafc" }}>
+                        • {point}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "1px",
+                    background: "rgba(23,156,249,0.2)",
+                    border: "1px solid rgba(23,156,249,0.35)",
+                  }}
+                >
+                  {(previewStats.length
+                    ? previewStats
+                    : [
+                        { label: "Quality", value: "95%" },
+                        { label: "Delivery", value: "On Time" },
+                        { label: "Coverage", value: "Wide" },
+                        { label: "Support", value: "24/7" },
+                      ]
+                  ).slice(0, 4).map((stat) => (
+                    <div key={`${stat.label}-${stat.value}`} style={{ background: "#0c335e", padding: "14px" }}>
+                      <p style={{ margin: "0 0 4px 0", color: THEME_PRIMARY, fontSize: "20px", fontWeight: 700 }}>
+                        {stat.value}
+                      </p>
+                      <p style={{ margin: 0, color: "#ffffff", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 700 }}>
+                        {stat.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p style={{ margin: "0 0 10px 0", color: THEME_PRIMARY, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700 }}>
+                  What's Included
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px" }}>
+                  {(previewFeatures.length
+                    ? previewFeatures
+                    : [{ title: "Core Capability", description: "Feature description will appear here." }]
+                  ).slice(0, 4).map((feature) => (
+                    <div key={feature.title} style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", padding: "12px" }}>
+                      <p style={{ margin: "0 0 6px 0", fontSize: "11px", textTransform: "uppercase", color: "#ffffff", fontWeight: 700 }}>
+                        {feature.title}
+                      </p>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#c6d6ea", lineHeight: 1.5 }}>
+                        {feature.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p style={{ margin: "0 0 10px 0", color: THEME_PRIMARY, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700 }}>
+                  How It Works
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "10px" }}>
+                  {(previewProcess.length
+                    ? previewProcess
+                    : [
+                        { step: "01", label: "Assess", description: "Understand scope." },
+                        { step: "02", label: "Plan", description: "Define roadmap." },
+                        { step: "03", label: "Deliver", description: "Execute milestones." },
+                        { step: "04", label: "Optimize", description: "Improve outcomes." },
+                      ]
+                  ).slice(0, 4).map((step) => (
+                    <div key={`${step.step}-${step.label}`} style={{ border: "1px solid rgba(255,255,255,0.08)", padding: "12px", background: "rgba(255,255,255,0.01)" }}>
+                      <p style={{ margin: "0 0 6px 0", color: "rgba(23,156,249,0.3)", fontSize: "24px", fontWeight: 800 }}>{step.step}</p>
+                      <p style={{ margin: "0 0 6px 0", color: THEME_PRIMARY, fontSize: "10px", textTransform: "uppercase", fontWeight: 700 }}>{step.label}</p>
+                      <p style={{ margin: 0, color: "#a8b7cc", fontSize: "12px", lineHeight: 1.45 }}>{step.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                <div style={{ border: "1px solid rgba(23,156,249,0.38)", background: "rgba(23,156,249,0.13)", padding: "14px" }}>
+                  <p style={{ margin: "0 0 8px 0", fontSize: "22px", textTransform: "uppercase", fontWeight: 700 }}>
+                    {formData.ctaTitle || "Ready to Get Started?"}
+                  </p>
+                  <p style={{ margin: "0 0 12px 0", fontSize: "12px", lineHeight: 1.55, color: "#d7e6f8" }}>
+                    {formData.ctaDescription || "CTA description will appear here."}
+                  </p>
+                  <button type="button" style={{ width: "100%", border: "none", padding: "10px", textTransform: "uppercase", fontWeight: 700, background: THEME_PRIMARY, color: "#05121f", cursor: "default" }}>
+                    {formData.ctaButtonLabel || "Schedule Consultation"}
+                  </button>
+                </div>
+                <div style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", padding: "14px" }}>
+                  <p style={{ margin: "0 0 8px 0", color: THEME_PRIMARY, fontSize: "10px", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 700 }}>
+                    Next Service
+                  </p>
+                  <p style={{ margin: "0 0 6px 0", fontSize: "20px", textTransform: "uppercase", fontWeight: 700 }}>
+                    Next Published Item
+                  </p>
+                  <p style={{ margin: 0, color: "#c7d6ea", fontSize: "12px", lineHeight: 1.6 }}>
+                    This block mirrors the right CTA card on the live page and auto-fills from neighboring service data there.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </Section>
       </div>
     </CmsDrawer>

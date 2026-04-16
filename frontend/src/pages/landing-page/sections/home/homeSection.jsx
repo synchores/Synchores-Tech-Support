@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useHeroSection } from "../../../hooks/useLandingPageData";
+import { useHeroSection } from "../../../../hooks/useLandingPageData";
 import TrueFocus from "../../../../components/layout/landing-contents/ui/trueFocus";
 
 const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";

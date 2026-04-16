@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useLandingServices } from '../../../../hooks/useLandingPageData';
 import { offerings } from './data/offeringsData';
 import HeroSection from './offering-detail/HeroSection';
 import OverviewSection from './offering-detail/OverviewSection';
@@ -10,17 +11,187 @@ import Footer from '../../../../components/layout/footer';
 
 const THEME_PRIMARY = '#179cf9';
 
+function toSlug(value = '') {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function toMediaUrl(path = '') {
+  if (!path) return '';
+  if (/^(https?:|data:|blob:)/i.test(path)) return path;
+  if (path.startsWith('/uploads/')) return `http://localhost:3000${path}`;
+  if (path.startsWith('uploads/')) return `http://localhost:3000/${path}`;
+  return path;
+}
+
+function splitLines(value = '') {
+  return String(value)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function parseLabelValueLines(value = '', defaultLabelPrefix = 'Item') {
+  return splitLines(value)
+    .map((line, index) => {
+      const [label, ...rest] = line.split('|');
+      const normalizedLabel = (label || '').trim();
+      const normalizedValue = rest.join('|').trim();
+
+      if (!normalizedLabel && !normalizedValue) {
+        return null;
+      }
+
+      return {
+        label: normalizedLabel || `${defaultLabelPrefix} ${index + 1}`,
+        value: normalizedValue || normalizedLabel,
+      };
+    })
+    .filter(Boolean);
+}
+
+function parseFeatureLines(value = '') {
+  return splitLines(value)
+    .map((line) => {
+      const [title, ...rest] = line.split('|');
+      const normalizedTitle = (title || '').trim();
+      const description = rest.join('|').trim();
+
+      if (!normalizedTitle && !description) {
+        return null;
+      }
+
+      return {
+        title: normalizedTitle || 'Feature',
+        description: description || normalizedTitle,
+      };
+    })
+    .filter(Boolean);
+}
+
+function parseProcessLines(value = '') {
+  return splitLines(value)
+    .map((line, index) => {
+      const [label, ...rest] = line.split('|');
+      const normalizedLabel = (label || '').trim();
+      const description = rest.join('|').trim();
+
+      if (!normalizedLabel && !description) {
+        return null;
+      }
+
+      return {
+        step: index + 1 < 10 ? `0${index + 1}` : String(index + 1),
+        label: normalizedLabel || 'Step',
+        description: description || normalizedLabel,
+      };
+    })
+    .filter(Boolean);
+}
+
 export default function OfferingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const offering = offerings.find((o) => o.id === id);
+  const { services, loading } = useLandingServices({ status: 'published' });
+
+  const serviceDrivenOfferings = useMemo(() => {
+    if (!services?.length) {
+      return offerings;
+    }
+
+    return services.map((service) => {
+      const slug = toSlug(service.title);
+      const fallback = offerings.find(
+        (item) => toSlug(item.id) === slug || toSlug(item.title) === slug,
+      );
+
+      return {
+        ...(fallback || {}),
+        id: fallback?.id || slug,
+        title: service.title || fallback?.title || 'Untitled Service',
+        displayTitle: fallback?.displayTitle || service.title || 'Untitled Service',
+        subtitle: service.subtitle || fallback?.subtitle || service.category || 'Business Solutions',
+        heroSubtitle: fallback?.heroSubtitle || service.description || '',
+        description: service.description || fallback?.description || '',
+        longDescription: service.longDescription || fallback?.longDescription || service.description || 'Service details will be available soon.',
+        bullets: fallback?.bullets || [service.category || 'General Service'],
+        points: splitLines(service.points).length
+          ? splitLines(service.points)
+          : fallback?.points || [service.description || 'Details coming soon.'],
+        stats: parseLabelValueLines(service.stats, 'Metric').length
+          ? parseLabelValueLines(service.stats, 'Metric')
+          : fallback?.stats || [
+              { label: 'Quality', value: '95%' },
+              { label: 'Delivery', value: 'On Time' },
+              { label: 'Coverage', value: 'End-to-End' },
+              { label: 'Support', value: '24/7' },
+            ],
+        features: parseFeatureLines(service.features).length
+          ? parseFeatureLines(service.features)
+          : fallback?.features || [
+              {
+                title: 'Core Capability',
+                description: service.description || 'Feature details will be available soon.',
+              },
+            ],
+        process: parseProcessLines(service.process).length
+          ? parseProcessLines(service.process)
+          : fallback?.process || [
+              { step: '01', label: 'Assess', description: 'Understand goals and current state.' },
+              { step: '02', label: 'Plan', description: 'Define scope and implementation path.' },
+              { step: '03', label: 'Deliver', description: 'Execute milestones with quality checks.' },
+              { step: '04', label: 'Optimize', description: 'Improve outcomes continuously.' },
+            ],
+        ctaTitle: service.ctaTitle || fallback?.ctaTitle || 'Ready to Get Started?',
+        ctaDescription:
+          service.ctaDescription ||
+          fallback?.ctaDescription ||
+          `Connect with our team to explore how ${service.title || fallback?.title || 'this service'} can transform your operations and drive growth.`,
+        ctaButtonLabel: service.ctaButtonLabel || fallback?.ctaButtonLabel || 'Schedule Consultation',
+        shortDescription: service.description || fallback?.description || '',
+        image: toMediaUrl(service.image) || fallback?.image || '/assets/placeholder-service.jpg',
+      };
+    });
+  }, [services]);
+
+  const offering = useMemo(() => {
+    const routeSlug = toSlug(id);
+    return serviceDrivenOfferings.find(
+      (item) =>
+        item.id === id ||
+        toSlug(item.id) === routeSlug ||
+        toSlug(item.title) === routeSlug,
+    );
+  }, [id, serviceDrivenOfferings]);
 
   // Scroll to top when component mounts or ID changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!offering) {
+  if (loading && !offering) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: '#060c14',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#ffffff',
+          fontFamily: "'Inter', Arial, sans-serif",
+        }}
+      >
+        Loading service details...
+      </div>
+    );
+  }
+
+  if (!loading && !offering) {
     return (
       <div
         style={{
@@ -60,8 +231,11 @@ export default function OfferingDetail() {
     );
   }
 
-  const currentIndex = offerings.findIndex((o) => o.id === id);
-  const nextOffering = offerings[(currentIndex + 1) % offerings.length];
+  const currentIndex = serviceDrivenOfferings.findIndex((o) => o.id === offering?.id);
+  const nextOffering =
+    currentIndex >= 0
+      ? serviceDrivenOfferings[(currentIndex + 1) % serviceDrivenOfferings.length]
+      : null;
 
   const handleBack = () => {
     navigate('/', { state: { scrollTo: 'offering' } });
@@ -72,7 +246,9 @@ export default function OfferingDetail() {
   };
 
   const handleNextService = () => {
-    navigate(`/offering/${nextOffering.id}`);
+    if (nextOffering?.id) {
+      navigate(`/offering/${nextOffering.id}`);
+    }
   };
 
   return (
