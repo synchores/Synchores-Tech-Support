@@ -6,6 +6,7 @@ import AboutSection from "./sections/about/aboutSection";
 import AboutSectionAlternate from "./sections/about/aboutSectionAlternate";
 import DeploymentGallery from "./sections/deploymentGallery/deploymentGallery";
 import ContactUs from "./sections/contactUs/contactUs";
+import { Footer } from "../../components/layout/footer/Footer";
 
 export default function LandingPage() {
   const location = useLocation();
@@ -34,6 +35,7 @@ export default function LandingPage() {
       <AboutSectionAlternate />
       <DeploymentGallery />
       <ContactUs />
+      <Footer />
     </div>
   );
 }
