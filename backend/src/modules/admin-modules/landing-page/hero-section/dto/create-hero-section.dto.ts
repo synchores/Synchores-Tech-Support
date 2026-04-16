@@ -17,4 +17,9 @@ export class CreateHeroSectionDto {
   @IsOptional()
   @IsString()
   declare backgroundImage?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare focusText?: string;
 }

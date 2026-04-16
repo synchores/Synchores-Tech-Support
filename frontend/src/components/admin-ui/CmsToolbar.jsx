@@ -94,18 +94,20 @@ export function CmsToolbar({
               paddingRight: "0.875rem",
               background: "var(--input-background)",
               color: "var(--foreground)",
-              border: "1px solid var(--border)",
+              border: "1px solid rgba(15, 23, 42, 0.22)",
               borderRadius: "0.375rem",
               fontSize: "0.875rem",
               transition: "all 0.15s ease-in-out",
+              boxShadow: "0 1px 2px rgba(15, 23, 42, 0.06)",
+              outline: "none",
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = "#06b6d4";
-              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(6, 182, 212, 0.1)";
+              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(6, 182, 212, 0.12)";
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.boxShadow = "none";
+              e.currentTarget.style.borderColor = "rgba(15, 23, 42, 0.22)";
+              e.currentTarget.style.boxShadow = "0 1px 2px rgba(15, 23, 42, 0.06)";
             }}
           />
         </div>

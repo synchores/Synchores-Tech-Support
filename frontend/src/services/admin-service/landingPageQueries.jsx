@@ -7,6 +7,7 @@ export const GET_HERO_SECTION_QUERY = gql`
       headline
       tagline
       backgroundImage
+      focusText
       createdAt
       updatedAt
     }

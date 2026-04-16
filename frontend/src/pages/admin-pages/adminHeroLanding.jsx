@@ -12,17 +12,24 @@ import {
   ImageOff,
   Info,
   Loader2,
+  Video,
 } from "lucide-react";
+
+function isVideoSource(src = "") {
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
+}
 
 export function AdminHeroLanding() {
   const { hero, loading, updateHero } = useHeroSection();
   const [formData, setFormData] = useState({
     headline: "",
+    focusText: "",
     tagline: "",
     backgroundImage: "",
   });
   const [savedSnapshot, setSavedSnapshot] = useState({
     headline: "",
+    focusText: "",
     tagline: "",
     backgroundImage: "",
   });
@@ -36,6 +43,7 @@ export function AdminHeroLanding() {
 
   const fieldLabels = {
     headline: "headline",
+    focusText: "focus text",
     tagline: "tagline",
     backgroundImage: "background image",
   };
@@ -62,7 +70,9 @@ export function AdminHeroLanding() {
 
 	const isActive = !!hero?.headline;
 	const hasImage = !!formData.backgroundImage;
+  const isVideo = isVideoSource(formData.backgroundImage);
 	const headlineLength = (formData.headline || "").length;
+  const focusLength = (formData.focusText || "").length;
 	const lastUpdated = hero?.updatedAt
 		? new Date(hero.updatedAt).toLocaleDateString()
 		: "N/A";
@@ -71,6 +81,7 @@ export function AdminHeroLanding() {
     if (hero) {
       const nextSnapshot = {
         headline: hero.headline || "",
+        focusText: hero.focusText || "",
         tagline: hero.tagline || "",
         backgroundImage: hero.backgroundImage || "",
       };
@@ -332,7 +343,7 @@ export function AdminHeroLanding() {
       </div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div
           className="rounded-lg p-4 flex items-center justify-between shadow-sm"
           style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
@@ -413,7 +424,7 @@ export function AdminHeroLanding() {
           style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
         >
           <div className="flex flex-col gap-1">
-            <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Background image</p>
+            <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Focus text length</p>
             <p
               style={{
                 fontSize: "18px",
@@ -422,14 +433,39 @@ export function AdminHeroLanding() {
                 lineHeight: 1,
               }}
             >
-              {hasImage ? "Set" : "Not set"}
+              {focusLength} chars
             </p>
           </div>
           <div
             className="rounded-full p-2"
             style={{ background: "var(--accent)", color: "var(--foreground)" }}
           >
-            {hasImage ? <ImageIcon size={18} /> : <ImageOff size={18} />}
+            <FileText size={18} />
+          </div>
+        </div>
+
+        <div
+          className="rounded-lg p-4 flex items-center justify-between shadow-sm"
+          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+        >
+          <div className="flex flex-col gap-1">
+            <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Background media</p>
+            <p
+              style={{
+                fontSize: "18px",
+                fontWeight: 700,
+                color: "var(--foreground)",
+                lineHeight: 1,
+              }}
+            >
+              {hasImage ? (isVideo ? "Video" : "Image") : "Not set"}
+            </p>
+          </div>
+          <div
+            className="rounded-full p-2"
+            style={{ background: "var(--accent)", color: "var(--foreground)" }}
+          >
+            {hasImage ? (isVideo ? <Video size={18} /> : <ImageIcon size={18} />) : <ImageOff size={18} />}
           </div>
         </div>
       </div>
@@ -452,16 +488,17 @@ export function AdminHeroLanding() {
                 </div>
                 <div>
                   <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--foreground)" }}>Headline</h3>
-                  <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Main hero section text</p>
+                  <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Main hero lines (use Enter to split into two lines)</p>
                 </div>
               </div>
-              <TextInput
+              <TextArea
                 value={formData.headline}
                 onChange={(val) =>
                   setFormData((prev) => ({ ...prev, headline: val }))
                 }
                 onBlur={() => handleSaveOnBlur("headline")}
-                placeholder="Scalable Tech Solutions Built For Your Business SUCCESS"
+                placeholder={"Scalable Tech Solutions\nBuilt for your"}
+                rows={2}
                 disabled={isSaving}
               />
               </div>
@@ -488,6 +525,28 @@ export function AdminHeroLanding() {
                 disabled={isSaving}
               />
               </div>
+
+              {/* Focus Text Card */}
+              <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="rounded-lg p-2" style={{ background: "var(--accent)", color: "var(--foreground)" }}>
+                  <FileText size={18} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--foreground)" }}>Focus Text</h3>
+                  <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Animated words in hero headline</p>
+                </div>
+              </div>
+              <TextInput
+                value={formData.focusText}
+                onChange={(val) =>
+                  setFormData((prev) => ({ ...prev, focusText: val }))
+                }
+                onBlur={() => handleSaveOnBlur("focusText")}
+                placeholder="BUSINESS SUCCESS"
+                disabled={isSaving}
+              />
+              </div>
             </div>
 
             <div className="admin-section-panel space-y-6">
@@ -498,8 +557,8 @@ export function AdminHeroLanding() {
                     <ImageIcon size={18} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--foreground)" }}>Background Image</h3>
-                    <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Hero section background (1920x1080px)</p>
+                    <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--foreground)" }}>Background Media</h3>
+                    <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Hero section background image or video</p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -508,14 +567,33 @@ export function AdminHeroLanding() {
                       className="relative w-full h-40 rounded-xl overflow-hidden"
                       style={{ background: "var(--accent)", border: "1px solid var(--border)" }}
                     >
-                      <img
-                        src={`http://localhost:3000${formData.backgroundImage}`}
-                        alt="Hero background"
-                        className="w-full h-full object-cover"
-                      />
+                      {isVideo ? (
+                        <video
+                          src={`http://localhost:3000${formData.backgroundImage}`}
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                        />
+                      ) : (
+                        <img
+                          src={`http://localhost:3000${formData.backgroundImage}`}
+                          alt="Hero background"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                     </div>
                   )}
-                  <ImageUpload onUpload={handleImageUpload} disabled={isSaving} />
+                  <ImageUpload
+                    onUpload={handleImageUpload}
+                    disabled={isSaving}
+                    accept="image/*,video/*"
+                    buttonLabel="Click to upload image or video"
+                    busyLabel="Uploading media..."
+                    ariaLabel="Upload background media"
+                    fileTypeLabel="image or video"
+                  />
                 </div>
               </div>
             </div>
@@ -541,11 +619,22 @@ export function AdminHeroLanding() {
               >
               <div className="relative h-64 flex items-center">
                 {formData.backgroundImage && (
-                  <img
-                    src={`http://localhost:3000${formData.backgroundImage}`}
-                    alt="Hero background preview"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
+                  isVideo ? (
+                    <video
+                      src={`http://localhost:3000${formData.backgroundImage}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  ) : (
+                    <img
+                      src={`http://localhost:3000${formData.backgroundImage}`}
+                      alt="Hero background preview"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )
                 )}
                 <div
                   className="absolute inset-0"
@@ -576,6 +665,8 @@ export function AdminHeroLanding() {
                     }}
                   >
                     {formData.headline || "Your headline will appear here"}
+                    <br />
+                    {formData.focusText || "BUSINESS SUCCESS"}
                   </h2>
                   <p
                     style={{

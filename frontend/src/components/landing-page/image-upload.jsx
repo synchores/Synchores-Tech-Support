@@ -1,7 +1,16 @@
 import { useState, useRef } from "react";
 import { Upload } from "lucide-react";
 
-export function ImageUpload({ onUpload, disabled = false }) {
+export function ImageUpload({
+  onUpload,
+  disabled = false,
+  accept = "image/*",
+  uploadUrl = "http://localhost:3000/landing-page/upload/image",
+  buttonLabel = "Click to upload image",
+  busyLabel = "Uploading...",
+  ariaLabel = "Upload image",
+  fileTypeLabel = "image",
+}) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
@@ -11,14 +20,14 @@ export function ImageUpload({ onUpload, disabled = false }) {
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith("image/")) {
-      setError("Please select an image file");
+    if (!file.type.match(/^(image|video)\//)) {
+      setError(`Please select a ${fileTypeLabel} file`);
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("File size must be less than 5MB");
+    // Validate file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      setError("File size must be less than 50MB");
       return;
     }
 
@@ -31,7 +40,7 @@ export function ImageUpload({ onUpload, disabled = false }) {
 
       const token = localStorage.getItem("accessToken");
       const response = await fetch(
-        "http://localhost:3000/landing-page/upload/image",
+        uploadUrl,
         {
           method: "POST",
           headers: {
@@ -64,11 +73,11 @@ export function ImageUpload({ onUpload, disabled = false }) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept={accept}
         onChange={handleFileSelect}
         disabled={uploading || disabled}
         className="hidden"
-        aria-label="Upload image"
+        aria-label={ariaLabel}
       />
 
       <button
@@ -78,7 +87,7 @@ export function ImageUpload({ onUpload, disabled = false }) {
       >
         <Upload size={18} className="text-gray-600" />
         <span className="text-sm font-medium text-gray-700">
-          {uploading ? "Uploading..." : "Click to upload image"}
+          {uploading ? busyLabel : buttonLabel}
         </span>
       </button>
 

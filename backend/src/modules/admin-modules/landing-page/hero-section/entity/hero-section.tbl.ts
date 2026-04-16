@@ -20,6 +20,10 @@ export class HeroSectionTbl {
   @Field({ nullable: true })
   declare backgroundImage?: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  declare focusText?: string;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field()
   declare createdAt: Date;

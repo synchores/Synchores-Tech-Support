@@ -8,6 +8,7 @@ export const UPDATE_HERO_SECTION_MUTATION = gql`
       headline
       tagline
       backgroundImage
+      focusText
       createdAt
       updatedAt
     }
@@ -21,6 +22,7 @@ export const CREATE_HERO_SECTION_MUTATION = gql`
       headline
       tagline
       backgroundImage
+      focusText
       createdAt
       updatedAt
     }
