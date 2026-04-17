@@ -8,6 +8,7 @@ export const UPDATE_HERO_SECTION_MUTATION = gql`
       headline
       tagline
       backgroundImage
+      focusText
       createdAt
       updatedAt
     }
@@ -21,6 +22,7 @@ export const CREATE_HERO_SECTION_MUTATION = gql`
       headline
       tagline
       backgroundImage
+      focusText
       createdAt
       updatedAt
     }
@@ -36,6 +38,15 @@ export const CREATE_LANDING_SERVICE_CARD_MUTATION = gql`
       description
       icon
       image
+      subtitle
+      longDescription
+      points
+      stats
+      features
+      process
+      ctaTitle
+      ctaDescription
+      ctaButtonLabel
       category
       status
       order
@@ -53,6 +64,15 @@ export const UPDATE_LANDING_SERVICE_CARD_MUTATION = gql`
       description
       icon
       image
+      subtitle
+      longDescription
+      points
+      stats
+      features
+      process
+      ctaTitle
+      ctaDescription
+      ctaButtonLabel
       category
       status
       order
@@ -76,6 +96,15 @@ export const DUPLICATE_LANDING_SERVICE_CARD_MUTATION = gql`
       description
       icon
       image
+      subtitle
+      longDescription
+      points
+      stats
+      features
+      process
+      ctaTitle
+      ctaDescription
+      ctaButtonLabel
       category
       status
       order

@@ -42,7 +42,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                   margin: '0 0 16px 0',
                 }}
               >
-                Ready to Get Started?
+                {offering.ctaTitle || 'Ready to Get Started?'}
               </h3>
               <p
                 style={{
@@ -53,7 +53,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                   margin: '0 0 24px 0',
                 }}
               >
-                Connect with our team to explore how {offering.title} can transform your operations and drive growth.
+                {offering.ctaDescription || `Connect with our team to explore how ${offering.title} can transform your operations and drive growth.`}
               </p>
             </div>
 
@@ -79,7 +79,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                 gap: '8px',
               }}
             >
-              Schedule Consultation
+              {offering.ctaButtonLabel || 'Schedule Consultation'}
               <ArrowUpRight size={16} />
             </motion.button>
           </motion.div>

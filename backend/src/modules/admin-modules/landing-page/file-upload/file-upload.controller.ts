@@ -13,6 +13,8 @@ import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
 const UPLOAD_DIR = join(process.cwd(), 'uploads', 'landing-page');
+const ALLOWED_MIME_PREFIXES = ['image/', 'video/'];
+const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 // Ensure upload directory exists
 if (!existsSync(UPLOAD_DIR)) {
@@ -37,15 +39,21 @@ export class FileUploadController {
         },
       }),
       fileFilter: (req, file, cb) => {
-        // Accept only image files
-        if (!file.mimetype.startsWith('image/')) {
-          cb(new BadRequestException('Only image files are allowed'), false);
+        const isAllowed = ALLOWED_MIME_PREFIXES.some((prefix) =>
+          file.mimetype.startsWith(prefix),
+        );
+
+        if (!isAllowed) {
+          cb(
+            new BadRequestException('Only image and video files are allowed'),
+            false,
+          );
         } else {
           cb(null, true);
         }
       },
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB max
+        fileSize: MAX_FILE_SIZE,
       },
     }),
   )
@@ -55,7 +63,7 @@ export class FileUploadController {
     }
 
     return {
-      message: 'Image uploaded successfully',
+      message: 'Media uploaded successfully',
       path: `/uploads/landing-page/${file.filename}`,
       filename: file.filename,
     };

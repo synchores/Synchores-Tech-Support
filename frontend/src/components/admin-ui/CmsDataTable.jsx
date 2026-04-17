@@ -108,7 +108,7 @@ export function CmsDataTable({
                   </td>
                   <td className="px-4 py-3">
                     <img
-                      src={item.image || FALLBACK_IMAGE}
+                      src={item.image ? `http://localhost:3000/${item.image}` : FALLBACK_IMAGE}
                       alt={item.title}
                       className="h-10 w-16 rounded object-cover"
                       onError={(e) => {

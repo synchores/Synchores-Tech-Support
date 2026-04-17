@@ -31,6 +31,51 @@ export class UpdateLandingServiceCardDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
+  declare subtitle?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare longDescription?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare points?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare stats?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare features?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare process?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare ctaTitle?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare ctaDescription?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  declare ctaButtonLabel?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   declare category?: string;
 
   @Field(() => ContentStatus, { nullable: true })
