@@ -161,8 +161,8 @@ export default function Home() {
                     blurAmount={5}
                     borderColor="#0088ff"
                     glowColor="rgba(0, 136, 255, 0.6)"
-                    animationDuration={0.5}
-                    pauseBetweenAnimations={0.5}
+                    animationDuration={2.5}
+                    pauseBetweenAnimations={2.5}
                   />
                 </motion.span>
               </span>

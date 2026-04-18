@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { deployments } from "../deploymentsData";
@@ -9,11 +9,14 @@ import { DeploymentDetails } from "./deploymentDetails";
 export function DeploymentCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [autoplay, setAutoplay] = useState(true);
   const navigate = useNavigate();
 
   const goTo = (index, dir) => {
     setDirection(dir);
     setActiveIndex(index);
+    setAutoplay(false);
+    setTimeout(() => setAutoplay(true), 5000); // Resume autoplay after 5 seconds
   };
 
   const prev = () => {
@@ -25,6 +28,21 @@ export function DeploymentCarousel() {
     const newIndex = activeIndex === deployments.length - 1 ? 0 : activeIndex + 1;
     goTo(newIndex, 1);
   };
+
+  useEffect(() => {
+    if (!autoplay) return;
+
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) =>
+        prevIndex === deployments.length - 1 ? 0 : prevIndex + 1
+      );
+      setDirection(1);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [autoplay]);
+
+
 
   const current = deployments[activeIndex];
 
@@ -51,7 +69,7 @@ export function DeploymentCarousel() {
             initial={{ opacity: 0, x: direction * 80 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -direction * 80 }}
-            transition={{ duration: 0.45, ease: "easeInOut" }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
           >
             <div
               style={{
