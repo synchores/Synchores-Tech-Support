@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 
 export default function ProcessSection({ offering }) {
   return (
-    <section style={{ backgroundColor: '#060c14', padding: '72px 40px' }}>
+    <section style={{ backgroundColor: 'var(--landing-bg-strong)', padding: '72px 40px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -38,7 +38,7 @@ export default function ProcessSection({ offering }) {
               fontFamily: "'Orbitron', sans-serif",
               fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
               fontWeight: 700,
-              color: '#ffffff',
+              color: 'var(--landing-text)',
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
               margin: 0,
@@ -65,9 +65,9 @@ export default function ProcessSection({ offering }) {
               style={{
                 position: 'relative',
                 padding: '28px 24px',
-                border: '1px solid rgba(255,255,255,0.07)',
+                border: `1px solid var(--landing-border)`,
                 borderRadius: '2px',
-                background: 'rgba(255,255,255,0.02)',
+                background: 'var(--landing-surface-soft)',
               }}
             >
               {/* Connector line (not on last) */}

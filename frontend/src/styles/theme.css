@@ -39,6 +39,23 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Landing palette (light) */
+  --landing-bg: #f5f8fc;
+  --landing-bg-strong: #ffffff;
+  --landing-surface: #ffffff;
+  --landing-surface-soft: #e8eef5;
+  --landing-border: #d5dfeb;
+  --landing-border-strong: #cfd8e3;
+  --landing-text: #102a45;
+  --landing-text-muted: #4d6178;
+  --landing-text-soft: #6a7d91;
+  --landing-overlay: rgba(244, 248, 253, 0.95);
+  --landing-btn-text: #37516d;
+  --landing-overlay-top: rgba(7, 35, 68, 0.35);
+  --landing-overlay-mid: rgba(7, 35, 68, 0.08);
+  --landing-overlay-side: rgba(10, 74, 136, 0.25);
+  --card-bg: #ffffff;
 }
 
 .dark {
@@ -76,6 +93,23 @@
   --sidebar-accent-foreground: #e5e7eb;
   --sidebar-border: rgba(148, 163, 184, 0.24);
   --sidebar-ring: rgba(96, 165, 250, 0.5);
+
+  /* Landing palette (dark) */
+  --landing-bg: #0a0a0a;
+  --landing-bg-strong: #000000;
+  --landing-surface: #111111;
+  --landing-surface-soft: #0a0a0a;
+  --landing-border: #1a1a1a;
+  --landing-border-strong: #2a2a2a;
+  --landing-text: #ffffff;
+  --landing-text-muted: #999999;
+  --landing-text-soft: #757575;
+  --landing-overlay: rgba(0, 0, 0, 0.95);
+  --landing-btn-text: #a7a7a7;
+  --landing-overlay-top: rgba(0, 0, 0, 0.85);
+  --landing-overlay-mid: rgba(0, 0, 0, 0.2);
+  --landing-overlay-side: rgba(0, 0, 0, 0.6);
+  --card-bg: #0c1e3b;
 }
 
 @theme inline {
@@ -119,59 +153,58 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  body {
-    @apply bg-background text-foreground;
-  }
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
 
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
+/**
+* Default typography styles for HTML elements (h1-h4, p, label, button, input).
+* Tailwind utility classes can still override these because utility classes have higher specificity in use.
+*/
 
-  html {
-    font-size: var(--font-size);
-  }
+html {
+  font-size: var(--font-size);
+}
 
-  h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+h1 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
 
-  h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
 
-  h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
 
-  h4 {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+h4 {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
 
-  label {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+label {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
 
-  button {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+button {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.5;
+}
 
-  input {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
-  }
+input {
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
 }

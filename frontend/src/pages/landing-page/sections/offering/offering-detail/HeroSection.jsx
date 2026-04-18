@@ -10,6 +10,7 @@ export default function HeroSection({ offering, currentIndex, onBack }) {
         position: 'relative',
         height: 'clamp(460px, 65vh, 700px)',
         overflow: 'hidden',
+        backgroundColor: 'var(--landing-bg)',
       }}
     >
       <img

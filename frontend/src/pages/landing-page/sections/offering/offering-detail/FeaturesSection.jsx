@@ -4,7 +4,7 @@ const THEME_PRIMARY = '#179cf9';
 
 export default function FeaturesSection({ offering }) {
   return (
-    <section style={{ backgroundColor: '#0c335e', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
+    <section style={{ backgroundColor: 'var(--landing-bg-strong)', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -33,7 +33,7 @@ export default function FeaturesSection({ offering }) {
               fontFamily: "'Orbitron', sans-serif",
               fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
               fontWeight: 700,
-              color: '#ffffff',
+              color: 'var(--landing-text)',
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
               margin: 0,
@@ -62,7 +62,7 @@ export default function FeaturesSection({ offering }) {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
               style={{
-                background: '#060c14',
+                background: 'var(--landing-surface)',
                 padding: 'clamp(20px, 4vw, 32px) clamp(16px, 4vw, 28px)',
                 position: 'relative',
               }}
@@ -80,7 +80,7 @@ export default function FeaturesSection({ offering }) {
                   fontFamily: "'Orbitron', sans-serif",
                   fontSize: 'clamp(11px, 2vw, 13px)',
                   fontWeight: 700,
-                  color: '#ffffff',
+                  color: 'var(--landing-text)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                   margin: '0 0 12px 0',
@@ -93,7 +93,7 @@ export default function FeaturesSection({ offering }) {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontSize: 'clamp(12px, 2vw, 13.5px)',
-                  color: '#ffffff',
+                  color: 'var(--landing-text-muted)',
                   lineHeight: 1.65,
                   margin: 0,
                 }}

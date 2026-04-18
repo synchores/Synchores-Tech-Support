@@ -92,3 +92,7 @@ export const getDeploymentsByType = () => {
 
   return grouped;
 };
+
+export const getAllDeploymentTypes = () => {
+  return [...new Set(deploymentsGalleryData.map((item) => item.type))];
+};

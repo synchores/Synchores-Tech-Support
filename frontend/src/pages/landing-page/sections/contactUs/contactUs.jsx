@@ -14,14 +14,14 @@ const contactInfo = [
 
 const inputStyle = {
   width: "100%",
-  backgroundColor: "#0a0a0a",
-  border: "1px solid #2a2a2a",
+  backgroundColor: "var(--landing-surface)",
+  border: "1px solid var(--landing-border-strong)",
   borderRadius: "2px",
   padding: "11px 13px",
   fontFamily: "'Inter', Arial, sans-serif",
   fontSize: "15px",
   fontWeight: 400,
-  color: "#ffffff",
+  color: "var(--landing-text)",
   outline: "none",
   lineHeight: 1.5,
   boxSizing: "border-box",
@@ -41,7 +41,7 @@ export function ContactUs() {
   const mapContainerStyle = {
     width: "100%",
     height: "260px",
-    border: "1px solid #1a1a1a",
+    border: "1px solid var(--landing-border-strong)",
     borderRadius: "2px",
     overflow: "hidden",
   };
@@ -63,7 +63,7 @@ export function ContactUs() {
   };
 
   return (
-    <section id="contact" style={{ backgroundColor: "#000000" }}>
+    <section id="contact" style={{ backgroundColor: "var(--landing-bg-strong)" }}>
       {/* Top image band */}
       <div style={{ position: "relative", height: "200px", overflow: "hidden" }}>
         <img
@@ -74,7 +74,7 @@ export function ContactUs() {
         <div style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, #000000 100%)",
+          background: "linear-gradient(to bottom, rgba(10,74,136,0.16) 0%, var(--landing-bg-strong) 100%)",
         }} />
         <div style={{
           position: "absolute",
@@ -99,7 +99,7 @@ export function ContactUs() {
               fontFamily: "'Orbitron', Arial, sans-serif",
               fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
               fontWeight: 700,
-              color: "#ffffff",
+              color: "var(--landing-text)",
               lineHeight: 1.25,
               margin: 0,
               textTransform: "uppercase",
@@ -128,7 +128,7 @@ export function ContactUs() {
               fontFamily: "'Inter', Arial, sans-serif",
               fontSize: "15px",
               fontWeight: 400,
-              color: "#757575",
+              color: "var(--landing-text-muted)",
               lineHeight: 1.67,
               margin: "0 0 40px 0",
             }}>
@@ -146,9 +146,9 @@ export function ContactUs() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    border: "1px solid #2a2a2a",
+                    border: "1px solid var(--landing-border-strong)",
                     borderRadius: "2px",
-                    backgroundColor: "#0a0a0a",
+                    backgroundColor: "var(--landing-surface)",
                   }}>
                     <Icon size={16} color="#1e7fd4" />
                   </div>
@@ -166,7 +166,7 @@ export function ContactUs() {
                       fontFamily: "'Inter', Arial, sans-serif",
                       fontSize: "14px",
                       fontWeight: 400,
-                      color: "#a7a7a7",
+                      color: "var(--landing-text-muted)",
                       margin: 0,
                       lineHeight: 1.5,
                     }}>{value}</p>
@@ -197,18 +197,18 @@ export function ContactUs() {
                     display: "flex",
                     justifyContent: "space-between",
                     padding: "10px 0",
-                    borderBottom: "1px solid #1a1a1a",
+                    borderBottom: "1px solid var(--landing-border)",
                   }}
                 >
                   <span style={{
                     fontFamily: "'Inter', Arial, sans-serif",
                     fontSize: "14px",
-                    color: "#757575",
+                    color: "var(--landing-text-muted)",
                   }}>{day}</span>
                   <span style={{
                     fontFamily: "'Inter', Arial, sans-serif",
                     fontSize: "14px",
-                    color: "#a7a7a7",
+                    color: "var(--landing-text-soft)",
                     fontWeight: 700,
                   }}>{hours}</span>
                 </div>
@@ -231,7 +231,7 @@ export function ContactUs() {
                 justifyContent: "center",
                 padding: "64px 32px",
                 textAlign: "center",
-                border: "1px solid #1a1a1a",
+                border: "1px solid var(--landing-border)",
                 borderRadius: "2px",
               }}>
                 <CheckCircle size={56} color="#1e7fd4" style={{ marginBottom: "24px" }} />
@@ -239,14 +239,14 @@ export function ContactUs() {
                   fontFamily: "'Orbitron', Arial, sans-serif",
                   fontSize: "1.2rem",
                   fontWeight: 700,
-                  color: "#ffffff",
+                  color: "var(--landing-text)",
                   textTransform: "uppercase",
                   margin: "0 0 12px 0",
                 }}>MESSAGE SENT</h3>
                 <p style={{
                   fontFamily: "'Inter', Arial, sans-serif",
                   fontSize: "15px",
-                  color: "#757575",
+                  color: "var(--landing-text-muted)",
                   lineHeight: 1.67,
                   margin: "0 0 24px 0",
                 }}>
@@ -295,8 +295,8 @@ export function ContactUs() {
                       onChange={handleChange}
                       style={{
                         ...inputStyle,
-                        borderColor: focused === "service" ? "#1e7fd4" : "#2a2a2a",
-                        color: form.service ? "#ffffff" : "#757575",
+                        borderColor: focused === "service" ? "#1e7fd4" : "var(--landing-border-strong)",
+                        color: form.service ? "var(--landing-text)" : "var(--landing-text-soft)",
                         cursor: "pointer",
                       }}
                       onFocus={() => setFocused("service")}
@@ -330,7 +330,7 @@ export function ContactUs() {
                     placeholder="Tell us about your IT needs..."
                     style={{
                       ...inputStyle,
-                      borderColor: focused === "message" ? "#1e7fd4" : "#2a2a2a",
+                      borderColor: focused === "message" ? "#1e7fd4" : "var(--landing-border-strong)",
                       resize: "none",
                     }}
                     onFocus={() => setFocused("message")}
@@ -349,7 +349,7 @@ export function ContactUs() {
                     fontFamily: "'Inter', Arial, sans-serif",
                     fontSize: "16px",
                     fontWeight: 700,
-                    color: "#ffffff",
+                    color: "#1e7fd4",
                     cursor: loading ? "not-allowed" : "pointer",
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
@@ -361,10 +361,16 @@ export function ContactUs() {
                     opacity: loading ? 0.7 : 1,
                   }}
                   onMouseEnter={(e) => {
-                    if (!loading) e.currentTarget.style.background = "#1eaedb";
+                    if (!loading) {
+                      e.currentTarget.style.background = "#1eaedb";
+                      e.currentTarget.style.color = "#ffffff";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    if (!loading) e.currentTarget.style.background = "transparent";
+                    if (!loading) {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.color = "#1e7fd4";
+                    }
                   }}
                 >
                   {loading ? (
@@ -387,9 +393,9 @@ export function ContactUs() {
                   {loadError ? (
                     <div style={{
                       padding: "16px",
-                      border: "1px solid #1a1a1a",
+                      border: "1px solid var(--landing-border)",
                       borderRadius: "2px",
-                      color: "#757575",
+                      color: "var(--landing-text-muted)",
                       fontFamily: "'Inter', Arial, sans-serif",
                       fontSize: "14px",
                     }}>
@@ -435,7 +441,7 @@ export function ContactUs() {
                       height: mapContainerStyle.height,
                       border: mapContainerStyle.border,
                       borderRadius: mapContainerStyle.borderRadius,
-                      background: "#0a0a0a",
+                      background: "var(--landing-surface-soft)",
                     }} />
                   )}
                 </div>
@@ -453,14 +459,14 @@ function Field({
 }) {
   const fieldInputStyle = {
     width: "100%",
-    backgroundColor: "#0a0a0a",
-    border: `1px solid ${focused === name ? "#1e7fd4" : "#2a2a2a"}`,
+    backgroundColor: "var(--landing-surface)",
+    border: `1px solid ${focused === name ? "#1e7fd4" : "var(--landing-border-strong)"}`,
     borderRadius: "2px",
     padding: "11px 13px",
     fontFamily: "'Inter', Arial, sans-serif",
     fontSize: "15px",
     fontWeight: 400,
-    color: "#ffffff",
+    color: "var(--landing-text)",
     outline: "none",
     lineHeight: 1.5,
     boxSizing: "border-box",

@@ -51,7 +51,7 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
           fontFamily: "'Orbitron', Arial, sans-serif",
           fontSize: "clamp(1rem, 2vw, 1.4rem)",
           fontWeight: 700,
-          color: "#ffffff",
+          color: "var(--landing-text)",
           textTransform: "uppercase",
           letterSpacing: "0.03em",
           margin: "0 0 20px 0",
@@ -65,7 +65,7 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
         style={{
           fontFamily: "'Inter', Arial, sans-serif",
           fontSize: "clamp(13px, 1.5vw, 14.5px)",
-          color: "#6b7280",
+          color: "var(--landing-text-muted)",
           lineHeight: 1.7,
           margin: "0 0 32px 0",
         }}
@@ -86,7 +86,7 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
               background:
                 i === activeIndex
                   ? "#1e7fd4"
-                  : "rgba(255,255,255,0.15)",
+                  : "var(--landing-border-strong)",
               border: "none",
               cursor: "pointer",
               padding: 0,

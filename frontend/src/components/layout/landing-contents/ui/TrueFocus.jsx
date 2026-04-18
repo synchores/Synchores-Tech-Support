@@ -71,16 +71,10 @@ const TrueFocus = ({
             ref={el => { wordRefs.current[index] = el; }}
             className={`focus-word ${manualMode ? 'manual' : ''} ${isActive && !manualMode ? 'active' : ''}`}
             style={{
-              filter: manualMode
-                ? isActive
-                  ? `blur(0px)`
-                  : `blur(${blurAmount}px)`
-                : isActive
-                  ? `blur(0px)`
-                  : `blur(${blurAmount}px)`,
+              color: isActive ? borderColor : 'inherit',
               '--border-color': borderColor,
               '--glow-color': glowColor,
-              transition: `filter ${animationDuration}s ease`
+              transition: `color ${animationDuration}s ease`
             }}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}

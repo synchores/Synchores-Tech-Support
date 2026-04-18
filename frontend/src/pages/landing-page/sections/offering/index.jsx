@@ -117,7 +117,7 @@ export default function OfferingSection() {
   }
 
   return (
-    <section id="offering" className="w-full overflow-hidden">
+    <section id="offering" style={{ backgroundColor: "var(--landing-bg)" }} className="w-full overflow-hidden">
       {/* Section Header */}
       <div className="py-12 px-4 sm:px-6">
         <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-[#0055aa] text-center">

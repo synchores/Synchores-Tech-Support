@@ -31,9 +31,9 @@ export function DeploymentCarousel() {
   return (
     <section
       style={{
-        backgroundColor: "#0a0a0a",
-        borderTop: "1px solid #111",
-        borderBottom: "1px solid #111",
+        backgroundColor: "var(--landing-bg)",
+        borderTop: "1px solid var(--landing-border)",
+        borderBottom: "1px solid var(--landing-border)",
       }}
     >
       <DeploymentHeader

@@ -17,7 +17,7 @@ export function VideoPlayer({ current, onPrev, onNext, onDotClick, activeIndex, 
   const imageSrc = toMediaUrl(current?.image);
 
   return (
-    <div className="relative w-full bg-black overflow-hidden">
+    <div className="relative w-full overflow-hidden" style={{ backgroundColor: "var(--landing-bg-strong)" }}>
       {videoSrc ? (
         <div
           className="relative w-full h-64 sm:h-96 md:h-[500px] lg:h-[600px] cursor-pointer"
@@ -53,17 +53,17 @@ export function VideoPlayer({ current, onPrev, onNext, onDotClick, activeIndex, 
 
           <TitleOverlay displayTitle={current.displayTitle} subtitle={current.subtitle} />
 
-          {/* Dark overlay gradients */}
+          {/* Soft overlay gradients - Fixed darkness for video */}
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)",
+              background: "linear-gradient(to top, rgba(7,35,68,0.35) 0%, rgba(7,35,68,0.08) 50%, transparent 100%)",
             }}
           />
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 50%)",
+              background: "linear-gradient(to right, rgba(10,74,136,0.25) 0%, transparent 55%)",
             }}
           />
 
@@ -97,17 +97,17 @@ export function VideoPlayer({ current, onPrev, onNext, onDotClick, activeIndex, 
 
           <TitleOverlay displayTitle={current.displayTitle} subtitle={current.subtitle} />
 
-          {/* Dark overlay gradients */}
+          {/* Soft overlay gradients - Fixed darkness for image */}
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)",
+              background: "linear-gradient(to top, rgba(7,35,68,0.35) 0%, rgba(7,35,68,0.08) 50%, transparent 100%)",
             }}
           />
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 50%)",
+              background: "linear-gradient(to right, rgba(10,74,136,0.25) 0%, transparent 55%)",
             }}
           />
 

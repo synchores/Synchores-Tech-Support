@@ -1,204 +1,173 @@
-import { motion } from "motion/react";
-import { deploymentsGalleryData, getDeploymentsByType } from "../deploymentsGalleryData";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  deploymentsGalleryData,
+  getAllDeploymentTypes,
+} from "../deploymentsGalleryData";
+import { DeploymentGalleryFilterButton } from "./deploymentGalleryFilterButton";
+import { DeploymentGalleryCard } from "./deploymentGalleryCard";
+import { DeploymentGalleryLightboxModal } from "./deploymentGalleryLightboxModal";
 
 export function DeploymentGalleryGrid() {
-  const deploymentsByType = getDeploymentsByType();
-  const types = Object.keys(deploymentsByType);
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const allTypes = getAllDeploymentTypes();
+
+  const filteredDeployments =
+    activeFilter === "All"
+      ? deploymentsGalleryData
+      : deploymentsGalleryData.filter((item) => item.type === activeFilter);
 
   return (
     <section
       style={{
-        backgroundColor: "#0a0a0a",
-        borderTop: "1px solid #111",
-        borderBottom: "1px solid #111",
+        backgroundColor: "var(--landing-bg)",
+        borderTop: "1px solid var(--landing-border)",
+        borderBottom: "1px solid var(--landing-border)",
         padding: "clamp(48px, 8vw, 80px) 0",
       }}
     >
-      {/* Section Header */}
       <div
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
           padding: "0 clamp(16px, 3vw, 24px)",
-          marginBottom: "clamp(32px, 5vw, 56px)",
+          marginBottom: "clamp(32px, 5vw, 48px)",
         }}
       >
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{
-            fontFamily: "'Orbitron', Arial, sans-serif",
-            fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
-            fontWeight: 700,
-            color: "#ffffff",
-            margin: 0,
-            textTransform: "uppercase",
-            letterSpacing: "0.04em",
-          }}
+          viewport={{ once: true }}
+          style={{ textAlign: "center" }}
         >
-          Deployment <span style={{ color: "#1e7fd4" }}>Gallery</span>
-        </motion.h2>
+          <h2
+            style={{
+              fontFamily: "'Orbitron', Arial, sans-serif",
+              fontSize: "clamp(1.75rem, 4vw, 3rem)",
+              fontWeight: 700,
+              color: "var(--landing-text)",
+              margin: "0 0 12px 0",
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+            }}
+          >
+            Deployment <span style={{ color: "#1e7fd4" }}>Gallery</span>
+          </h2>
+          <p
+            style={{
+              fontFamily: "'Inter', Arial, sans-serif",
+              fontSize: "clamp(14px, 2vw, 16px)",
+              color: "var(--landing-text-muted)",
+              margin: 0,
+              maxWidth: "600px",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
+          >
+            Showcasing our expertise in infrastructure, security, and
+            telecommunications solutions
+          </p>
+        </motion.div>
       </div>
 
-      {/* Type-Based Columns */}
       <div
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
           padding: "0 clamp(16px, 3vw, 24px)",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "clamp(24px, 3vw, 40px)",
         }}
       >
-        {types.map((type, typeIndex) => (
-          <motion.div
-            key={type}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: typeIndex * 0.1 }}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "clamp(16px, 2vw, 24px)",
-            }}
-          >
-            {/* Type Header */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                paddingBottom: "12px",
-                borderBottom: "2px solid #1e7fd4",
-              }}
-            >
-              <div
-                style={{
-                  width: "8px",
-                  height: "8px",
-                  borderRadius: "50%",
-                  backgroundColor: "#4da6ff",
-                }}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true }}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "12px",
+            justifyContent: "center",
+            marginBottom: "clamp(32px, 5vw, 48px)",
+          }}
+        >
+          <DeploymentGalleryFilterButton
+            label="All"
+            count={deploymentsGalleryData.length}
+            isActive={activeFilter === "All"}
+            onClick={() => setActiveFilter("All")}
+          />
+          {allTypes.map((type) => {
+            const count = deploymentsGalleryData.filter(
+              (item) => item.type === type,
+            ).length;
+
+            return (
+              <DeploymentGalleryFilterButton
+                key={type}
+                label={type}
+                count={count}
+                isActive={activeFilter === type}
+                onClick={() => setActiveFilter(type)}
               />
-              <h3
-                style={{
-                  fontFamily: "'Rajdhani', sans-serif",
-                  fontSize: "clamp(14px, 2vw, 16px)",
-                  fontWeight: 600,
-                  color: "#ffffff",
-                  margin: 0,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {type}
-              </h3>
-              <span
-                style={{
-                  marginLeft: "auto",
-                  fontSize: "12px",
-                  color: "#757575",
-                  fontFamily: "'Rajdhani', sans-serif",
-                }}
-              >
-                ({deploymentsByType[type].length})
-              </span>
-            </div>
+            );
+          })}
+        </motion.div>
 
-            {/* Items in Column */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeFilter}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             <div
               style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "clamp(12px, 1.5vw, 16px)",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "clamp(16px, 2vw, 24px)",
+                alignItems: "stretch",
               }}
             >
-              {deploymentsByType[type].map((item, itemIndex) => (
-                <motion.div
+              {filteredDeployments.map((item, index) => (
+                <DeploymentGalleryCard
                   key={item.id}
-                  whileHover={{ x: 8 }}
-                  transition={{ duration: 0.2 }}
-                  style={{
-                    padding: "clamp(12px, 2vw, 16px)",
-                    backgroundColor: "#111111",
-                    border: "1px solid #1a1a1a",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#1a1a1a";
-                    e.currentTarget.style.borderColor = "#1e7fd4";
-                    e.currentTarget.style.boxShadow = "0 0 12px rgba(30, 127, 212, 0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#111111";
-                    e.currentTarget.style.borderColor = "#1a1a1a";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                >
-                  {/* Item Image */}
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "160px",
-                      borderRadius: "4px",
-                      overflow: "hidden",
-                      marginBottom: "12px",
-                      backgroundColor: "#000000",
-                    }}
-                  >
-                    <img
-                      src={item.image}
-                      alt={item.label}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.3s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "scale(1.05)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "scale(1)";
-                      }}
-                    />
-                  </div>
-
-                  {/* Item Content */}
-                  <div>
-                    <h4
-                      style={{
-                        fontFamily: "'Rajdhani', sans-serif",
-                        fontSize: "clamp(13px, 1.8vw, 15px)",
-                        fontWeight: 600,
-                        color: "#ffffff",
-                        margin: "0 0 6px 0",
-                      }}
-                    >
-                      {item.project}
-                    </h4>
-                    <p
-                      style={{
-                        fontFamily: "'Inter', Arial, sans-serif",
-                        fontSize: "clamp(12px, 1.5vw, 13px)",
-                        color: "#999999",
-                        margin: 0,
-                        lineHeight: 1.4,
-                      }}
-                    >
-                      {item.description}
-                    </p>
-                  </div>
-                </motion.div>
+                  item={item}
+                  index={index}
+                  onClick={() => setSelectedItem(item)}
+                />
               ))}
             </div>
           </motion.div>
-        ))}
+        </AnimatePresence>
+
+        {filteredDeployments.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{
+              textAlign: "center",
+              padding: "60px 20px",
+              color: "var(--landing-text-soft)",
+            }}
+          >
+            <p style={{ fontFamily: "'Inter', Arial, sans-serif", fontSize: "16px" }}>
+              No deployments found for this category.
+            </p>
+          </motion.div>
+        )}
       </div>
+
+      <AnimatePresence>
+        {selectedItem && (
+          <DeploymentGalleryLightboxModal
+            item={selectedItem}
+            onClose={() => setSelectedItem(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }

@@ -6,7 +6,7 @@ const THEME_PRIMARY_HOVER = '#1277d4';
 
 export default function OverviewSection({ offering, onCTA }) {
   return (
-    <section style={{ backgroundColor: '#060c14', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
+    <section style={{ backgroundColor: 'var(--landing-bg-strong)', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
       <div
         style={{
           maxWidth: '1200px',
@@ -43,7 +43,7 @@ export default function OverviewSection({ offering, onCTA }) {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: 'clamp(15px, 1.5vw, 17px)',
-              color: '#ffffff',
+              color: 'var(--landing-text)',
               lineHeight: 1.75,
               margin: '0 0 32px 0',
             }}
@@ -59,7 +59,7 @@ export default function OverviewSection({ offering, onCTA }) {
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontSize: 'clamp(12px, 2vw, 14px)',
-                    color: '#ffffff',
+                    color: 'var(--landing-text)',
                   }}
                 >
                   {pt}
@@ -90,7 +90,7 @@ export default function OverviewSection({ offering, onCTA }) {
               <div
                 key={stat.label}
                 style={{
-                  background: '#0c335e',
+                  background: 'var(--landing-surface)',
                   padding: '32px 24px',
                   textAlign: 'center',
                 }}

@@ -61,7 +61,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
   };
 
   return (
-    <div className="w-full bg-gradient-to-br from-[#040a12] via-[#07111f] to-[#040b15] py-2 sm:py-4 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
+    <div className="w-full py-2 sm:py-4 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden" style={{ background: "linear-gradient(to bottom-right, var(--landing-bg) 0%, var(--landing-bg-strong) 100%)" }}>
       <div className="w-full max-w-[1400px] mx-auto rounded-lg sm:rounded-2xl">
         {/* ScrollStack Features */}
         <ScrollStack
@@ -79,7 +79,12 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
           {features.map((feature, idx) => (
             <ScrollStackItem
               key={idx}
-              itemClassName="bg-gradient-to-br from-[#0a213d] to-[#07192e] hover:shadow-[0_24px_50px_rgba(12,51,94,0.28)] transition-shadow duration-300 border border-[#1e3f67] cursor-pointer"
+              itemClassName="hover:shadow-[0_24px_50px_rgba(12,51,94,0.14)] transition-shadow duration-300 cursor-pointer"
+              style={{
+                backgroundColor: "var(--card-bg)",
+                opacity: 1,
+                border: "1px solid var(--landing-border-strong)",
+              }}
             >
               <div className="flex flex-col md:flex-row h-full w-full gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12">
                 {/* Column 2: Image - Top on mobile, Right on desktop */}
@@ -95,18 +100,18 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                   className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
-                  <span className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase text-[#8fb0d4] border border-[#2a4a71] bg-[rgba(12,51,94,0.22)]">
+                  <span className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase text-[#2f5f8f] dark:text-[#8fb0d4] border border-[#a9c3df] dark:border-[#2a4a71] bg-[rgba(30,127,212,0.12)] dark:bg-[rgba(12,51,94,0.22)]">
                     Service {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                   </span>
-                  <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-[#eef5ff] tracking-wide break-words uppercase">
+                  <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-[#113057] dark:text-[#eef5ff] tracking-wide break-words uppercase">
                     {feature.title}
                   </h2>
-                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-[#9eb4cc] leading-relaxed break-words">
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-[#4d6178] dark:text-[#9eb4cc] leading-relaxed break-words">
                     {feature.description}
                   </p>
                   
                   {/* Separator Line */}
-                  <div className="my-1 sm:my-3 md:my-4 h-px bg-gradient-to-r from-[#0c335e] to-transparent opacity-90"></div>
+                  <div className="my-1 sm:my-3 md:my-4 h-px bg-gradient-to-r from-[#98b6d6] dark:from-[#0c335e] to-transparent opacity-90"></div>
                   
                   {/* Bullets List */}
                   {feature.bullets && (
@@ -119,8 +124,8 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                         return (
                           <li key={bulletIdx} className="flex items-start gap-1.5 sm:gap-2 md:gap-3">
                             {renderBulletIcon()}
-                            <span className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-[#c5d4e6] break-words pt-0.5">
-                              <span className="font-bold text-[#7ea0c4]">{firstWord}</span> {restWords}
+                            <span className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-[#57718b] dark:text-[#c5d4e6] break-words pt-0.5">
+                              <span className="font-bold text-[#2f5f8f] dark:text-[#7ea0c4]">{firstWord}</span> {restWords}
                             </span>
                           </li>
                         );

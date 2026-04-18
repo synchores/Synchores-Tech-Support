@@ -12,7 +12,7 @@ export function DeploymentImage({ current }) {
           borderRadius: "2px",
           overflow: "hidden",
           minHeight: "clamp(160px, 50vw, 340px)",
-          border: "1px solid rgba(255,255,255,0.07)",
+          border: "1px solid var(--landing-border-strong)",
           width: "100%",
           maxWidth: "500px",
         }}
@@ -35,7 +35,7 @@ export function DeploymentImage({ current }) {
           position: "absolute",
           top: "16px",
           left: "16px",
-          background: "rgba(0,0,0,0.7)",
+          background: "var(--landing-overlay)",
           border: "1px solid rgba(30,127,212,0.5)",
           borderRadius: "2px",
           padding: "4px 12px",

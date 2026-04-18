@@ -42,7 +42,7 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             fontFamily: "'Orbitron', Arial, sans-serif",
             fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
             fontWeight: 700,
-            color: "#ffffff",
+            color: "var(--landing-text)",
             margin: 0,
             lineHeight: 1.2,
             textTransform: "uppercase",
@@ -68,12 +68,12 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             fontFamily: "'Orbitron', Arial, sans-serif",
             fontSize: "clamp(11px, 1.5vw, 13px)",
             fontWeight: 700,
-            color: "#6b7280",
+            color: "var(--landing-text-muted)",
             letterSpacing: "0.1em",
           }}
         >
           {String(activeIndex + 1).padStart(2, "0")}{" "}
-          <span style={{ color: "#2a2a2a" }}>/</span>{" "}
+          <span style={{ color: "var(--landing-border-strong)" }}>/</span>{" "}
           {String(totalCount).padStart(2, "0")}
         </span>
 
@@ -83,14 +83,14 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             style={{
               width: "clamp(32px, 8vw, 40px)",
               height: "clamp(32px, 8vw, 40px)",
-              background: "transparent",
-              border: "1px solid #2a2a2a",
+              background: "var(--landing-surface)",
+              border: "1px solid var(--landing-border-strong)",
               borderRadius: "2px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              color: "#a7a7a7",
+              color: "var(--landing-btn-text)",
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
@@ -100,8 +100,9 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.borderColor = "#2a2a2a";
-              e.currentTarget.style.color = "#a7a7a7";
+              e.currentTarget.style.background = "var(--landing-surface)";
+              e.currentTarget.style.borderColor = "var(--landing-border-strong)";
+              e.currentTarget.style.color = "var(--landing-btn-text)";
             }}
           >
             <ChevronLeft size={18} />
@@ -111,14 +112,14 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             style={{
               width: "clamp(32px, 8vw, 40px)",
               height: "clamp(32px, 8vw, 40px)",
-              background: "transparent",
-              border: "1px solid #2a2a2a",
+              background: "var(--landing-surface)",
+              border: "1px solid var(--landing-border-strong)",
               borderRadius: "2px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              color: "#a7a7a7",
+              color: "var(--landing-btn-text)",
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
@@ -128,8 +129,9 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.borderColor = "#2a2a2a";
-              e.currentTarget.style.color = "#a7a7a7";
+              e.currentTarget.style.background = "var(--landing-surface)";
+              e.currentTarget.style.borderColor = "var(--landing-border-strong)";
+              e.currentTarget.style.color = "var(--landing-btn-text)";
             }}
           >
             <ChevronRight size={18} />

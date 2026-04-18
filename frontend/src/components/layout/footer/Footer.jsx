@@ -19,7 +19,7 @@ export function Footer() {
 
   const navLinks = [
     { id: "home", label: "Home" },
-    { id: "offerings", label: "Offerings" },
+    { id: "offering", label: "Offerings" },
     { id: "about", label: "About Us" },
     { id: "contact", label: "Contact Us" },
   ];
@@ -40,7 +40,7 @@ export function Footer() {
         style={{
           maxWidth: "1400px",
           margin: "0 auto",
-          padding: "clamp(48px, 8vw, 64px) clamp(16px, 3vw, 24px)",
+          padding: "clamp(24px, 4vw, 32px) 0",
         }}
       >
         {/* Main Grid */}
@@ -54,7 +54,7 @@ export function Footer() {
           }}
         >
           {/* Brand Section - spans wider */}
-          <div style={{ gridColumn: "span 1", paddingRight: "clamp(16px, 2vw, 24px)", borderRight: "1px solid rgba(255, 255, 255, 0.2)" }}>
+          <div style={{ gridColumn: "span 1", paddingLeft: "clamp(16px, 2vw, 24px)", paddingRight: "clamp(16px, 2vw, 24px)" }}>
             <div
               style={{
                 display: "flex",
@@ -153,9 +153,8 @@ export function Footer() {
               ))}
             </div>
           </div>
-
           {/* Quick Links */}
-          <div style={{ paddingLeft: "clamp(16px, 2vw, 24px)", paddingRight: "clamp(16px, 2vw, 24px)", borderRight: "1px solid rgba(255, 255, 255, 0.2)" }}>
+          <div style={{ paddingLeft: "clamp(16px, 2vw, 24px)", paddingRight: "clamp(16px, 2vw, 24px)" }}>
             <h3
               style={{
                 fontFamily: "'Rajdhani', sans-serif",
@@ -203,7 +202,7 @@ export function Footer() {
           </div>
 
           {/* Services */}
-          <div style={{ paddingLeft: "clamp(16px, 2vw, 24px)", paddingRight: "clamp(16px, 2vw, 24px)", borderRight: "1px solid rgba(255, 255, 255, 0.2)" }}>
+          <div style={{ paddingLeft: "clamp(16px, 2vw, 24px)", paddingRight: "clamp(16px, 2vw, 24px)" }}>
             <h3
               style={{
                 fontFamily: "'Rajdhani', sans-serif",
@@ -392,34 +391,24 @@ export function Footer() {
         <p
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "clamp(12px, 1.8vw, 14px)",
+            fontSize: "clamp(14px, 2.2vw, 17px)",
             color: "#666666",
-            margin: "0 0 8px 0",
+            margin: 0,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: "6px",
+            gap: "8px",
           }}
         >
-          © {new Date().getFullYear()}
+          2026 all rights reserved
           <img
             src="/assets/synchores-color.png"
             alt="Synchores"
             style={{
-              height: "clamp(14px, 1.8vw, 16px)",
+              height: "clamp(16px, 2.2vw, 19px)",
               objectFit: "contain",
             }}
           />
-          Synchores. All rights reserved.
-        </p>
-        <p
-          style={{
-            fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "clamp(12px, 1.8vw, 14px)",
-            color: "#666666",
-            margin: 0,
-          }}
-        >
           Synchores Information Technology Solutions
         </p>
       </div>

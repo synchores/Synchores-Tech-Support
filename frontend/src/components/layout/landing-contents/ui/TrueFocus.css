@@ -17,7 +17,7 @@
 }
 
 .focus-word.active {
-  filter: blur(0);
+  color: var(--border-color, #0055aa);
 }
 
 .focus-frame {
