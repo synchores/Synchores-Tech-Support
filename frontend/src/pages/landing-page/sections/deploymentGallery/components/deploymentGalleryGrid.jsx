@@ -11,12 +11,28 @@ import { DeploymentGalleryLightboxModal } from "./deploymentGalleryLightboxModal
 export function DeploymentGalleryGrid() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const allTypes = getAllDeploymentTypes();
+  const ITEMS_PER_PAGE = 8; // 4 columns × 2 rows
 
   const filteredDeployments =
     activeFilter === "All"
       ? deploymentsGalleryData
       : deploymentsGalleryData.filter((item) => item.type === activeFilter);
+
+  // Reset to page 1 when filter changes
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    setCurrentPage(1);
+  };
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredDeployments.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedDeployments = filteredDeployments.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
 
   return (
     <section
@@ -96,7 +112,7 @@ export function DeploymentGalleryGrid() {
             label="All"
             count={deploymentsGalleryData.length}
             isActive={activeFilter === "All"}
-            onClick={() => setActiveFilter("All")}
+            onClick={() => handleFilterChange("All")}
           />
           {allTypes.map((type) => {
             const count = deploymentsGalleryData.filter(
@@ -109,7 +125,7 @@ export function DeploymentGalleryGrid() {
                 label={type}
                 count={count}
                 isActive={activeFilter === type}
-                onClick={() => setActiveFilter(type)}
+                onClick={() => handleFilterChange(type)}
               />
             );
           })}
@@ -126,12 +142,12 @@ export function DeploymentGalleryGrid() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gridTemplateColumns: "repeat(4, 1fr)",
                 gap: "clamp(16px, 2vw, 24px)",
                 alignItems: "stretch",
               }}
             >
-              {filteredDeployments.map((item, index) => (
+              {paginatedDeployments.map((item, index) => (
                 <DeploymentGalleryCard
                   key={item.id}
                   item={item}
@@ -142,6 +158,156 @@ export function DeploymentGalleryGrid() {
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "16px",
+              marginTop: "clamp(32px, 5vw, 48px)",
+            }}
+          >
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              style={{
+                padding: "10px 20px",
+                backgroundColor:
+                  currentPage === 1
+                    ? "transparent"
+                    : "var(--landing-accent, #1e7fd4)",
+                color: currentPage === 1
+                  ? "var(--landing-text-soft)"
+                  : "white",
+                border: `2px solid ${currentPage === 1
+                  ? "var(--landing-text-soft)"
+                  : "var(--landing-accent, #1e7fd4)"}`,
+                borderRadius: "4px",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                fontFamily: "'Inter', Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: 600,
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (currentPage !== 1) {
+                  e.target.style.opacity = "0.8";
+                  e.target.style.transform = "translateX(-2px)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (currentPage !== 1) {
+                  e.target.style.opacity = "1";
+                  e.target.style.transform = "translateX(0)";
+                }
+              }}
+            >
+              ← Previous
+            </button>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+              }}
+            >
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    padding: 0,
+                    backgroundColor:
+                      currentPage === page
+                        ? "var(--landing-accent, #1e7fd4)"
+                        : "transparent",
+                    color:
+                      currentPage === page
+                        ? "white"
+                        : "var(--landing-text)",
+                    border:
+                      currentPage === page
+                        ? "2px solid var(--landing-accent, #1e7fd4)"
+                        : "2px solid var(--landing-text)",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontFamily: "'Inter', Arial, sans-serif",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (currentPage !== page) {
+                      e.target.style.backgroundColor = "var(--landing-accent, #1e7fd4)";
+                      e.target.style.color = "white";
+                      e.target.style.borderColor = "var(--landing-accent, #1e7fd4)";
+                      e.target.style.transform = "scale(1.05)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentPage !== page) {
+                      e.target.style.backgroundColor = "transparent";
+                      e.target.style.color = "var(--landing-text)";
+                      e.target.style.borderColor = "var(--landing-text)";
+                      e.target.style.transform = "scale(1)";
+                    }
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              disabled={currentPage === totalPages}
+              style={{
+                padding: "10px 20px",
+                backgroundColor:
+                  currentPage === totalPages
+                    ? "transparent"
+                    : "var(--landing-accent, #1e7fd4)",
+                color: currentPage === totalPages
+                  ? "var(--landing-text-soft)"
+                  : "white",
+                border: `2px solid ${currentPage === totalPages
+                  ? "var(--landing-text-soft)"
+                  : "var(--landing-accent, #1e7fd4)"}`,
+                borderRadius: "4px",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                fontFamily: "'Inter', Arial, sans-serif",
+                fontSize: "14px",
+                fontWeight: 600,
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (currentPage !== totalPages) {
+                  e.target.style.opacity = "0.8";
+                  e.target.style.transform = "translateX(2px)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (currentPage !== totalPages) {
+                  e.target.style.opacity = "1";
+                  e.target.style.transform = "translateX(0)";
+                }
+              }}
+            >
+              Next →
+            </button>
+          </motion.div>
+        )}
 
         {filteredDeployments.length === 0 && (
           <motion.div

@@ -71,49 +71,6 @@ export function DeploymentGalleryCard({ item, index, onClick }) {
         </div>
       </div>
 
-      <div
-        style={{
-          padding: "clamp(14px, 2vw, 18px)",
-        }}
-      >
-        <h3
-          style={{
-            fontFamily: "'Rajdhani', sans-serif",
-            fontSize: "clamp(15px, 2vw, 18px)",
-            fontWeight: 600,
-            color: "var(--landing-text)",
-            margin: "0 0 8px 0",
-            lineHeight: 1.3,
-          }}
-        >
-          {item.project}
-        </h3>
-        <p
-          style={{
-            fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "clamp(12px, 1.5vw, 14px)",
-            color: "var(--landing-text-muted)",
-            margin: "0 0 12px 0",
-            lineHeight: 1.5,
-          }}
-        >
-          {item.description}
-        </p>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            fontSize: "11px",
-            color: "var(--landing-text-soft)",
-            fontFamily: "'Rajdhani', sans-serif",
-          }}
-        >
-          {item.date && <span>{item.date}</span>}
-          {item.date && item.location && <span style={{ color: "var(--landing-border-strong)" }}>•</span>}
-          {item.location && <span>{item.location}</span>}
-        </div>
-      </div>
     </motion.div>
   );
 }
