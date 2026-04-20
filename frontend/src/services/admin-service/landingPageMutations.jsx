@@ -217,6 +217,28 @@ export const UPDATE_COMPANY_INFO_MUTATION = gql`
       facebookUrl
       instagramUrl
       youtubeUrl
+      aboutEyebrow
+      aboutHeading
+      aboutParagraph2
+      aboutImage1
+      aboutImage2
+      aboutImage1Alt
+      aboutImage2Alt
+      missionLabel
+      missionStatement
+      valuesLabel
+      valuesStatement
+      commitmentEyebrow
+      commitmentHeading
+      commitmentStatement
+      footerBrandText
+      companyLogo
+      companyLogoAlt
+      contactEyebrow
+      contactHeading
+      contactIntroText
+      contactBgImage
+      contactBgImageAlt
       createdAt
       updatedAt
     }

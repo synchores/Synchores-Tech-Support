@@ -7,12 +7,10 @@ export function Navbar({ activeSection, onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isManualScrolling, setIsManualScrolling] = useState(false);
-  const [themeMode, setThemeMode] = useState("light");
-
-  useEffect(() => {
-    const currentIsDark = document.documentElement.classList.contains("dark");
-    setThemeMode(currentIsDark ? "dark" : "light");
-  }, []);
+  const [themeMode, setThemeMode] = useState(() => {
+    if (typeof document === "undefined") return "light";
+    return document.documentElement.classList.contains("dark") ? "dark" : "light";
+  });
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

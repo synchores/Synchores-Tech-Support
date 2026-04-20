@@ -9,6 +9,7 @@ import { TicketsStats } from "../../components/layout/adminTickets-contents/Tick
 import { TicketsToolbar } from "../../components/layout/adminTickets-contents/TicketsToolbar";
 import { TicketsTable } from "../../components/layout/adminTickets-contents/TicketsTable";
 import { TicketsFooter } from "../../components/layout/adminTickets-contents/TicketsFooter";
+import { toastError, toastSuccess } from "../../services/admin-service/adminToast";
 
 export function AdminTickets() {
   const { data: ticketsData, loading, error } = useQuery(GET_ALL_TICKETS_QUERY);
@@ -66,7 +67,9 @@ export function AdminTickets() {
     critical: ticketList.filter(t => t.priority === "critical").length,
   }), [ticketList]);
 
-  async function handleStatusChange(id, newStatus) {
+  async function handleStatusChange(id, newStatus, options = {}) {
+    const { silent = false } = options;
+
     // Update local state optimistically
     setLocalTickets(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
     
@@ -82,10 +85,22 @@ export function AdminTickets() {
             },
           },
         });
+
+        if (!silent) {
+          toastSuccess("Updated successfully", "Ticket status updated.");
+        }
       } catch (err) {
         console.error("Failed to update ticket status:", err);
+        if (!silent) {
+          toastError(err, "Update failed");
+        }
         // Local state was already updated optimistically, so the UI will reflect the change
       }
+      return;
+    }
+
+    if (!silent) {
+      toastSuccess("Updated successfully", "Ticket status updated.");
     }
   }
 
@@ -112,6 +127,7 @@ export function AdminTickets() {
       updatedAt: new Date().toISOString(),
     };
     setLocalTickets(prev => [newTicket, ...prev]);
+    toastSuccess("Created successfully", "Ticket created.");
     setNewModal(false);
   }
 
@@ -125,8 +141,10 @@ export function AdminTickets() {
     );
   }
 
-  function handleMarkResolved() {
-    selected.forEach(id => handleStatusChange(id, "completed"));
+  async function handleMarkResolved() {
+    const ids = [...selected];
+    await Promise.all(ids.map((id) => handleStatusChange(id, "completed", { silent: true })));
+    toastSuccess("Updated successfully", "Selected tickets marked as resolved.");
     setSelected([]);
   }
 

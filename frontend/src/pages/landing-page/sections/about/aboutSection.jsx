@@ -1,6 +1,6 @@
 import { NAVY, AboutLeftPanel, AboutRightPanel } from "./components";
 
-export function AboutSection() {
+export function AboutSection({ companyInfo }) {
   return (
     <section
       id="about"
@@ -18,8 +18,18 @@ export function AboutSection() {
         }}
         className="about-split"
       >
-        <AboutLeftPanel />
-        <AboutRightPanel />
+        <AboutLeftPanel
+          eyebrow={companyInfo?.aboutEyebrow}
+          heading={companyInfo?.aboutHeading}
+          paragraph1={companyInfo?.aboutText}
+          paragraph2={companyInfo?.aboutParagraph2 || companyInfo?.whatWeDoParagraph1}
+          missionLabel={companyInfo?.missionLabel}
+          missionStatement={companyInfo?.missionStatement}
+        />
+        <AboutRightPanel
+          imageSrc={companyInfo?.aboutImage1}
+          imageAlt={companyInfo?.aboutImage1Alt}
+        />
       </div>
 
       {/* Responsive stacked styles for mobile */}

@@ -1,11 +1,15 @@
 import { useMemo, useState } from "react";
-import { Copy, Eye, Pencil, Trash2 } from "lucide-react";
+import { Copy, Pencil } from "lucide-react";
 import { useDeploymentGallery } from "../../hooks/useLandingPageData";
 import { DeploymentStatsSection } from "../../components/layout/adminLanding-contents/DeploymentStatsSection";
 import { DeploymentDetailModal } from "../../components/layout/adminLanding-contents/DeploymentDetailModal";
 import { CmsToolbar } from "../../components/admin-ui/CmsToolbar";
 import { CmsDataTable } from "../../components/admin-ui/CmsDataTable";
 import { CmsActionMenu } from "../../components/admin-ui/CmsActionMenu";
+import {
+  toastError,
+  toastSuccess,
+} from "../../services/admin-service/adminToast";
 
 const STATUS_ORDER = ["published", "draft", "archived"];
 
@@ -25,9 +29,7 @@ export function AdminDeploymentGallery() {
     loading,
     createDeployment,
     updateDeployment,
-    deleteDeployment,
     duplicateDeployment,
-    bulkDeleteDeployments,
     bulkUpdateDeploymentStatus,
   } = useDeploymentGallery({
     search,
@@ -91,57 +93,71 @@ export function AdminDeploymentGallery() {
     setDrawerOpen(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this deployment item?")) return;
-    await deleteDeployment(id);
-    setSelectedIds((prev) => prev.filter((itemId) => itemId !== id));
-  };
-
   const handleSingleStatusChange = async (id, status) => {
-    await updateDeployment({ deploymentId: id, status });
-  };
-
-  const handleDuplicate = async (id) => {
-    const cloned = await duplicateDeployment(id);
-    if (cloned) {
-      openEdit(cloned);
+    try {
+      await updateDeployment({ deploymentId: id, status });
+      toastSuccess("Updated successfully", "Deployment status updated.");
+    } catch (error) {
+      toastError(error, "Update failed");
     }
   };
 
-  const handleBulkDelete = async () => {
-    if (!selectedIds.length) return;
-    if (!window.confirm(`Delete ${selectedIds.length} selected deployments?`)) return;
-    await bulkDeleteDeployments(selectedIds);
-    clearSelection();
+  const handleDuplicate = async (id) => {
+    try {
+      const cloned = await duplicateDeployment(id);
+      if (cloned) {
+        openEdit(cloned);
+        toastSuccess("Duplicated successfully", "Deployment duplicated.");
+      }
+    } catch (error) {
+      toastError(error, "Duplicate failed");
+    }
   };
 
   const handleBulkPublish = async () => {
     if (!selectedIds.length) return;
-    await bulkUpdateDeploymentStatus(selectedIds, "published");
-    clearSelection();
+
+    try {
+      const ids = [...selectedIds];
+      await bulkUpdateDeploymentStatus(ids, "published");
+      clearSelection();
+      toastSuccess("Updated successfully", "Selected deployments published.");
+    } catch (error) {
+      toastError(error, "Update failed");
+    }
   };
 
   const handleBulkArchive = async () => {
     if (!selectedIds.length) return;
-    await bulkUpdateDeploymentStatus(selectedIds, "archived");
-    clearSelection();
-  };
 
-  const handlePreview = (id) => {
-    window.open(`/?preview=deployment&itemId=${id}`, "_blank");
+    try {
+      const ids = [...selectedIds];
+      await bulkUpdateDeploymentStatus(ids, "archived");
+      clearSelection();
+      toastSuccess("Updated successfully", "Selected deployments archived.");
+    } catch (error) {
+      toastError(error, "Update failed");
+    }
   };
 
   const handleSubmit = async (input) => {
-    if (editingDeployment?.deploymentId) {
-      await updateDeployment(input);
-      return;
-    }
+    try {
+      if (editingDeployment?.deploymentId) {
+        await updateDeployment(input);
+        toastSuccess("Updated successfully", "Deployment updated.");
+        return;
+      }
 
-    await createDeployment(input);
+      await createDeployment(input);
+      toastSuccess("Created successfully", "Deployment created.");
+    } catch (error) {
+      toastError(error, editingDeployment?.deploymentId ? "Update failed" : "Create failed");
+      throw error;
+    }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#ffffff" }}>
+    <div className="admin-page-shell" style={{ minHeight: "100vh" }}>
       <div className="p-6 flex flex-col gap-5">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--foreground)" }}>
@@ -167,7 +183,6 @@ export function AdminDeploymentGallery() {
         onCreate={openCreate}
         createLabel="+ New Deployment"
         selectedCount={selectedIds.length}
-        onBulkDelete={handleBulkDelete}
         onBulkPublish={handleBulkPublish}
         onBulkArchive={handleBulkArchive}
         onClearSelection={clearSelection}
@@ -181,11 +196,9 @@ export function AdminDeploymentGallery() {
           onToggleSelect={handleToggleSelect}
           onToggleSelectAll={handleToggleSelectAll}
           onEdit={openEdit}
-          onDelete={handleDelete}
           onDuplicate={handleDuplicate}
           onToggleStatus={handleSingleStatusChange}
           onStatusChange={handleSingleStatusChange}
-          onPreview={handlePreview}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -195,7 +208,7 @@ export function AdminDeploymentGallery() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                background: "white",
+                background: "var(--card)",
                 borderRadius: "0.5rem",
                 border: "1px solid var(--border)",
                 boxShadow: "0 1px 3px rgba(15, 23, 42, 0.08)",
@@ -204,7 +217,7 @@ export function AdminDeploymentGallery() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = "0 4px 12px rgba(15, 23, 42, 0.15)";
-                e.currentTarget.style.borderColor = "#cbd5e1";
+                e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.45)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = "0 1px 3px rgba(15, 23, 42, 0.08)";
@@ -212,7 +225,7 @@ export function AdminDeploymentGallery() {
               }}
             >
               {/* Image Container */}
-              <div className="relative h-40 overflow-hidden bg-slate-100">
+              <div className="relative h-40 overflow-hidden" style={{ background: "var(--accent)" }}>
                 <img
                   src={item.image ? `http://localhost:3000${item.image}` : "https://placehold.co/600x320/e2e8f0/64748b?text=No+Image"}
                   alt={item.title}
@@ -240,17 +253,6 @@ export function AdminDeploymentGallery() {
                         label: "Duplicate",
                         icon: <Copy size={14} />,
                         onClick: () => handleDuplicate(item.id),
-                      },
-                      {
-                        label: "Preview in Landing Page",
-                        icon: <Eye size={14} />,
-                        onClick: () => handlePreview(item.id),
-                      },
-                      {
-                        label: "Delete",
-                        icon: <Trash2 size={14} />,
-                        tone: "danger",
-                        onClick: () => handleDelete(item.id),
                       },
                     ]}
                   />

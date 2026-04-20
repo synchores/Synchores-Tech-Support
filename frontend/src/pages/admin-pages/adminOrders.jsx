@@ -5,6 +5,7 @@ import { OrdersTableSection } from "../../components/layout/adminOrders-Contents
 import { OrderDetailModal } from "../../components/layout/adminOrders-Contents/OrderDetailModal";
 import { ALL_ORDERS_QUERY } from "../../services/admin-service/Queries";
 import { TRANSITION_ORDER_STATUS_MUTATION } from "../../services/admin-service/Mutation";
+import { toastError, toastSuccess } from "../../services/admin-service/adminToast";
 
 const validTransitions = {
   PENDING_APPROVAL: ["APPROVED", "REJECTED"],
@@ -58,6 +59,10 @@ export function AdminOrders() {
       });
 
       const updated = result?.data?.transitionOrderStatus;
+      if (updated) {
+        toastSuccess("Updated successfully", "Order status updated.");
+      }
+
       if (updated && detailOrder?.orderId === orderId) {
         setDetailOrder((prev) =>
           prev
@@ -71,6 +76,7 @@ export function AdminOrders() {
       }
     } catch (mutationError) {
       console.error("Failed to transition order status:", mutationError);
+      toastError(mutationError, "Update failed");
     }
   }
 

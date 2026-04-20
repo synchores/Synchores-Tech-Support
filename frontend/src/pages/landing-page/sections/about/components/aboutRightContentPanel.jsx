@@ -2,7 +2,23 @@ import { motion } from "motion/react";
 import { NAVY, BLUE_VIVID } from "./constants";
 import { Separator } from "./separator";
 
-export function AboutRightContentPanel() {
+export function AboutRightContentPanel({
+  eyebrow,
+  heading,
+  statement,
+  valuesLabel,
+  valuesStatement,
+}) {
+  const commitmentHeadingText = (heading || "OUR COMMITMENT").trim();
+  const headingParts = commitmentHeadingText.includes("\n")
+    ? commitmentHeadingText.split("\n").map((part) => part.trim()).filter(Boolean)
+    : commitmentHeadingText.split(" ").map((part) => part.trim()).filter(Boolean);
+  const headingTop = headingParts[0] || "OUR";
+  const headingBottom = headingParts.slice(1).join(" ") || "COMMITMENT";
+  const commitmentStatement =
+    statement ||
+    "We implement secure, scalable technologies-from networking and cloud systems to AI-powered workflows-that streamline operations, boost productivity, and drive sustainable growth.";
+
   return (
     <div
       style={{
@@ -61,7 +77,7 @@ export function AboutRightContentPanel() {
           margin: "0 0 14px 0",
         }}
       >
-        Why Choose Us
+        {eyebrow || "Why Choose Us"}
       </motion.p>
 
       {/* Heading */}
@@ -81,7 +97,7 @@ export function AboutRightContentPanel() {
           letterSpacing: "0.03em",
         }}
       >
-        OUR
+        {headingTop}
         <br />
         <span
           style={{
@@ -92,7 +108,7 @@ export function AboutRightContentPanel() {
             backgroundImage: `linear-gradient(135deg, #ffffff 40%, ${BLUE_VIVID} 100%)`,
           }}
         >
-          COMMITMENT
+          {headingBottom}
         </span>
       </motion.h2>
 
@@ -113,11 +129,7 @@ export function AboutRightContentPanel() {
           margin: "0 0 36px 0",
         }}
       >
-        We implement{" "}
-        <span style={{ color: "#ffffff", fontWeight: 600 }}>
-          secure, scalable technologies
-        </span>
-        —from networking and cloud systems to AI-powered workflows—that streamline operations, boost productivity, and drive sustainable growth.
+        {commitmentStatement}
       </motion.p>
 
       {/* Value highlight */}
@@ -146,7 +158,7 @@ export function AboutRightContentPanel() {
             margin: "0 0 6px 0",
           }}
         >
-          Our Values
+          {valuesLabel || "Our Values"}
         </p>
         <p
           style={{
@@ -158,7 +170,7 @@ export function AboutRightContentPanel() {
             fontStyle: "italic",
           }}
         >
-          "Quality, innovation, and reliability are at the heart of everything we do."
+          "{valuesStatement || "Quality, innovation, and reliability are at the heart of everything we do."}"
         </p>
       </motion.div>
     </div>

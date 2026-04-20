@@ -1,7 +1,60 @@
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
+const DRAWER_ANIMATION_MS = 260;
+
+function getActionStyles(variant = "primary") {
+  if (variant === "danger") {
+    return {
+      base: { background: "#ef4444", color: "white", border: "none" },
+      hover: "#dc2626",
+    };
+  }
+
+  if (variant === "ghost") {
+    return {
+      base: {
+        background: "white",
+        color: "var(--foreground)",
+        border: "1px solid var(--border)",
+      },
+      hover: "#f1f5f9",
+    };
+  }
+
+  return {
+    base: { background: "#3b82f6", color: "white", border: "none" },
+    hover: "#2563eb",
+  };
+}
+
 export function CmsDrawer({ open, title, onClose, children, actions }) {
-  if (!open) return null;
+  const [isMounted, setIsMounted] = useState(open);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    let showTimer;
+    let hideTimer;
+
+    if (open) {
+      setIsMounted(true);
+      showTimer = setTimeout(() => {
+        setIsVisible(true);
+      }, 16);
+    } else if (isMounted) {
+      setIsVisible(false);
+      hideTimer = setTimeout(() => {
+        setIsMounted(false);
+      }, DRAWER_ANIMATION_MS);
+    }
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [open, isMounted]);
+
+  if (!isMounted) return null;
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
@@ -14,6 +67,8 @@ export function CmsDrawer({ open, title, onClose, children, actions }) {
           right: 0,
           bottom: 0,
           background: "rgba(2, 6, 23, 0.48)",
+          opacity: isVisible ? 1 : 0,
+          transition: `opacity ${DRAWER_ANIMATION_MS}ms ease`,
           zIndex: 40,
         }}
       />
@@ -31,6 +86,10 @@ export function CmsDrawer({ open, title, onClose, children, actions }) {
           background: "linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)",
           boxShadow: "-16px 0 40px rgba(15, 23, 42, 0.12)",
           borderLeft: "2px solid var(--border)",
+          transform: isVisible ? "translateX(0)" : "translateX(100%)",
+          opacity: isVisible ? 1 : 0.98,
+          transition: `transform ${DRAWER_ANIMATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${DRAWER_ANIMATION_MS}ms ease`,
+          willChange: "transform, opacity",
         }}
       >
         <header
@@ -96,49 +155,42 @@ export function CmsDrawer({ open, title, onClose, children, actions }) {
               backdropFilter: "blur(10px)",
             }}
           >
-            {actions.map((action) => (
-              <button
-                key={action.id || action.label}
-                type="button"
-                onClick={action.onClick}
-                style={{
-                  flex: 1,
-                  padding: "0.5rem",
-                  borderRadius: "0.375rem",
-                  fontSize: "0.875rem",
-                  fontWeight: 500,
-                  transition: "all 0.15s ease-in-out",
-                  cursor: "pointer",
-                  ...(action.variant === "danger"
-                    ? {
-                        background: "#ef4444",
-                        color: "white",
-                        border: "none",
-                      }
-                    : {
-                        background: "#3b82f6",
-                        color: "white",
-                        border: "none",
-                      }),
-                }}
-                onMouseEnter={(e) => {
-                  if (action.variant === "danger") {
-                    e.currentTarget.style.background = "#dc2626";
-                  } else {
-                    e.currentTarget.style.background = "#2563eb";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (action.variant === "danger") {
-                    e.currentTarget.style.background = "#ef4444";
-                  } else {
-                    e.currentTarget.style.background = "#3b82f6";
-                  }
-                }}
-              >
-                {action.label}
-              </button>
-            ))}
+            {actions.map((action) => {
+              const styles = getActionStyles(action.variant);
+
+              return (
+                <button
+                  key={action.id || action.label}
+                  type="button"
+                  onClick={action.onClick}
+                  disabled={action.disabled}
+                  aria-busy={action.loading ? true : undefined}
+                  style={{
+                    flex: 1,
+                    padding: "0.5rem",
+                    borderRadius: "0.375rem",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    transition: "all 0.15s ease-in-out",
+                    cursor: action.disabled ? "not-allowed" : "pointer",
+                    opacity: action.disabled ? 0.6 : 1,
+                    ...styles.base,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (action.disabled) return;
+                    e.currentTarget.style.background = styles.hover;
+                  }}
+                  onMouseLeave={(e) => {
+                    if (action.disabled) return;
+                    e.currentTarget.style.background = styles.base.background;
+                  }}
+                >
+                  {action.loading
+                    ? action.loadingLabel || `${action.label}...`
+                    : action.label}
+                </button>
+              );
+            })}
           </footer>
         )}
       </aside>

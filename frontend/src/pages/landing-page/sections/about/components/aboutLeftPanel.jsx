@@ -3,7 +3,28 @@ import { NAVY, BLUE_VIVID } from "./constants";
 import { Separator } from "./separator";
 import { MissionCard } from "./missionCard";
 
-export function AboutLeftPanel() {
+export function AboutLeftPanel({
+  eyebrow,
+  heading,
+  paragraph1,
+  paragraph2,
+  missionLabel,
+  missionStatement,
+}) {
+  const aboutHeadingText = (heading || "ABOUT SYNCHORES").trim();
+  const headingParts = aboutHeadingText.includes("\n")
+    ? aboutHeadingText.split("\n").map((part) => part.trim()).filter(Boolean)
+    : aboutHeadingText.split(" ").map((part) => part.trim()).filter(Boolean);
+  const headingTop = headingParts[0] || "ABOUT";
+  const headingBottom = headingParts.slice(1).join(" ") || "SYNCHORES";
+
+  const aboutParagraph1 =
+    paragraph1 ||
+    "Synchores I.T. Solutions is a full-service technology company dedicated to empowering organizations through innovative, reliable, and scalable IT solutions.";
+  const aboutParagraph2 =
+    paragraph2 ||
+    "We deliver tailored digital solutions that help small and medium enterprises thrive in an increasingly competitive landscape.";
+
   return (
     <div
       style={{
@@ -62,7 +83,7 @@ export function AboutLeftPanel() {
           margin: "0 0 14px 0",
         }}
       >
-        Who We Are
+        {eyebrow || "Who We Are"}
       </motion.p>
 
       {/* Heading */}
@@ -82,7 +103,7 @@ export function AboutLeftPanel() {
           letterSpacing: "0.03em",
         }}
       >
-        ABOUT
+        {headingTop}
         <br />
         <span
           style={{
@@ -93,7 +114,7 @@ export function AboutLeftPanel() {
             backgroundImage: `linear-gradient(135deg, #ffffff 40%, ${BLUE_VIVID} 100%)`,
           }}
         >
-          SYNCHORES
+          {headingBottom}
         </span>
       </motion.h2>
 
@@ -114,12 +135,7 @@ export function AboutLeftPanel() {
           margin: "0 0 12px 0",
         }}
       >
-        Synchores I.T. Solutions is a full-service technology company
-        dedicated to{" "}
-        <span style={{ color: "#ffffff", fontWeight: 600 }}>
-          empowering organizations
-        </span>{" "}
-        through innovative, reliable, and scalable IT solutions.
+        {aboutParagraph1}
       </motion.p>
 
       <motion.p
@@ -135,18 +151,11 @@ export function AboutLeftPanel() {
           margin: "0 0 36px 0",
         }}
       >
-        We deliver tailored digital solutions that help{" "}
-        <span style={{ color: BLUE_VIVID, fontWeight: 500 }}>
-          small and medium
-        </span>{" "}
-        enterprises thrive in an increasingly{" "}
-        <span style={{ color: BLUE_VIVID, fontWeight: 500 }}>
-          competitive landscape.
-        </span>
+        {aboutParagraph2}
       </motion.p>
 
       {/* Mission floating card */}
-      <MissionCard />
+      <MissionCard label={missionLabel} statement={missionStatement} />
     </div>
   );
 }

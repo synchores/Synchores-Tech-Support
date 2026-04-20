@@ -20,7 +20,19 @@ createRoot(document.getElementById('root')).render(
     <ApolloProvider client={client}>
       <AuthProvider>
         <OrderProvider>
-          <Toaster position="top-right" offset={{ top: 96, right: 20 }} />
+          <Toaster
+            position="top-right"
+            offset={{ top: 96, right: 20 }}
+            options={{
+              fill: "#0f172a",
+              roundness: 14,
+              styles: {
+                description: "!text-white",
+                badge: "!bg-white/15",
+                button: "!bg-white/12 !text-white hover:!bg-white/20",
+              },
+            }}
+          />
           <App />
         </OrderProvider>
       </AuthProvider>

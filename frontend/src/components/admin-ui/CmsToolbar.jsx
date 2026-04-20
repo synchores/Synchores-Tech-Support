@@ -243,6 +243,7 @@ export function CmsToolbar({
             <button
               type="button"
               onClick={() => onViewChange("table")}
+              title="Switch to table view"
               className="px-3 text-xs font-medium transition-colors"
               style={{
                 background: view === "table" ? "#3b82f6" : "transparent",
@@ -256,6 +257,7 @@ export function CmsToolbar({
             <button
               type="button"
               onClick={() => onViewChange("grid")}
+              title="Switch to grid view"
               className="px-3 text-xs font-medium transition-colors"
               style={{
                 background: view === "grid" ? "#3b82f6" : "transparent",
@@ -272,6 +274,7 @@ export function CmsToolbar({
           <button
             type="button"
             onClick={onCreate}
+            title="Create a new service"
             style={{
               height: "43px",
               background: "#3b82f6",
@@ -304,6 +307,7 @@ export function CmsToolbar({
         <button
           type="button"
           onClick={() => onCategoryChange("all")}
+          title="Filter by all categories"
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -338,6 +342,7 @@ export function CmsToolbar({
             key={cat}
             type="button"
             onClick={() => onCategoryChange(cat)}
+            title={`Filter by ${cat}`}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -391,6 +396,7 @@ export function CmsToolbar({
           <button
             type="button"
             onClick={onBulkPublish}
+            title="Publish selected services"
             style={{
               background: "#22c55e",
               color: "white",
@@ -414,6 +420,7 @@ export function CmsToolbar({
           <button
             type="button"
             onClick={onBulkArchive}
+            title="Archive selected services"
             style={{
               background: "transparent",
               color: "var(--foreground)",
@@ -437,6 +444,7 @@ export function CmsToolbar({
           <button
             type="button"
             onClick={onBulkDelete}
+            title="Delete selected services"
             style={{
               background: "#ef4444",
               color: "white",
@@ -460,6 +468,7 @@ export function CmsToolbar({
           <button
             type="button"
             onClick={onClearSelection}
+            title="Clear current selection"
             style={{
               background: "transparent",
               color: "var(--foreground)",

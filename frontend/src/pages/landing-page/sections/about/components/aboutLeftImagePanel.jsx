@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
 import { TEAM_CODING_IMG } from "./constants";
 
-export function AboutLeftImagePanel({ imageSrc = TEAM_CODING_IMG }) {
+export function AboutLeftImagePanel({ imageSrc = TEAM_CODING_IMG, imageAlt }) {
+  const resolvedImageSrc = imageSrc.startsWith("/uploads/")
+    ? `http://localhost:3000${imageSrc}`
+    : imageSrc;
+
   return (
     <div
       style={{
@@ -26,8 +30,8 @@ export function AboutLeftImagePanel({ imageSrc = TEAM_CODING_IMG }) {
         }}
       >
         <img
-          src={imageSrc}
-          alt="Synchores solutions"
+          src={resolvedImageSrc}
+          alt={imageAlt || "Synchores solutions"}
           style={{
             width: "100%",
             height: "100%",

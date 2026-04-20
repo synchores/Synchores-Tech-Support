@@ -1,5 +1,6 @@
 import { Search, Trash2, Edit } from "lucide-react";
 import { useMemo } from "react";
+import { confirmActionToast } from "../../../services/admin-service/adminToast";
 
 export function DeploymentGridSection({
   deployments,
@@ -18,11 +19,20 @@ export function DeploymentGridSection({
     );
   }, [deployments, search]);
 
-  const handleDelete = async (e, deployment) => {
+  const handleDelete = (e, deployment) => {
     e.stopPropagation();
-    if (window.confirm(`Delete "${deployment.title}"?`)) {
-      await onDelete(deployment.id);
-    }
+
+    confirmActionToast({
+      title: "Delete deployment?",
+      description: deployment.title,
+      confirmLabel: "Delete",
+      successTitle: "Deleted successfully",
+      successDescription: "Deployment removed.",
+      errorTitle: "Delete failed",
+      onConfirm: async () => {
+        await onDelete(deployment.id);
+      },
+    });
   };
 
   return (

@@ -3,14 +3,7 @@ import { motion } from "motion/react";
 import { Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react";
 import { GoogleMap, Marker, useLoadScript, OverlayView } from "@react-google-maps/api";
 
-const contactBg = "https://images.unsplash.com/photo-1758611974287-8ca7147860a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMFVJJTIwZGVzaWduJTIwc2NyZWVuJTIwbW9kZXJufGVufDF8fHx8MTc3NjEzOTgwNXww&ixlib=rb-4.1.0&q=80&w=1080";
-
-const contactInfo = [
-  { icon: Phone, label: "PHONE", value: "+63 977 322 3796" },
-  { icon: Phone, label: "LANDLINE", value: "(046) 884 6572" },
-  { icon: Mail, label: "EMAIL", value: "info@synchores.com" },
-  { icon: MapPin, label: "ADDRESS", value: "KM 27, Emilio Aguinaldo Highway, Anabu 2F, Imus City, Cavite 4103 PH" },
-];
+const DEFAULT_CONTACT_BG = "https://images.unsplash.com/photo-1758611974287-8ca7147860a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMFVJJTIwZGVzaWduJTIwc2NyZWVuJTIwbW9kZXJufGVufDF8fHx8MTc3NjEzOTgwNXww&ixlib=rb-4.1.0&q=80&w=1080";
 
 const inputStyle = {
   width: "100%",
@@ -28,11 +21,42 @@ const inputStyle = {
   transition: "border-color 0.2s",
 };
 
-export function ContactUs() {
+function resolveAssetUrl(path, fallback) {
+  if (!path) return fallback;
+  return path.startsWith("/uploads/") ? `http://localhost:3000${path}` : path;
+}
+
+export function ContactUs({ companyInfo }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", service: "", message: "" });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState(null);
+  const contactBg = resolveAssetUrl(companyInfo?.contactBgImage, DEFAULT_CONTACT_BG);
+  const contactBgAlt = companyInfo?.contactBgImageAlt || "Contact";
+  const contactInfo = [
+    {
+      icon: Phone,
+      label: "PHONE",
+      value: companyInfo?.phoneMobile || "+63 977 322 3796",
+    },
+    {
+      icon: Phone,
+      label: "LANDLINE",
+      value: companyInfo?.phoneMain || "(046) 884 6572",
+    },
+    {
+      icon: Mail,
+      label: "EMAIL",
+      value: companyInfo?.email || "info@synchores.com",
+    },
+    {
+      icon: MapPin,
+      label: "ADDRESS",
+      value:
+        companyInfo?.address ||
+        "KM 27, Emilio Aguinaldo Highway, Anabu 2F, Imus City, Cavite 4103 PH",
+    },
+  ];
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
   });
@@ -68,7 +92,7 @@ export function ContactUs() {
       <div style={{ position: "relative", height: "200px", overflow: "hidden" }}>
         <img
           src={contactBg}
-          alt="Contact"
+          alt={contactBgAlt}
           style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.3 }}
         />
         <div style={{
@@ -93,7 +117,7 @@ export function ContactUs() {
               letterSpacing: "0.2em",
               margin: "0 0 12px 0",
             }}>
-              LET'S WORK TOGETHER
+              {companyInfo?.contactEyebrow || "LET'S WORK TOGETHER"}
             </p>
             <h2 style={{
               fontFamily: "'Orbitron', Arial, sans-serif",
@@ -104,7 +128,7 @@ export function ContactUs() {
               margin: 0,
               textTransform: "uppercase",
             }}>
-              HOW CAN WE HELP?
+              {companyInfo?.contactHeading || "HOW CAN WE HELP?"}
             </h2>
           </div>
         </div>
@@ -132,8 +156,7 @@ export function ContactUs() {
               lineHeight: 1.67,
               margin: "0 0 40px 0",
             }}>
-              Ready to transform your IT infrastructure? Our team of experts is here
-              to help. Reach out and we'll get back to you within one business day.
+              {companyInfo?.contactIntroText || "Ready to transform your IT infrastructure? Our team of experts is here to help. Reach out and we'll get back to you within one business day."}
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>

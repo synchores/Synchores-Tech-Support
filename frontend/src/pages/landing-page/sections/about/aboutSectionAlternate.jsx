@@ -1,6 +1,6 @@
 import { NAVY, SECOND_ABOUT_IMG, AboutLeftImagePanel, AboutRightContentPanel } from "./components";
 
-export function AboutSectionAlternate() {
+export function AboutSectionAlternate({ companyInfo }) {
   return (
     <section
       id="about-alternate"
@@ -18,8 +18,17 @@ export function AboutSectionAlternate() {
         }}
         className="about-split-alternate"
       >
-        <AboutLeftImagePanel imageSrc={SECOND_ABOUT_IMG} />
-        <AboutRightContentPanel />
+        <AboutLeftImagePanel
+          imageSrc={companyInfo?.aboutImage2 || SECOND_ABOUT_IMG}
+          imageAlt={companyInfo?.aboutImage2Alt}
+        />
+        <AboutRightContentPanel
+          eyebrow={companyInfo?.commitmentEyebrow}
+          heading={companyInfo?.commitmentHeading}
+          statement={companyInfo?.commitmentStatement || companyInfo?.whatWeDoParagraph2}
+          valuesLabel={companyInfo?.valuesLabel}
+          valuesStatement={companyInfo?.valuesStatement}
+        />
       </div>
 
       {/* Responsive stacked styles for mobile */}

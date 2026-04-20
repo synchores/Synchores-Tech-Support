@@ -1,4 +1,4 @@
-import { Eye, Copy, Pencil, Trash2, ArrowUpDown } from "lucide-react";
+import { Copy, Pencil, ArrowUpDown } from "lucide-react";
 import { CmsActionMenu } from "./CmsActionMenu";
 
 const FALLBACK_IMAGE = "https://placehold.co/64x40/e2e8f0/64748b?text=No+Image";
@@ -32,28 +32,28 @@ export function CmsDataTable({
   onToggleSelect,
   onToggleSelectAll,
   onEdit,
-  onDelete,
   onDuplicate,
   onToggleStatus,
   onStatusChange,
-  onPreview,
 }) {
   const allSelected = items.length > 0 && items.every((item) => selectedIds.includes(item.id));
 
   return (
     <div style={{ background: "white", borderRadius: "0.5rem", border: "1px solid var(--border)", overflow: "hidden" }}>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[940px]">
+        <table className="w-full min-w-[940px] cms-data-table">
           <thead style={{ background: "#fafafa", borderBottom: "1px solid var(--border)" }}>
             <tr>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase" style={{ color: "var(--muted-foreground)", letterSpacing: "0.5px" }}>
-                <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={(e) => onToggleSelectAll(e.target.checked)}
-                  aria-label="Select all"
-                  className="cursor-pointer"
-                />
+                <label className="cms-checkbox-hitbox cms-checkbox-hitbox-square" title="Select all services on this page">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={(e) => onToggleSelectAll(e.target.checked)}
+                    aria-label="Select all services on this page"
+                    className="cms-checkbox-input"
+                  />
+                </label>
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase" style={{ color: "var(--muted-foreground)", letterSpacing: "0.5px" }}>Image</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase" style={{ color: "var(--muted-foreground)", letterSpacing: "0.5px" }}>Title</th>
@@ -98,13 +98,15 @@ export function CmsDataTable({
                   }}
                 >
                   <td className="px-4 py-3">
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => onToggleSelect(item.id)}
-                      aria-label={`Select ${item.title}`}
-                      className="cursor-pointer"
-                    />
+                    <label className="cms-checkbox-hitbox cms-checkbox-hitbox-square" title={`Select ${item.title}`}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => onToggleSelect(item.id)}
+                        aria-label={`Select ${item.title}`}
+                        className="cms-checkbox-input"
+                      />
+                    </label>
                   </td>
                   <td className="px-4 py-3">
                     <img
@@ -153,6 +155,7 @@ export function CmsDataTable({
                       <select
                         value={item.status || "draft"}
                         onChange={(e) => onStatusChange(item.id, e.target.value)}
+                        title={`Change status for ${item.title}`}
                         style={{
                           width: "auto",
                           minWidth: "80px",
@@ -198,17 +201,6 @@ export function CmsDataTable({
                           label: `Set ${formatStatus(nextStatus(item.status))}`,
                           icon: <ArrowUpDown size={14} />,
                           onClick: () => onToggleStatus(item.id, nextStatus(item.status)),
-                        },
-                        {
-                          label: "Preview in Landing Page",
-                          icon: <Eye size={14} />,
-                          onClick: () => onPreview(item.id),
-                        },
-                        {
-                          label: "Delete",
-                          icon: <Trash2 size={14} />,
-                          tone: "danger",
-                          onClick: () => onDelete(item.id),
                         },
                       ]}
                     />

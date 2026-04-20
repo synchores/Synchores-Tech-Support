@@ -87,6 +87,7 @@ export function CmsActionMenu({ actions }) {
         ref={triggerRef}
         type="button"
         onClick={() => setOpen((prev) => !prev)}
+        title="Open row actions"
         style={{
           height: "32px",
           width: "32px",

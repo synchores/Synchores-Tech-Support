@@ -14,6 +14,7 @@ import {
   Loader2,
   Video,
 } from "lucide-react";
+import { toastError, toastInfo, toastSuccess } from "../../services/admin-service/adminToast";
 
 function isVideoSource(src = "") {
   return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
@@ -141,6 +142,7 @@ export function AdminHeroLanding() {
         message: `${fieldLabels[fieldName] || "Field"} saved.`,
         lastSavedAt: savedAt,
       }));
+      toastSuccess("Updated successfully", "Hero content updated.");
     } catch (error) {
       console.error("Save failed:", error);
       setFormData((prev) => ({
@@ -153,6 +155,7 @@ export function AdminHeroLanding() {
         field: fieldName,
         message: `Failed to save ${fieldLabels[fieldName] || "this field"}. Please try again.`,
       }));
+      toastError(error, "Update failed");
     } finally {
       setIsSaving(false);
     }
@@ -190,6 +193,7 @@ export function AdminHeroLanding() {
         message: "All changes saved.",
         lastSavedAt: savedAt,
       }));
+      toastSuccess("Updated successfully", "Hero content updated.");
     } catch (error) {
       console.error("Save all failed:", error);
       setFormData((prev) => ({
@@ -202,6 +206,7 @@ export function AdminHeroLanding() {
         field: "",
         message: "Failed to save all changes. Please try again.",
       }));
+      toastError(error, "Update failed");
     } finally {
       setIsSaving(false);
     }
@@ -215,6 +220,7 @@ export function AdminHeroLanding() {
       field: "",
       message: "Unsaved edits were discarded.",
     }));
+    toastInfo("Changes discarded", "Unsaved hero edits were removed.");
   }, [savedSnapshot]);
 
   useEffect(() => {
@@ -238,7 +244,7 @@ export function AdminHeroLanding() {
   }
 
   return (
-    <div className="admin-page-shell">
+    <div className="admin-page-shell admin-hero-page">
       <div className="p-6 flex flex-col gap-5 max-w-6xl mx-auto">
       {/* Header */}
       <div>
@@ -346,7 +352,7 @@ export function AdminHeroLanding() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div
           className="rounded-lg p-4 flex items-center justify-between shadow-sm"
-          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+          style={{ background: "#f8fafc", border: "1px solid var(--border)" }}
         >
           <div className="flex flex-col gap-1">
             <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Status</p>
@@ -363,7 +369,7 @@ export function AdminHeroLanding() {
           </div>
           <div
             className="rounded-full p-2"
-            style={{ background: "var(--accent)", color: "var(--foreground)" }}
+            style={{ background: "#f8fafc", color: "var(--foreground)" }}
           >
             {isActive ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
           </div>
@@ -371,7 +377,7 @@ export function AdminHeroLanding() {
 
         <div
           className="rounded-lg p-4 flex items-center justify-between shadow-sm"
-          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+          style={{ background: "#f8fafc", border: "1px solid var(--border)" }}
         >
           <div className="flex flex-col gap-1">
             <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Last Updated</p>
@@ -388,7 +394,7 @@ export function AdminHeroLanding() {
           </div>
           <div
             className="rounded-full p-2"
-            style={{ background: "var(--accent)", color: "var(--foreground)" }}
+            style={{ background: "#f8fafc", color: "var(--foreground)" }}
           >
             <Clock size={18} />
           </div>
@@ -396,7 +402,7 @@ export function AdminHeroLanding() {
 
         <div
           className="rounded-lg p-4 flex items-center justify-between shadow-sm"
-          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+          style={{ background: "#f8fafc", border: "1px solid var(--border)" }}
         >
           <div className="flex flex-col gap-1">
             <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Headline length</p>
@@ -413,7 +419,7 @@ export function AdminHeroLanding() {
           </div>
           <div
             className="rounded-full p-2"
-            style={{ background: "var(--accent)", color: "var(--foreground)" }}
+            style={{ background: "#f8fafc", color: "var(--foreground)" }}
           >
             <Type size={18} />
           </div>
@@ -421,7 +427,7 @@ export function AdminHeroLanding() {
 
         <div
           className="rounded-lg p-4 flex items-center justify-between shadow-sm"
-          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+          style={{ background: "#f8fafc", border: "1px solid var(--border)" }}
         >
           <div className="flex flex-col gap-1">
             <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Focus text length</p>
@@ -438,7 +444,7 @@ export function AdminHeroLanding() {
           </div>
           <div
             className="rounded-full p-2"
-            style={{ background: "var(--accent)", color: "var(--foreground)" }}
+            style={{ background: "#f8fafc", color: "var(--foreground)" }}
           >
             <FileText size={18} />
           </div>
@@ -446,7 +452,7 @@ export function AdminHeroLanding() {
 
         <div
           className="rounded-lg p-4 flex items-center justify-between shadow-sm"
-          style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+          style={{ background: "#f8fafc", border: "1px solid var(--border)" }}
         >
           <div className="flex flex-col gap-1">
             <p style={{ fontSize: "12px", color: "var(--muted-foreground)" }}>Background media</p>
@@ -463,7 +469,7 @@ export function AdminHeroLanding() {
           </div>
           <div
             className="rounded-full p-2"
-            style={{ background: "var(--accent)", color: "var(--foreground)" }}
+            style={{ background: "#f8fafc", color: "var(--foreground)" }}
           >
             {hasImage ? (isVideo ? <Video size={18} /> : <ImageIcon size={18} />) : <ImageOff size={18} />}
           </div>
@@ -477,13 +483,13 @@ export function AdminHeroLanding() {
           <div className="flex-1">
             <div
               className="rounded-lg border shadow-sm p-6 space-y-6"
-              style={{ backgroundColor: "#f8fafc", borderColor: "#e2e8f0" }}
+              style={{ backgroundColor: "#f8fafc", borderColor: "var(--border)" }}
             >
             <div className="admin-section-panel space-y-6">
               {/* Headline Card */}
               <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="rounded-lg p-2" style={{ background: "var(--accent)", color: "var(--foreground)" }}>
+                <div className="rounded-lg p-2" style={{ background: "#f8fafc", color: "var(--foreground)" }}>
                   <Type size={18} />
                 </div>
                 <div>
@@ -506,7 +512,7 @@ export function AdminHeroLanding() {
               {/* Tagline Card */}
               <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="rounded-lg p-2" style={{ background: "var(--accent)", color: "var(--foreground)" }}>
+                <div className="rounded-lg p-2" style={{ background: "#f8fafc", color: "var(--foreground)" }}>
                   <FileText size={18} />
                 </div>
                 <div>
@@ -529,7 +535,7 @@ export function AdminHeroLanding() {
               {/* Focus Text Card */}
               <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="rounded-lg p-2" style={{ background: "var(--accent)", color: "var(--foreground)" }}>
+                <div className="rounded-lg p-2" style={{ background: "#f8fafc", color: "var(--foreground)" }}>
                   <FileText size={18} />
                 </div>
                 <div>
@@ -553,7 +559,7 @@ export function AdminHeroLanding() {
               {/* Background Image Card */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="rounded-lg p-2" style={{ background: "var(--accent)", color: "var(--foreground)" }}>
+                  <div className="rounded-lg p-2" style={{ background: "#f8fafc", color: "var(--foreground)" }}>
                     <ImageIcon size={18} />
                   </div>
                   <div>
@@ -565,7 +571,7 @@ export function AdminHeroLanding() {
                   {formData.backgroundImage && (
                     <div
                       className="relative w-full h-40 rounded-xl overflow-hidden"
-                      style={{ background: "var(--accent)", border: "1px solid var(--border)" }}
+                      style={{ background: "#f8fafc", border: "1px solid var(--border)" }}
                     >
                       {isVideo ? (
                         <video
@@ -606,7 +612,7 @@ export function AdminHeroLanding() {
               className="h-full rounded-lg border shadow-sm overflow-hidden"
               style={{
                 backgroundColor: "#f8fafc",
-                borderColor: "#e2e8f0",
+                borderColor: "var(--border)",
               }}
             >
               {/* Inner actual hero preview with dark gradient */}

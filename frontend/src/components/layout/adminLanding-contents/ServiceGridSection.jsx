@@ -1,5 +1,6 @@
 import { Search, Trash2, Edit } from "lucide-react";
 import { useMemo } from "react";
+import { confirmActionToast } from "../../../services/admin-service/adminToast";
 
 export function ServiceGridSection({
   services,
@@ -16,11 +17,20 @@ export function ServiceGridSection({
     );
   }, [services, search]);
 
-  const handleDelete = async (e, service) => {
+  const handleDelete = (e, service) => {
     e.stopPropagation();
-    if (window.confirm(`Delete "${service.title}"?`)) {
-      await onDelete(service.id);
-    }
+
+    confirmActionToast({
+      title: "Delete service?",
+      description: service.title,
+      confirmLabel: "Delete",
+      successTitle: "Deleted successfully",
+      successDescription: "Service removed.",
+      errorTitle: "Delete failed",
+      onConfirm: async () => {
+        await onDelete(service.id);
+      },
+    });
   };
 
   return (

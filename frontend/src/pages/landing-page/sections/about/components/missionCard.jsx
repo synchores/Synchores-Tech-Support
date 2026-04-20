@@ -1,7 +1,12 @@
 import { motion } from "motion/react";
 import { BLUE_VIVID } from "./constants";
 
-export function MissionCard() {
+export function MissionCard({ label, statement }) {
+  const missionLabel = label || "Our Mission";
+  const missionStatement =
+    statement ||
+    "Empower organizations through technology that drives efficiency, security, and growth.";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -28,7 +33,7 @@ export function MissionCard() {
           margin: "0 0 6px 0",
         }}
       >
-        Our Mission
+        {missionLabel}
       </p>
       <p
         style={{
@@ -40,8 +45,7 @@ export function MissionCard() {
           fontStyle: "italic",
         }}
       >
-        "Empower organizations through technology that drives efficiency,
-        security, and growth."
+        "{missionStatement}"
       </p>
     </motion.div>
   );

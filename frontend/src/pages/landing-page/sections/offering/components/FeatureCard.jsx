@@ -34,7 +34,8 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
 
   const renderBulletIcon = () => (
     <svg
-      className="w-4 h-4 sm:w-5 sm:h-5 text-[#4e7398] flex-shrink-0"
+      className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
+      style={{ color: "var(--landing-text-soft)" }}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -100,18 +101,36 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                   className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
-                  <span className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase text-[#2f5f8f] dark:text-[#8fb0d4] border border-[#a9c3df] dark:border-[#2a4a71] bg-[rgba(30,127,212,0.12)] dark:bg-[rgba(12,51,94,0.22)]">
+                  <span
+                    className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase"
+                    style={{
+                      color: "var(--landing-text)",
+                      border: "1px solid var(--landing-border-strong)",
+                      background: "var(--landing-surface-soft)",
+                    }}
+                  >
                     Service {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                   </span>
-                  <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-[#113057] dark:text-[#eef5ff] tracking-wide break-words uppercase">
+                  <h2
+                    className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold tracking-wide break-words uppercase"
+                    style={{ color: "var(--landing-text)" }}
+                  >
                     {feature.title}
                   </h2>
-                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-[#4d6178] dark:text-[#9eb4cc] leading-relaxed break-words">
+                  <p
+                    className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl leading-relaxed break-words"
+                    style={{ color: "var(--landing-text-muted)" }}
+                  >
                     {feature.description}
                   </p>
                   
                   {/* Separator Line */}
-                  <div className="my-1 sm:my-3 md:my-4 h-px bg-gradient-to-r from-[#98b6d6] dark:from-[#0c335e] to-transparent opacity-90"></div>
+                  <div
+                    className="my-1 sm:my-3 md:my-4 h-px opacity-90"
+                    style={{
+                      background: "linear-gradient(to right, var(--landing-border-strong), transparent)",
+                    }}
+                  ></div>
                   
                   {/* Bullets List */}
                   {feature.bullets && (
@@ -124,8 +143,11 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                         return (
                           <li key={bulletIdx} className="flex items-start gap-1.5 sm:gap-2 md:gap-3">
                             {renderBulletIcon()}
-                            <span className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-[#57718b] dark:text-[#c5d4e6] break-words pt-0.5">
-                              <span className="font-bold text-[#2f5f8f] dark:text-[#7ea0c4]">{firstWord}</span> {restWords}
+                            <span
+                              className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg break-words pt-0.5"
+                              style={{ color: "var(--landing-text-soft)" }}
+                            >
+                              <span className="font-bold" style={{ color: "var(--landing-text)" }}>{firstWord}</span> {restWords}
                             </span>
                           </li>
                         );

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { Field, TextInput, TextArea } from "../../admin-ui/field";
 import { CmsDrawer } from "../../admin-ui/CmsDrawer";
+import { toastError, toastInfo } from "../../../services/admin-service/adminToast";
 
 const CATEGORIES = [
   { value: "cloud", label: "Cloud" },
@@ -84,7 +85,7 @@ export function DeploymentDetailModal({
   const uploadFile = async (file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      alert("Please upload a valid image file");
+      toastInfo("Image required", "Please upload a valid image file.");
       return;
     }
 
@@ -110,7 +111,7 @@ export function DeploymentDetailModal({
       setFormData((prev) => ({ ...prev, image: data.path }));
     } catch (error) {
       console.error(error);
-      alert("Image upload failed");
+      toastError(error, "Upload failed", "Image upload failed.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) {
@@ -121,17 +122,21 @@ export function DeploymentDetailModal({
 
   const handleSubmit = async () => {
     if (!formData.title.trim() || !formData.description.trim()) {
-      alert("Please fill all required fields");
+      toastInfo("Missing fields", "Please fill all required fields.");
       return;
     }
 
-    await onSubmit(
-      isEditMode
-        ? { deploymentId: deployment.deploymentId, ...formData }
-        : formData
-    );
+    try {
+      await onSubmit(
+        isEditMode
+          ? { deploymentId: deployment.deploymentId, ...formData }
+          : formData
+      );
 
-    onClose();
+      onClose();
+    } catch (error) {
+      toastError(error, isEditMode ? "Update failed" : "Create failed");
+    }
   };
 
   return (

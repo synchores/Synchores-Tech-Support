@@ -7,10 +7,12 @@ import AboutSectionAlternate from "./sections/about/aboutSectionAlternate";
 import DeploymentGallery from "./sections/deploymentGallery/deploymentGallery";
 import ContactUs from "./sections/contactUs/contactUs";
 import { Footer } from "../../components/layout/footer/Footer";
+import { useCompanyInfo } from "../../hooks/useLandingPageData";
 
 export default function LandingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { companyInfo } = useCompanyInfo();
 
   useEffect(() => {
     const targetSection = location.state?.scrollTo;
@@ -31,11 +33,11 @@ export default function LandingPage() {
     <div className="w-full h-full">
       <Home />
       <OfferingSection />
-      <AboutSection />
-      <AboutSectionAlternate />
+      <AboutSection companyInfo={companyInfo} />
+      <AboutSectionAlternate companyInfo={companyInfo} />
       <DeploymentGallery />
-      <ContactUs />
-      <Footer />
+      <ContactUs companyInfo={companyInfo} />
+      <Footer companyInfo={companyInfo} />
     </div>
   );
 }

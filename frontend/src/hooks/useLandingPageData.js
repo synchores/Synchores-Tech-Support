@@ -144,6 +144,11 @@ export function useLandingServices(filters = {}) {
     category: filters.category || undefined,
   };
 
+  const landingServiceRefetchQueries = [
+    { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
+    { query: GET_ALL_LANDING_SERVICES_QUERY, variables: {} },
+  ];
+
   const { data, loading, error, refetch } = useQuery(
     GET_ALL_LANDING_SERVICES_QUERY,
     { errorPolicy: "all", variables: queryVariables }
@@ -173,9 +178,8 @@ export function useLandingServices(filters = {}) {
       const mappedInput = mapStatusInInput(input);
       const res = await createCardMutation({
         variables: { input: mappedInput },
-        refetchQueries: [
-          { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: landingServiceRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return normalizeService(res.data?.createLandingServiceCard) || null;
     } catch (err) {
@@ -204,6 +208,8 @@ export function useLandingServices(filters = {}) {
             __typename: "LandingServiceCardTbl",
           },
         },
+        refetchQueries: landingServiceRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return normalizeService(res.data?.updateLandingServiceCard) || null;
     } catch (err) {
@@ -216,9 +222,8 @@ export function useLandingServices(filters = {}) {
     try {
       await deleteCardMutation({
         variables: { cardId },
-        refetchQueries: [
-          { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: landingServiceRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return true;
     } catch (err) {
@@ -231,9 +236,8 @@ export function useLandingServices(filters = {}) {
     try {
       const res = await duplicateCardMutation({
         variables: { cardId },
-        refetchQueries: [
-          { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: landingServiceRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return normalizeService(res.data?.duplicateLandingServiceCard) || null;
     } catch (err) {
@@ -246,9 +250,8 @@ export function useLandingServices(filters = {}) {
     try {
       await bulkDeleteCardsMutation({
         variables: { cardIds },
-        refetchQueries: [
-          { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: landingServiceRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return true;
     } catch (err) {
@@ -261,9 +264,8 @@ export function useLandingServices(filters = {}) {
     try {
       const res = await bulkUpdateCardStatusMutation({
         variables: { cardIds, status: toGraphQLStatus(status) },
-        refetchQueries: [
-          { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: landingServiceRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return (res.data?.bulkUpdateLandingServiceCardStatus || []).map(
         normalizeService
@@ -296,6 +298,11 @@ export function useDeploymentGallery(filters = {}) {
     category: filters.category || undefined,
   };
 
+  const deploymentRefetchQueries = [
+    { query: GET_ALL_DEPLOYMENTS_QUERY, variables: queryVariables },
+    { query: GET_ALL_DEPLOYMENTS_QUERY, variables: {} },
+  ];
+
   const { data, loading, error, refetch } = useQuery(
     GET_ALL_DEPLOYMENTS_QUERY,
     { errorPolicy: "all", variables: queryVariables }
@@ -315,9 +322,8 @@ export function useDeploymentGallery(filters = {}) {
       const mappedInput = mapStatusInInput(input);
       const res = await createDeploymentMutation({
         variables: { input: mappedInput },
-        refetchQueries: [
-          { query: GET_ALL_DEPLOYMENTS_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: deploymentRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return normalizeDeployment(res.data?.createDeployment) || null;
     } catch (err) {
@@ -346,6 +352,8 @@ export function useDeploymentGallery(filters = {}) {
             __typename: "DeploymentGalleryTbl",
           },
         },
+        refetchQueries: deploymentRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return normalizeDeployment(res.data?.updateDeployment) || null;
     } catch (err) {
@@ -358,9 +366,8 @@ export function useDeploymentGallery(filters = {}) {
     try {
       await deleteDeploymentMutation({
         variables: { deploymentId },
-        refetchQueries: [
-          { query: GET_ALL_DEPLOYMENTS_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: deploymentRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return true;
     } catch (err) {
@@ -373,9 +380,8 @@ export function useDeploymentGallery(filters = {}) {
     try {
       const res = await duplicateDeploymentMutation({
         variables: { deploymentId },
-        refetchQueries: [
-          { query: GET_ALL_DEPLOYMENTS_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: deploymentRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return normalizeDeployment(res.data?.duplicateDeployment) || null;
     } catch (err) {
@@ -388,9 +394,8 @@ export function useDeploymentGallery(filters = {}) {
     try {
       await bulkDeleteDeploymentsMutation({
         variables: { deploymentIds },
-        refetchQueries: [
-          { query: GET_ALL_DEPLOYMENTS_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: deploymentRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return true;
     } catch (err) {
@@ -403,9 +408,8 @@ export function useDeploymentGallery(filters = {}) {
     try {
       const res = await bulkUpdateDeploymentStatusMutation({
         variables: { deploymentIds, status: toGraphQLStatus(status) },
-        refetchQueries: [
-          { query: GET_ALL_DEPLOYMENTS_QUERY, variables: queryVariables },
-        ],
+        refetchQueries: deploymentRefetchQueries,
+        awaitRefetchQueries: true,
       });
       return (res.data?.bulkUpdateDeploymentStatus || []).map(
         normalizeDeployment
