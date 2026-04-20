@@ -116,10 +116,11 @@ export function Navbar({ activeSection, onNavigate }) {
     localStorage.setItem("synchores-theme", nextTheme);
   };
 
-  // Dynamic colors for tech support page
-  const navBgColor = THEME.colors.primary; // Always use blue primary
-  const navTextColor = isDark ? "#ffffff" : "#000000";
-  const navBorderColor = isDark ? "rgba(30,127,212,0.25)" : "rgba(0,0,0,0.1)";
+  // Keep the top bar solid and high-contrast across routes.
+  const navBgColor = THEME.colors.primary;
+  const navTextColor = "#ffffff";
+  const mobileMenuTextColor = isDark ? "#ffffff" : "#111111";
+  const navBorderColor = "rgba(255,255,255,0.2)";
 
   return (
     <nav
@@ -127,7 +128,7 @@ export function Navbar({ activeSection, onNavigate }) {
         scrolled ? "shadow-lg shadow-black/40" : ""
       }`}
       style={{ 
-        backgroundColor: isOnTechSupportPage || scrolled ? navBgColor : "transparent",
+        backgroundColor: navBgColor,
         borderBottom: `1px solid ${navBorderColor}`
       }}
     >
@@ -140,7 +141,7 @@ export function Navbar({ activeSection, onNavigate }) {
               onClick={() => handleNav("home")}
               className="flex items-center gap-2 group"
             >
-              <SNavLogo isDark={isDark} />
+              <SNavLogo />
             </button>
 
             {/* Social Icons */}
@@ -273,7 +274,7 @@ export function Navbar({ activeSection, onNavigate }) {
                   fontFamily: "'Rajdhani', sans-serif",
                   color: link.id === "Tech Support" && !isOnTechSupportPage
                     ? "#1e7fd4"
-                    : navTextColor,
+                    : mobileMenuTextColor,
                   opacity: isActive ? 1 : 0.7,
                 }}
               >
@@ -285,7 +286,7 @@ export function Navbar({ activeSection, onNavigate }) {
             onClick={toggleTheme}
             className="flex items-center gap-2 py-2 px-3 text-sm"
             style={{
-              color: navTextColor,
+              color: mobileMenuTextColor,
               border: `1px solid ${navBorderColor}`,
               borderRadius: "6px",
               background: isOnTechSupportPage
@@ -314,7 +315,7 @@ export function Navbar({ activeSection, onNavigate }) {
   );
 }
 
-function SNavLogo({ isDark }) {
+function SNavLogo() {
   return (
     <img
       src="/assets/Synchores-logo.png"
@@ -322,9 +323,6 @@ function SNavLogo({ isDark }) {
       width="36"
       height="36"
       className="object-contain"
-      style={{
-        filter: isDark ? "none" : "brightness(0)"
-      }}
     />
   );
 }
