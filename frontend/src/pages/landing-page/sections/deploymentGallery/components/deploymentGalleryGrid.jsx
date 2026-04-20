@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   deploymentsGalleryData,
@@ -12,8 +12,17 @@ export function DeploymentGalleryGrid() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedItem, setSelectedItem] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
   const allTypes = getAllDeploymentTypes();
   const ITEMS_PER_PAGE = 8; // 4 columns × 2 rows
+
+  // Detect mobile view
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const filteredDeployments =
     activeFilter === "All"
@@ -108,27 +117,92 @@ export function DeploymentGalleryGrid() {
             marginBottom: "clamp(32px, 5vw, 48px)",
           }}
         >
-          <DeploymentGalleryFilterButton
-            label="All"
-            count={deploymentsGalleryData.length}
-            isActive={activeFilter === "All"}
-            onClick={() => handleFilterChange("All")}
-          />
-          {allTypes.map((type) => {
-            const count = deploymentsGalleryData.filter(
-              (item) => item.type === type,
-            ).length;
-
-            return (
+          {isMobile ? (
+            // Mobile: Dropdown filter with icon
+            <div
+              style={{
+                position: "relative",
+                display: "inline-block",
+              }}
+            >
+              <select
+                value={activeFilter}
+                onChange={(e) => handleFilterChange(e.target.value)}
+                style={{
+                  padding: "10px 36px 10px 16px",
+                  backgroundColor: "transparent",
+                  color: "var(--landing-text)",
+                  border: "2px solid var(--landing-border)",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontFamily: "'Inter', Arial, sans-serif",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  transition: "all 0.2s ease",
+                  appearance: "none",
+                  paddingRight: "36px",
+                }}
+              >
+                <option value="All">All</option>
+                {allTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+              <div
+                style={{
+                  position: "absolute",
+                  right: "8px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  pointerEvents: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--landing-text)",
+                }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            // Desktop: Button filters
+            <>
               <DeploymentGalleryFilterButton
-                key={type}
-                label={type}
-                count={count}
-                isActive={activeFilter === type}
-                onClick={() => handleFilterChange(type)}
+                label="All"
+                count={deploymentsGalleryData.length}
+                isActive={activeFilter === "All"}
+                onClick={() => handleFilterChange("All")}
               />
-            );
-          })}
+              {allTypes.map((type) => {
+                const count = deploymentsGalleryData.filter(
+                  (item) => item.type === type,
+                ).length;
+
+                return (
+                  <DeploymentGalleryFilterButton
+                    key={type}
+                    label={type}
+                    count={count}
+                    isActive={activeFilter === type}
+                    onClick={() => handleFilterChange(type)}
+                  />
+                );
+              })}
+            </>
+          )}
         </motion.div>
 
         <AnimatePresence mode="wait">
