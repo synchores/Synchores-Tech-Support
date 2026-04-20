@@ -13,6 +13,8 @@ export default function DeploymentsPage() {
   useEffect(() => {
     const currentIsDark = document.documentElement.classList.contains("dark");
     setThemeMode(currentIsDark ? "dark" : "light");
+    // Scroll to top of page on mount
+    window.scrollTo(0, 0);
   }, []);
 
   const toggleTheme = () => {

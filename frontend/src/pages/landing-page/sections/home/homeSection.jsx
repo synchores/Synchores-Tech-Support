@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import { useHeroSection } from "../../../../hooks/useLandingPageData";
 import TrueFocus from "../../../../components/layout/landing-contents/ui/trueFocus";
@@ -50,6 +51,34 @@ function getMediaType(src = "") {
 
 export default function Home() {
   const { hero } = useHeroSection();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleServicesClick = () => {
+    if (location.pathname === "/") {
+      // Already on landing page, scroll directly
+      const element = document.getElementById("offering");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      // On a different page, navigate with state
+      navigate("/", { state: { scrollTo: "offering" } });
+    }
+  };
+
+  const handleLearnMoreClick = () => {
+    if (location.pathname === "/") {
+      // Already on landing page, scroll directly
+      const element = document.getElementById("about");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else {
+      // On a different page, navigate with state
+      navigate("/", { state: { scrollTo: "about" } });
+    }
+  };
 
   const headline = useMemo(() => {
     const value = hero?.headline?.trim();
@@ -169,10 +198,10 @@ export default function Home() {
               <span className="md:hidden" style={{ color: "#0088ff" }}>{focusText}</span>
             </h1>
             <div className="flex flex-row gap-2 sm:gap-2.5 md:gap-3 lg:gap-4 justify-center md:justify-start mt-4 sm:mt-5 md:mt-6 lg:mt-8">
-              <button className="flex-1 bg-[#0055aa] hover:bg-[#003d7a] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
+              <button onClick={handleServicesClick} className="flex-1 bg-[#0055aa] hover:bg-[#003d7a] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
                 Services
               </button>
-              <button className="flex-1 bg-transparent border-2 border-white hover:bg-white hover:text-[#0055aa] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
+              <button onClick={handleLearnMoreClick} className="flex-1 bg-transparent border-2 border-white hover:bg-white hover:text-[#0055aa] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
                 Learn More
               </button>
             </div>

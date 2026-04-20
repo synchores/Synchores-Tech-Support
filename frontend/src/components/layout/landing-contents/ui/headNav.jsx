@@ -93,32 +93,16 @@ export function Navbar({ activeSection, onNavigate }) {
     
     // If on tech support page and clicking a landing page link, navigate to landing page first
     if (isOnTechSupportPage) {
-      navigate("/");
-      // Scroll to section after navigating
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          const navHeight = 64;
-          const elementPosition = element.getBoundingClientRect().top + window.scrollY - navHeight;
-          window.scrollTo({ top: elementPosition, behavior: "smooth" });
-        }
-      }, 100);
+      navigate("/", { state: { scrollTo: id } });
       return;
     }
     
+    // Already on landing page, just scroll to section
     setIsManualScrolling(true);
-    onNavigate(id);
+    navigate("/", { state: { scrollTo: id } });
     
-    // Scroll to the section with offset for fixed navbar
-    const element = document.getElementById(id);
-    if (element) {
-      const navHeight = 64; // h-16 = 64px
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY - navHeight;
-      window.scrollTo({ top: elementPosition, behavior: "smooth" });
-      
-      // Re-enable observer after scroll completes
-      setTimeout(() => setIsManualScrolling(false), 1000);
-    }
+    // Re-enable observer after scroll completes
+    setTimeout(() => setIsManualScrolling(false), 1000);
   };
 
   const toggleTheme = () => {
@@ -130,8 +114,8 @@ export function Navbar({ activeSection, onNavigate }) {
 
   // Dynamic colors for tech support page
   const navBgColor = THEME.colors.primary; // Always use blue primary
-  const navTextColor = "#ffffff";
-  const navBorderColor = "rgba(30,127,212,0.25)";
+  const navTextColor = isDark ? "#ffffff" : "#000000";
+  const navBorderColor = isDark ? "rgba(30,127,212,0.25)" : "rgba(0,0,0,0.1)";
 
   return (
     <nav
@@ -139,7 +123,7 @@ export function Navbar({ activeSection, onNavigate }) {
         scrolled ? "shadow-lg shadow-black/40" : ""
       }`}
       style={{ 
-        backgroundColor: scrolled ? navBgColor : "transparent",
+        backgroundColor: isOnTechSupportPage || scrolled ? navBgColor : "transparent",
         borderBottom: `1px solid ${navBorderColor}`
       }}
     >
@@ -152,30 +136,36 @@ export function Navbar({ activeSection, onNavigate }) {
               onClick={() => handleNav("home")}
               className="flex items-center gap-2 group"
             >
-              <SNavLogo />
+              <SNavLogo isDark={isDark} />
             </button>
 
             {/* Social Icons */}
             <div className="hidden sm:flex items-center gap-3 ml-2">
               <a
-                href="#"
+                href="https://www.facebook.com/synchores.itsolutions"
                 aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition-colors"
                 style={{ color: navTextColor }}
               >
                 <FacebookIcon />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/synchores.itsolutions/"
                 aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition-colors"
                 style={{ color: navTextColor }}
               >
                 <InstagramIcon />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@SynchoresIT"
                 aria-label="YouTube"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition-colors"
                 style={{ color: navTextColor }}
               >
@@ -208,7 +198,7 @@ export function Navbar({ activeSection, onNavigate }) {
                     color: link.id === "Tech Support" && !isOnTechSupportPage
                       ? "#1e7fd4"
                       : navTextColor,
-                    opacity: isActive ? 1 : 0.7,
+                    opacity: isOnTechSupportPage ? 1 : (isActive ? 1 : 0.7),
                   }}
                 >
                   {link.label}
@@ -247,7 +237,7 @@ export function Navbar({ activeSection, onNavigate }) {
             className="lg:hidden p-1"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
-            style={{ color: navTextColor }}
+            style={{ color: "#ffffff" }}
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -261,7 +251,7 @@ export function Navbar({ activeSection, onNavigate }) {
           style={{ 
             backgroundColor: isOnTechSupportPage
               ? (isDark ? THEME.colors.darkBgAlt : THEME.colors.gray[100])
-              : "var(--landing-bg-strong)",
+              : (isDark ? "var(--landing-bg-strong)" : "#f5f5f5"),
             borderTop: `1px solid ${navBorderColor}`
           }}
         >
@@ -304,13 +294,13 @@ export function Navbar({ activeSection, onNavigate }) {
           </button>
           {/* Social icons on mobile */}
           <div className="flex items-center gap-4 pt-2">
-            <a href="#" aria-label="Facebook" style={{ color: navTextColor }}>
+            <a href="https://www.facebook.com/synchores.itsolutions" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ color: "#1e7fd4" }}>
               <FacebookIcon />
             </a>
-            <a href="#" aria-label="Instagram" style={{ color: navTextColor }}>
+            <a href="https://www.instagram.com/synchores.itsolutions/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "#1e7fd4" }}>
               <InstagramIcon />
             </a>
-            <a href="#" aria-label="YouTube" style={{ color: navTextColor }}>
+            <a href="https://www.youtube.com/@SynchoresIT" target="_blank" rel="noopener noreferrer" aria-label="YouTube" style={{ color: "#1e7fd4" }}>
               <YouTubeIcon />
             </a>
           </div>
@@ -320,7 +310,7 @@ export function Navbar({ activeSection, onNavigate }) {
   );
 }
 
-function SNavLogo() {
+function SNavLogo({ isDark }) {
   return (
     <img
       src="/assets/Synchores-logo.png"
@@ -328,6 +318,9 @@ function SNavLogo() {
       width="36"
       height="36"
       className="object-contain"
+      style={{
+        filter: isDark ? "none" : "brightness(0)"
+      }}
     />
   );
 }
