@@ -42,7 +42,7 @@ export default function OverviewSection({ offering, onCTA }) {
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
-              fontSize: 'clamp(15px, 1.5vw, 17px)',
+              fontSize: 'clamp(18px, 1.8vw, 20.4px)',
               color: 'var(--landing-text)',
               lineHeight: 1.75,
               margin: '0 0 32px 0',
