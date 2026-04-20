@@ -54,7 +54,7 @@ export function AboutLeftPanel() {
         transition={{ duration: 0.45 }}
         style={{
           fontFamily: "'Inter', Arial, sans-serif",
-          fontSize: "11px",
+          fontSize: "13.2px",
           fontWeight: 700,
           color: BLUE_VIVID,
           textTransform: "uppercase",
@@ -73,7 +73,7 @@ export function AboutLeftPanel() {
         transition={{ duration: 0.6, delay: 0.08 }}
         style={{
           fontFamily: "'Orbitron', Arial, sans-serif",
-          fontSize: "clamp(2rem, 4vw, 3rem)",
+          fontSize: "clamp(2.4rem, 4.8vw, 3.6rem)",
           fontWeight: 900,
           color: "#ffffff",
           lineHeight: 1.1,
@@ -107,7 +107,7 @@ export function AboutLeftPanel() {
         transition={{ duration: 0.6, delay: 0.3 }}
         style={{
           fontFamily: "'Inter', Arial, sans-serif",
-          fontSize: "clamp(14px, 1.4vw, 16px)",
+          fontSize: "clamp(16.8px, 1.68vw, 19.2px)",
           fontWeight: 400,
           color: "rgba(255,255,255,0.82)",
           lineHeight: 1.75,
@@ -129,7 +129,7 @@ export function AboutLeftPanel() {
         transition={{ duration: 0.6, delay: 0.38 }}
         style={{
           fontFamily: "'Inter', Arial, sans-serif",
-          fontSize: "clamp(13px, 1.2vw, 14.5px)",
+          fontSize: "clamp(15.6px, 1.44vw, 17.4px)",
           color: "rgba(255,255,255,0.5)",
           lineHeight: 1.75,
           margin: "0 0 36px 0",
