@@ -39,17 +39,26 @@ export default function OverviewSection({ offering, onCTA }) {
             </span>
           </div>
 
-          <p
+          <div
             style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 'clamp(15px, 1.5vw, 17px)',
-              color: 'var(--landing-text)',
-              lineHeight: 1.75,
-              margin: '0 0 32px 0',
+              position: 'relative',
+              marginBottom: '32px',
+              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)',
             }}
           >
-            {offering.longDescription}
-          </p>
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 'clamp(18px, 1.8vw, 20.4px)',
+                color: 'var(--landing-text)',
+                lineHeight: 1.75,
+                margin: '0',
+              }}
+            >
+              {offering.longDescription}
+            </p>
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {offering.points.map((pt) => (

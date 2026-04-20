@@ -1,16 +1,43 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YouTubeIcon } from "./socialIcons";
 import { THEME } from "../../../../constant/theme.js"; // Adjust path to your constants
 
 export function Navbar({ activeSection, onNavigate }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isManualScrolling, setIsManualScrolling] = useState(false);
+
   const [themeMode, setThemeMode] = useState(() => {
     if (typeof document === "undefined") return "light";
     return document.documentElement.classList.contains("dark") ? "dark" : "light";
   });
+  const [isDark, setIsDark] = useState(false);
+
+  // Detect if on tech support page
+  const isOnTechSupportPage = location.pathname === "/tech-support";
+
+  useEffect(() => {
+    const currentIsDark = document.documentElement.classList.contains("dark");
+    setThemeMode(currentIsDark ? "dark" : "light");
+    setIsDark(currentIsDark);
+
+    const observer = new MutationObserver(() => {
+      const dark = document.documentElement.classList.contains("dark");
+      setIsDark(dark);
+      setThemeMode(dark ? "dark" : "light");
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -40,7 +67,7 @@ export function Navbar({ activeSection, onNavigate }) {
     const observer = new IntersectionObserver(observerCallback, observerOptions);
 
     // Observe all sections
-    const navLinks = ["home", "offering", "about", "contact", "Tech Support"];
+    const navLinks = ["home", "offering", "about", "contact"];
     navLinks.forEach((linkId) => {
       const element = document.getElementById(linkId);
       if (element) {
@@ -60,20 +87,26 @@ export function Navbar({ activeSection, onNavigate }) {
   ];
 
   const handleNav = (id) => {
-    setIsManualScrolling(true);
-    onNavigate(id);
     setMobileOpen(false);
     
-    // Scroll to the section with offset for fixed navbar
-    const element = document.getElementById(id);
-    if (element) {
-      const navHeight = 64; // h-16 = 64px
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY - navHeight;
-      window.scrollTo({ top: elementPosition, behavior: "smooth" });
-      
-      // Re-enable observer after scroll completes
-      setTimeout(() => setIsManualScrolling(false), 1000);
+    // Navigate to Tech Support page if clicked
+    if (id === "Tech Support") {
+      navigate("/tech-support");
+      return;
     }
+    
+    // If on tech support page and clicking a landing page link, navigate to landing page first
+    if (isOnTechSupportPage) {
+      navigate("/", { state: { scrollTo: id } });
+      return;
+    }
+    
+    // Already on landing page, just scroll to section
+    setIsManualScrolling(true);
+    navigate("/", { state: { scrollTo: id } });
+    
+    // Re-enable observer after scroll completes
+    setTimeout(() => setIsManualScrolling(false), 1000);
   };
 
   const toggleTheme = () => {
@@ -83,14 +116,19 @@ export function Navbar({ activeSection, onNavigate }) {
     localStorage.setItem("synchores-theme", nextTheme);
   };
 
+  // Dynamic colors for tech support page
+  const navBgColor = THEME.colors.primary; // Always use blue primary
+  const navTextColor = isDark ? "#ffffff" : "#000000";
+  const navBorderColor = isDark ? "rgba(30,127,212,0.25)" : "rgba(0,0,0,0.1)";
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? "shadow-lg shadow-black/40" : ""
       }`}
       style={{ 
-        backgroundColor: THEME.colors.primary,
-        borderBottom: "1px solid rgba(30,127,212,0.25)"
+        backgroundColor: isOnTechSupportPage || scrolled ? navBgColor : "transparent",
+        borderBottom: `1px solid ${navBorderColor}`
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,30 +140,38 @@ export function Navbar({ activeSection, onNavigate }) {
               onClick={() => handleNav("home")}
               className="flex items-center gap-2 group"
             >
-              <SNavLogo />
+              <SNavLogo isDark={isDark} />
             </button>
 
             {/* Social Icons */}
             <div className="hidden sm:flex items-center gap-3 ml-2">
               <a
-                href="#"
+                href="https://www.facebook.com/synchores.itsolutions"
                 aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="transition-colors"
-                style={{ color: "#ffffff" }}
+                style={{ color: navTextColor }}
               >
                 <FacebookIcon />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/synchores.itsolutions/"
                 aria-label="Instagram"
-                className="text-blue-400 hover:text-blue-300 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors"
+                style={{ color: navTextColor }}
               >
                 <InstagramIcon />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@SynchoresIT"
                 aria-label="YouTube"
-                className="text-blue-400 hover:text-blue-300 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors"
+                style={{ color: navTextColor }}
               >
                 <YouTubeIcon />
               </a>
@@ -134,28 +180,41 @@ export function Navbar({ activeSection, onNavigate }) {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => handleNav(link.id)}
-                className={`relative text-sm tracking-widest transition-colors duration-200 py-1 px-3 rounded cursor-pointer ${
-                  link.id === "Tech Support"
-                    ? "bg-white text-[#1e7fd4] font-semibold hover:bg-gray-100"
-                    : activeSection === link.id
-                    ? "text-white"
-                    : "text-gray-300 hover:text-white"
-                }`}
-                style={{ fontFamily: "'Rajdhani', sans-serif", letterSpacing: "0.1em" }}
-              >
-                {link.label}
-                {activeSection === link.id && link.id !== "Tech Support" && (
-                  <span
-                    className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                    style={{ backgroundColor: THEME.colors.accent }}
-                  />
-                )}
-              </button>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = isOnTechSupportPage 
+                ? link.id === "Tech Support"
+                : activeSection === link.id;
+              
+              return (
+                <button
+                  key={link.id}
+                  onClick={() => handleNav(link.id)}
+                  className={`relative text-sm tracking-widest transition-colors duration-200 py-1 px-3 rounded cursor-pointer ${
+                    link.id === "Tech Support"
+                      ? isOnTechSupportPage
+                        ? "font-semibold"
+                        : "bg-white text-[#1e7fd4] font-semibold hover:bg-gray-100"
+                      : ""
+                  }`}
+                  style={{ 
+                    fontFamily: "'Rajdhani', sans-serif", 
+                    letterSpacing: "0.1em",
+                    color: link.id === "Tech Support" && !isOnTechSupportPage
+                      ? "#1e7fd4"
+                      : navTextColor,
+                    opacity: isOnTechSupportPage ? 1 : (isActive ? 1 : 0.7),
+                  }}
+                >
+                  {link.label}
+                  {isActive && link.id !== "Tech Support" && (
+                    <span
+                      className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                      style={{ backgroundColor: THEME.colors.accent }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -166,10 +225,11 @@ export function Navbar({ activeSection, onNavigate }) {
               width: "36px",
               height: "36px",
               borderRadius: "6px",
-              border: "1px solid rgba(30,127,212,0.35)",
-              backgroundColor:
-                themeMode === "dark" ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.22)",
-              color: "#ffffff",
+              border: `1px solid ${navBorderColor}`,
+              backgroundColor: isOnTechSupportPage
+                ? (isDark ? "rgba(30,127,212,0.2)" : "rgba(0,85,170,0.1)")
+                : (themeMode === "dark" ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.22)"),
+              color: navTextColor,
               cursor: "pointer",
             }}
           >
@@ -192,41 +252,45 @@ export function Navbar({ activeSection, onNavigate }) {
       {mobileOpen && (
         <div
           className="lg:hidden px-4 pb-4 pt-2 flex flex-col gap-3"
-          style={{ backgroundColor: "var(--landing-bg-strong)", borderTop: THEME.borders.mobile }}
+          style={{ 
+            backgroundColor: isOnTechSupportPage
+              ? (isDark ? THEME.colors.darkBgAlt : THEME.colors.gray[100])
+              : (isDark ? "var(--landing-bg-strong)" : "#f5f5f5"),
+            borderTop: `1px solid ${navBorderColor}`
+          }}
         >
-          {navLinks.map((link) => (
-            <button
-              key={link.id}
-              onClick={() => handleNav(link.id)}
-              className={`text-left py-2 px-3 text-sm tracking-widest transition-colors rounded cursor-pointer ${
-                link.id === "Tech Support"
-                  ? "text-white font-bold"
-                  : activeSection === link.id
-                  ? "text-blue-400"
-                  : "text-gray-300"
-              }`}
-              style={{
-                fontFamily: "'Rajdhani', sans-serif",
-                color:
-                  link.id === "Tech Support"
-                    ? "var(--landing-text)"
-                    : activeSection === link.id
+          {navLinks.map((link) => {
+            const isActive = isOnTechSupportPage 
+              ? link.id === "Tech Support"
+              : activeSection === link.id;
+            
+            return (
+              <button
+                key={link.id}
+                onClick={() => handleNav(link.id)}
+                className={`text-left py-2 px-3 text-sm tracking-widest transition-colors rounded cursor-pointer`}
+                style={{
+                  fontFamily: "'Rajdhani', sans-serif",
+                  color: link.id === "Tech Support" && !isOnTechSupportPage
                     ? "#1e7fd4"
-                    : "var(--landing-text-soft)",
-              }}
-            >
-              {link.label}
-            </button>
-          ))}
+                    : navTextColor,
+                  opacity: isActive ? 1 : 0.7,
+                }}
+              >
+                {link.label}
+              </button>
+            );
+          })}
           <button
             onClick={toggleTheme}
             className="flex items-center gap-2 py-2 px-3 text-sm"
             style={{
-              color: "#ffffff",
-              border: "1px solid rgba(30,127,212,0.35)",
+              color: navTextColor,
+              border: `1px solid ${navBorderColor}`,
               borderRadius: "6px",
-              background:
-                themeMode === "dark" ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.22)",
+              background: isOnTechSupportPage
+                ? (isDark ? "rgba(30,127,212,0.2)" : "rgba(0,85,170,0.1)")
+                : (themeMode === "dark" ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.22)"),
             }}
           >
             {themeMode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
@@ -234,13 +298,13 @@ export function Navbar({ activeSection, onNavigate }) {
           </button>
           {/* Social icons on mobile */}
           <div className="flex items-center gap-4 pt-2">
-            <a href="#" aria-label="Facebook" className="text-blue-400">
+            <a href="https://www.facebook.com/synchores.itsolutions" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ color: "#1e7fd4" }}>
               <FacebookIcon />
             </a>
-            <a href="#" aria-label="Instagram" className="text-blue-400">
+            <a href="https://www.instagram.com/synchores.itsolutions/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "#1e7fd4" }}>
               <InstagramIcon />
             </a>
-            <a href="#" aria-label="YouTube" className="text-blue-400">
+            <a href="https://www.youtube.com/@SynchoresIT" target="_blank" rel="noopener noreferrer" aria-label="YouTube" style={{ color: "#1e7fd4" }}>
               <YouTubeIcon />
             </a>
           </div>
@@ -250,7 +314,7 @@ export function Navbar({ activeSection, onNavigate }) {
   );
 }
 
-function SNavLogo() {
+function SNavLogo({ isDark }) {
   return (
     <img
       src="/assets/Synchores-logo.png"
@@ -258,6 +322,9 @@ function SNavLogo() {
       width="36"
       height="36"
       className="object-contain"
+      style={{
+        filter: isDark ? "none" : "brightness(0)"
+      }}
     />
   );
 }

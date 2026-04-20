@@ -12,10 +12,6 @@ export default function LandingLayout({ children }) {
 
   const handleNavigate = (section) => {
     setActiveSection(section);
-    const element = document.getElementById(section);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   return (

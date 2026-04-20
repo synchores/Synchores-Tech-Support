@@ -6,3 +6,6 @@ export { DeploymentGalleryGrid } from "./deploymentGalleryGrid";
 export { DeploymentGalleryFilterButton } from "./deploymentGalleryFilterButton";
 export { DeploymentGalleryCard } from "./deploymentGalleryCard";
 export { DeploymentGalleryLightboxModal } from "./deploymentGalleryLightboxModal";
+export { YoutubeVideosGrid } from "./youtubeVideosGrid";
+export { YoutubeVideoCard } from "./youtubeVideoCard";
+export { YoutubeVideoLightboxModal } from "./youtubeVideoLightboxModal";

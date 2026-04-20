@@ -2,15 +2,19 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ChevronLeft, Moon, Sun } from 'lucide-react';
 import { DeploymentGalleryGrid } from './sections/deploymentGallery/components/deploymentGalleryGrid';
+import { YoutubeVideosGrid } from './sections/deploymentGallery/components/youtubeVideosGrid';
 import { Footer } from '../../components/layout/footer/Footer';
 
 export default function DeploymentsPage() {
   const navigate = useNavigate();
   const [themeMode, setThemeMode] = useState("light");
+  const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
     const currentIsDark = document.documentElement.classList.contains("dark");
     setThemeMode(currentIsDark ? "dark" : "light");
+    // Scroll to top of page on mount
+    window.scrollTo(0, 0);
   }, []);
 
   const toggleTheme = () => {
@@ -78,7 +82,8 @@ export default function DeploymentsPage() {
         </button>
       </div>
 
-      <DeploymentGalleryGrid />
+      <DeploymentGalleryGrid activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+      <YoutubeVideosGrid activeFilter={activeFilter} />
       <Footer />
     </div>
   );

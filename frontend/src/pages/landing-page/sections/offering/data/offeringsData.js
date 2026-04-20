@@ -156,6 +156,6 @@ export const offerings = [
       { step: '04', label: 'Measure', description: 'We track outcomes and optimize strategy continuously.' },
     ],
     image: '/assets/tech-consultancy-2.png',
-    video: '/videos/tech_consult_vid3.mp4',
+    video: '/videos/tech_consultancy.mp4',
   },
 ];
