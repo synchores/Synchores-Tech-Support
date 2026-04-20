@@ -4,17 +4,32 @@ import {
   deploymentsGalleryData,
   getAllDeploymentTypes,
 } from "../deploymentsGalleryData";
+import { youtubeVideosData } from "../youtubeVideosData";
 import { DeploymentGalleryFilterButton } from "./deploymentGalleryFilterButton";
 import { DeploymentGalleryCard } from "./deploymentGalleryCard";
 import { DeploymentGalleryLightboxModal } from "./deploymentGalleryLightboxModal";
 
-export function DeploymentGalleryGrid() {
-  const [activeFilter, setActiveFilter] = useState("All");
+export function DeploymentGalleryGrid({ activeFilter, setActiveFilter }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const allTypes = getAllDeploymentTypes();
   const ITEMS_PER_PAGE = 8; // 4 columns × 2 rows
+
+  // Helper function to get total count (deployments + videos)
+  const getTotalCount = (type) => {
+    const deploymentCount = deploymentsGalleryData.filter(
+      (item) => item.type === type
+    ).length;
+    const videoCount = youtubeVideosData.filter(
+      (video) => video.category === type
+    ).length;
+    return deploymentCount + videoCount;
+  };
+
+  const getTotalAllCount = () => {
+    return deploymentsGalleryData.length + youtubeVideosData.length;
+  };
 
   // Detect mobile view
   useEffect(() => {
@@ -143,10 +158,10 @@ export function DeploymentGalleryGrid() {
                   paddingRight: "36px",
                 }}
               >
-                <option value="All">All</option>
+                <option value="All">All ({getTotalAllCount()})</option>
                 {allTypes.map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {type} ({getTotalCount(type)})
                   </option>
                 ))}
               </select>
@@ -182,20 +197,16 @@ export function DeploymentGalleryGrid() {
             <>
               <DeploymentGalleryFilterButton
                 label="All"
-                count={deploymentsGalleryData.length}
+                count={getTotalAllCount()}
                 isActive={activeFilter === "All"}
                 onClick={() => handleFilterChange("All")}
               />
               {allTypes.map((type) => {
-                const count = deploymentsGalleryData.filter(
-                  (item) => item.type === type,
-                ).length;
-
                 return (
                   <DeploymentGalleryFilterButton
                     key={type}
                     label={type}
-                    count={count}
+                    count={getTotalCount(type)}
                     isActive={activeFilter === type}
                     onClick={() => handleFilterChange(type)}
                   />
@@ -216,7 +227,7 @@ export function DeploymentGalleryGrid() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
+                gridTemplateColumns: isMobile ? "1fr" : "repeat(4, 1fr)",
                 gap: "clamp(16px, 2vw, 24px)",
                 alignItems: "stretch",
               }}
