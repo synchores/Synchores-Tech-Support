@@ -28,6 +28,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              backgroundColor: 'var(--landing-surface)',
             }}
           >
             <div>
@@ -36,7 +37,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                   fontFamily: "'Orbitron', sans-serif",
                   fontSize: 'clamp(1.1rem, 2.2vw, 1.5rem)',
                   fontWeight: 700,
-                  color: '#ffffff',
+                  color: 'var(--landing-text)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                   margin: '0 0 16px 0',
@@ -48,7 +49,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontSize: 'clamp(13px, 1.8vw, 15px)',
-                  color: '#ffffff',
+                  color: 'var(--landing-text)',
                   lineHeight: 1.7,
                   margin: '0 0 24px 0',
                 }}
@@ -101,6 +102,8 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                 justifyContent: 'space-between',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
+                backgroundColor: 'var(--landing-surface)',
+                borderColor: 'rgba(23, 156, 249, 0.3)',
               }}
               whileHover={{
                 background: 'rgba(255,255,255,0.06)',
@@ -135,7 +138,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                     fontFamily: "'Orbitron', sans-serif",
                     fontSize: 'clamp(1.1rem, 2.2vw, 1.5rem)',
                     fontWeight: 700,
-                    color: '#ffffff',
+                    color: 'var(--landing-text)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.04em',
                     margin: '0 0 8px 0',
@@ -147,7 +150,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontSize: 'clamp(12px, 1.8vw, 13.5px)',
-                    color: '#ffffff',
+                    color: 'var(--landing-text)',
                     lineHeight: 1.6,
                     margin: 0,
                   }}

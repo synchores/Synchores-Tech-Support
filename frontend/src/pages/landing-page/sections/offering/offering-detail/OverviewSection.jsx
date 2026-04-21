@@ -43,8 +43,6 @@ export default function OverviewSection({ offering, onCTA }) {
             style={{
               position: 'relative',
               marginBottom: '32px',
-              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)',
-              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)',
             }}
           >
             <p
