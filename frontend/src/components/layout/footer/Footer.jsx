@@ -121,7 +121,7 @@ export function Footer({ companyInfo }) {
               <h3
                 style={{
                   fontFamily: "'Rajdhani', sans-serif",
-                  fontSize: "clamp(18px, 3vw, 24px)",
+                  fontSize: "clamp(22.5px, 3.75vw, 30px)",
                   fontWeight: 700,
                   color: "#ffffff",
                   margin: 0,
@@ -134,7 +134,7 @@ export function Footer({ companyInfo }) {
             <p
               style={{
                 fontFamily: "'Inter', Arial, sans-serif",
-                fontSize: "clamp(13px, 2vw, 15px)",
+                fontSize: "clamp(16.25px, 2.5vw, 18.75px)",
                 fontWeight: 400,
                 color: "#ffffff",
                 lineHeight: 1.6,
@@ -178,8 +178,8 @@ export function Footer({ companyInfo }) {
                   }}
                 >
                   <svg
-                    width="24"
-                    height="24"
+                    width="30"
+                    height="30"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -194,7 +194,7 @@ export function Footer({ companyInfo }) {
             <h3
               style={{
                 fontFamily: "'Rajdhani', sans-serif",
-                fontSize: "clamp(14px, 2.5vw, 16px)",
+                fontSize: "clamp(17.5px, 3.125vw, 20px)",
                 fontWeight: 700,
                 color: "#ffffff",
                 margin: "0 0 clamp(16px, 2vw, 24px) 0",
@@ -217,7 +217,7 @@ export function Footer({ companyInfo }) {
                     cursor: "pointer",
                     textAlign: "left",
                     fontFamily: "'Inter', Arial, sans-serif",
-                    fontSize: "clamp(13px, 2vw, 15px)",
+                    fontSize: "clamp(16.25px, 2.5vw, 18.75px)",
                     fontWeight: 400,
                     color: "#ffffff",
                     padding: 0,
@@ -242,7 +242,7 @@ export function Footer({ companyInfo }) {
             <h3
               style={{
                 fontFamily: "'Rajdhani', sans-serif",
-                fontSize: "clamp(14px, 2.5vw, 16px)",
+                fontSize: "clamp(17.5px, 3.125vw, 20px)",
                 fontWeight: 700,
                 color: "#ffffff",
                 margin: "0 0 clamp(16px, 2vw, 24px) 0",
@@ -267,7 +267,7 @@ export function Footer({ companyInfo }) {
                     cursor: "pointer",
                     textAlign: "left",
                     fontFamily: "'Inter', Arial, sans-serif",
-                    fontSize: "clamp(13px, 2vw, 15px)",
+                    fontSize: "clamp(16.25px, 2.5vw, 18.75px)",
                     fontWeight: 400,
                     color: "#ffffff",
                     padding: 0,
@@ -291,7 +291,7 @@ export function Footer({ companyInfo }) {
             <h3
               style={{
                 fontFamily: "'Rajdhani', sans-serif",
-                fontSize: "clamp(14px, 2.5vw, 16px)",
+                fontSize: "clamp(17.5px, 3.125vw, 20px)",
                 fontWeight: 700,
                 color: "#ffffff",
                 margin: "0 0 clamp(16px, 2vw, 24px) 0",
@@ -308,7 +308,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Rajdhani', sans-serif",
-                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontSize: "clamp(13.75px, 2.25vw, 16.25px)",
                     fontWeight: 600,
                     color: "#ffffff",
                     margin: "0 0 6px 0",
@@ -322,7 +322,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Inter', Arial, sans-serif",
-                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontSize: "clamp(15px, 2.5vw, 17.5px)",
                     fontWeight: 400,
                     color: "#ffffff",
                     margin: 0,
@@ -336,7 +336,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Rajdhani', sans-serif",
-                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontSize: "clamp(13.75px, 2.25vw, 16.25px)",
                     fontWeight: 600,
                     color: "#ffffff",
                     margin: "0 0 6px 0",
@@ -350,7 +350,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Inter', Arial, sans-serif",
-                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontSize: "clamp(15px, 2.5vw, 17.5px)",
                     fontWeight: 400,
                     color: "#ffffff",
                     margin: 0,
@@ -364,7 +364,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Rajdhani', sans-serif",
-                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontSize: "clamp(13.75px, 2.25vw, 16.25px)",
                     fontWeight: 600,
                     color: "#ffffff",
                     margin: "0 0 6px 0",
@@ -378,7 +378,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Inter', Arial, sans-serif",
-                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontSize: "clamp(15px, 2.5vw, 17.5px)",
                     fontWeight: 400,
                     color: "#ffffff",
                     margin: 0,
@@ -392,7 +392,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Rajdhani', sans-serif",
-                    fontSize: "clamp(11px, 1.8vw, 13px)",
+                    fontSize: "clamp(13.75px, 2.25vw, 16.25px)",
                     fontWeight: 600,
                     color: "#ffffff",
                     margin: "0 0 6px 0",
@@ -406,7 +406,7 @@ export function Footer({ companyInfo }) {
                 <p
                   style={{
                     fontFamily: "'Inter', Arial, sans-serif",
-                    fontSize: "clamp(12px, 2vw, 14px)",
+                    fontSize: "clamp(15px, 2.5vw, 17.5px)",
                     fontWeight: 400,
                     color: "#ffffff",
                     margin: 0,
@@ -433,13 +433,16 @@ export function Footer({ companyInfo }) {
         <p
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "clamp(14px, 2.2vw, 17px)",
+            fontSize: "clamp(19.25px, 3.025vw, 23.375px)",
             color: "#666666",
             margin: 0,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: "8px",
+            gap: "clamp(4px, 1vw, 8px)",
+            flexWrap: "wrap",
+            whiteSpace: "normal",
+            overflow: "visible",
           }}
         >
           2026 all rights reserved
@@ -447,7 +450,7 @@ export function Footer({ companyInfo }) {
             src={bottomLogo}
             alt={companyInfo?.companyLogoAlt || "Synchores"}
             style={{
-              height: "clamp(16px, 2.2vw, 19px)",
+              height: "clamp(26.88px, 3.7vw, 31.92px)",
               objectFit: "contain",
             }}
           />
