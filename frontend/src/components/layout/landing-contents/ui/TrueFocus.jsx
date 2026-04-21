@@ -14,7 +14,6 @@ const TrueFocus = ({
 }) => {
   const words = sentence.split(separator);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastActiveIndex, setLastActiveIndex] = useState(null);
   const containerRef = useRef(null);
   const wordRefs = useRef([]);
   const [focusRect, setFocusRect] = useState({ x: 0, y: 0, width: 0, height: 0 });
@@ -48,19 +47,6 @@ const TrueFocus = ({
     });
   }, [currentIndex, words.length]);
 
-  const handleMouseEnter = (index) => {
-    if (manualMode) {
-      setLastActiveIndex(index);
-      setCurrentIndex(index);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (manualMode && lastActiveIndex !== null) {
-      setCurrentIndex(lastActiveIndex);
-    }
-  };
-
   return (
     <div className="focus-container" ref={containerRef}>
       {words.map((word, index) => {
@@ -69,15 +55,13 @@ const TrueFocus = ({
           <span
             key={index}
             ref={el => { wordRefs.current[index] = el; }}
-            className={`focus-word ${manualMode ? 'manual' : ''} ${isActive && !manualMode ? 'active' : ''}`}
+            className={`focus-word ${isActive ? 'active' : ''}`}
             style={{
               color: isActive ? borderColor : 'inherit',
               '--border-color': borderColor,
               '--glow-color': glowColor,
               transition: `color ${animationDuration}s ease`
             }}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={handleMouseLeave}
           >
             {word}
           </span>
