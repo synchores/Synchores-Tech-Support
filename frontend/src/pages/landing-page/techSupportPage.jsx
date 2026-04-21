@@ -42,6 +42,10 @@ export default function TechSupportPage() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const currentIsDark = document.documentElement.classList.contains('dark');
     setIsDark(currentIsDark);
 
