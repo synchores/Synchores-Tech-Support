@@ -37,13 +37,13 @@ export default function ContactFormPanel({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: 150 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.7, delay: 0.1 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
     >
       {submitted ? (
-        <div
+        <motion.div
           style={{
             display: "flex",
             flexDirection: "column",
@@ -54,8 +54,17 @@ export default function ContactFormPanel({
             border: "1px solid var(--landing-border)",
             borderRadius: "2px",
           }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <CheckCircle size={56} color="#1e7fd4" style={{ marginBottom: "24px" }} />
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <CheckCircle size={56} color="#1e7fd4" style={{ marginBottom: "24px" }} />
+          </motion.div>
           <h3
             style={{
               fontFamily: "'Orbitron', Arial, sans-serif",
@@ -97,10 +106,16 @@ export default function ContactFormPanel({
           >
             SEND ANOTHER
           </button>
-        </div>
+        </motion.div>
       ) : (
         <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          <motion.div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
+          >
             <ContactField
               label="FULL NAME"
               name="name"
@@ -125,8 +140,14 @@ export default function ContactFormPanel({
               onFocus={onFocus}
               onBlur={onBlur}
             />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          </motion.div>
+          <motion.div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          >
             <ContactField
               label="PHONE"
               name="phone"
@@ -175,9 +196,14 @@ export default function ContactFormPanel({
                 <option value="other">Other</option>
               </select>
             </div>
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+          >
             <p
               style={{
                 fontFamily: "'Inter', Arial, sans-serif",
@@ -207,9 +233,9 @@ export default function ContactFormPanel({
               onFocus={() => onFocus("message")}
               onBlur={onBlur}
             />
-          </div>
+          </motion.div>
 
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
             style={{
@@ -231,6 +257,10 @@ export default function ContactFormPanel({
               transition: "background 0.2s",
               opacity: loading ? 0.7 : 1,
             }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
             onMouseEnter={(e) => {
               if (!loading) {
                 e.currentTarget.style.background = "#1eaedb";
@@ -258,9 +288,15 @@ export default function ContactFormPanel({
                 SEND MESSAGE
               </>
             )}
-          </button>
+          </motion.button>
 
-          <div style={{ marginTop: "24px" }}>
+          <motion.div
+            style={{ marginTop: "24px" }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
+          >
             <ContactMap
               isLoaded={isLoaded}
               loadError={loadError}
@@ -268,7 +304,7 @@ export default function ContactFormPanel({
               mapContainerStyle={mapContainerStyle}
               mapOptions={mapOptions}
             />
-          </div>
+          </motion.div>
         </form>
       )}
     </motion.div>

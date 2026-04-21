@@ -3,10 +3,10 @@ import { motion } from "motion/react";
 export default function ContactInfoPanel({ introText, contactInfo, hours }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: -150 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.7 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
     >
       <p
         style={{
@@ -22,8 +22,15 @@ export default function ContactInfoPanel({ introText, contactInfo, hours }) {
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        {contactInfo.map(({ icon: Icon, label, value }) => (
-          <div key={label} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+        {contactInfo.map(({ icon: Icon, label, value }, index) => (
+          <motion.div
+            key={label}
+            style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 + index * 0.05, ease: "easeOut" }}
+          >
             <div
               style={{
                 width: "40px",
@@ -66,7 +73,7 @@ export default function ContactInfoPanel({ introText, contactInfo, hours }) {
                 {value}
               </p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -84,8 +91,8 @@ export default function ContactInfoPanel({ introText, contactInfo, hours }) {
         >
           BUSINESS HOURS
         </p>
-        {hours.map(({ day, hours: hoursValue }) => (
-          <div
+        {hours.map(({ day, hours: hoursValue }, index) => (
+          <motion.div
             key={day}
             style={{
               display: "flex",
@@ -93,6 +100,10 @@ export default function ContactInfoPanel({ introText, contactInfo, hours }) {
               padding: "10px 0",
               borderBottom: "1px solid var(--landing-border)",
             }}
+            initial={{ opacity: 0, x: -80 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 + index * 0.05, ease: "easeOut" }}
           >
             <span
               style={{
@@ -113,7 +124,7 @@ export default function ContactInfoPanel({ introText, contactInfo, hours }) {
             >
               {hoursValue}
             </span>
-          </div>
+          </motion.div>
         ))}
       </div>
     </motion.div>

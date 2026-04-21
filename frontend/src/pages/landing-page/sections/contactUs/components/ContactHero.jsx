@@ -1,6 +1,14 @@
+import { motion } from "motion/react";
+
 export default function ContactHero({ contactBg, contactBgAlt, eyebrow, heading }) {
   return (
-    <div style={{ position: "relative", height: "200px", overflow: "hidden" }}>
+    <motion.div
+      style={{ position: "relative", height: "200px", overflow: "hidden" }}
+      initial={{ opacity: 0, y: -30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+    >
       <img
         src={contactBg}
         alt={contactBgAlt}
@@ -24,7 +32,7 @@ export default function ContactHero({ contactBg, contactBgAlt, eyebrow, heading 
         }}
       >
         <div style={{ textAlign: "center" }}>
-          <p
+          <motion.p
             style={{
               fontFamily: "'Inter', Arial, sans-serif",
               fontSize: "12px",
@@ -34,10 +42,14 @@ export default function ContactHero({ contactBg, contactBgAlt, eyebrow, heading 
               letterSpacing: "0.2em",
               margin: "0 0 12px 0",
             }}
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
           >
             {eyebrow}
-          </p>
-          <h2
+          </motion.p>
+          <motion.h2
             style={{
               fontFamily: "'Orbitron', Arial, sans-serif",
               fontSize: "clamp(1.5rem, 3.5vw, 2.2rem)",
@@ -47,11 +59,15 @@ export default function ContactHero({ contactBg, contactBgAlt, eyebrow, heading 
               margin: 0,
               textTransform: "uppercase",
             }}
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
             {heading}
-          </h2>
+          </motion.h2>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
