@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Skeleton } from 'boneyard-js/react';
+import '../../bones/registry';
 import Home from "./sections/home/homeSection";
 import OfferingSection from "./sections/offering";
 import AboutSection from "./sections/about/aboutSection";
@@ -13,6 +15,32 @@ export default function LandingPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { companyInfo } = useCompanyInfo();
+  const [loadingStates, setLoadingStates] = useState({
+    home: true,
+    offering: true,
+    about: true,
+    deployment: true,
+    contact: true,
+    footer: true,
+  });
+
+  // Simulate loading delays for each section
+  useEffect(() => {
+    const timings = {
+      home: 500,
+      offering: 1200,
+      about: 1800,
+      deployment: 2400,
+      contact: 3000,
+      footer: 3500,
+    };
+
+    Object.entries(timings).forEach(([key, delay]) => {
+      setTimeout(() => {
+        setLoadingStates(prev => ({ ...prev, [key]: false }));
+      }, delay);
+    });
+  }, []);
 
   useEffect(() => {
     const targetSection = location.state?.scrollTo;
@@ -31,13 +59,27 @@ export default function LandingPage() {
 
   return (
     <div className="w-full h-full">
-      <Home />
-      <OfferingSection />
-      <AboutSection companyInfo={companyInfo} />
-      <AboutSectionAlternate companyInfo={companyInfo} />
-      <DeploymentGallery />
-      <ContactUs companyInfo={companyInfo} />
-      <Footer companyInfo={companyInfo} />
+      <Skeleton name="home-section" loading={loadingStates.home} fixture={<Home />}>
+        <Home />
+      </Skeleton>
+      <Skeleton name="offering-section" loading={loadingStates.offering} fixture={<OfferingSection />}>
+        <OfferingSection />
+      </Skeleton>
+      <Skeleton name="about-section" loading={loadingStates.about} fixture={<AboutSection companyInfo={companyInfo} />}>
+        <AboutSection companyInfo={companyInfo} />
+      </Skeleton>
+      <Skeleton name="about-alternate-section" loading={loadingStates.about} fixture={<AboutSectionAlternate companyInfo={companyInfo} />}>
+        <AboutSectionAlternate companyInfo={companyInfo} />
+      </Skeleton>
+      <Skeleton name="deployment-section" loading={loadingStates.deployment} fixture={<DeploymentGallery />}>
+        <DeploymentGallery />
+      </Skeleton>
+      <Skeleton name="contact-section" loading={loadingStates.contact} fixture={<ContactUs companyInfo={companyInfo} />}>
+        <ContactUs companyInfo={companyInfo} />
+      </Skeleton>
+      <Skeleton name="footer-section" loading={loadingStates.footer} fixture={<Footer companyInfo={companyInfo} />}>
+        <Footer companyInfo={companyInfo} />
+      </Skeleton>
     </div>
   );
 }

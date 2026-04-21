@@ -117,7 +117,11 @@ export function Navbar({ activeSection, onNavigate }) {
   };
 
   // Keep the top bar solid and high-contrast across routes.
-  const navBgColor = THEME.colors.primary;
+  // On home section with no scroll, use 5% opacity; otherwise full color
+  const isHomeSection = activeSection === "home";
+  const navBgColor = isHomeSection && !scrolled 
+    ? `rgba(30, 127, 212, 0.05)`
+    : THEME.colors.primary;
   const navTextColor = "#ffffff";
   const mobileMenuTextColor = isDark ? "#ffffff" : "#111111";
   const navBorderColor = "rgba(255,255,255,0.2)";
@@ -129,7 +133,8 @@ export function Navbar({ activeSection, onNavigate }) {
       }`}
       style={{ 
         backgroundColor: navBgColor,
-        borderBottom: `1px solid ${navBorderColor}`
+        borderBottom: `1px solid ${navBorderColor}`,
+        transition: "background-color 0.3s ease"
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
