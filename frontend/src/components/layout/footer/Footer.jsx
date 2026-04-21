@@ -55,11 +55,11 @@ export function Footer({ companyInfo }) {
   ];
 
   const resourceLinks = [
-    { label: "IT Consulting", url: "#" },
-    { label: "Infrastructure Management", url: "#" },
-    { label: "Security Solutions", url: "#" },
-    { label: "Telecommunications", url: "#" },
-    { label: "Technical Support", url: "#" },
+    { label: "IT Consulting", url: "/offering/tech-consultancy" },
+    { label: "Infrastructure Management", url: "/offering/it-infrastructure" },
+    { label: "Security Solutions", url: "/deployments" },
+    { label: "Telecommunications", url: "/deployments" },
+    { label: "Technical Support", url: "/deployments" },
   ];
 
   const socialLinks = [
@@ -256,15 +256,21 @@ export function Footer({ companyInfo }) {
               style={{ display: "flex", flexDirection: "column", gap: "12px" }}
             >
               {resourceLinks.map((link) => (
-                <a
+                <button
                   key={link.label}
-                  href={link.url}
+                  onClick={() => {
+                    navigate(link.url);
+                  }}
                   style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
                     fontFamily: "'Inter', Arial, sans-serif",
                     fontSize: "clamp(13px, 2vw, 15px)",
                     fontWeight: 400,
                     color: "#ffffff",
-                    textDecoration: "none",
+                    padding: 0,
                     transition: "color 0.2s",
                   }}
                   onMouseEnter={(e) => {
@@ -275,7 +281,7 @@ export function Footer({ companyInfo }) {
                   }}
                 >
                   {link.label}
-                </a>
+                </button>
               ))}
             </div>
           </div>

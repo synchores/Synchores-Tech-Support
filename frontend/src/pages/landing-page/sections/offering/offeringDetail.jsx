@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLandingServices } from '../../../../hooks/useLandingPageData';
 import { offerings } from './data/offeringsData';
 import HeroSection from './offering-detail/HeroSection';
@@ -8,6 +8,7 @@ import FeaturesSection from './offering-detail/FeaturesSection';
 import ProcessSection from './offering-detail/ProcessSection';
 import CTASection from './offering-detail/CTASection';
 import Footer from '../../../../components/layout/footer';
+import { Moon, Sun } from 'lucide-react';
 
 const THEME_PRIMARY = '#179cf9';
 
@@ -97,6 +98,7 @@ export default function OfferingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { services, loading } = useLandingServices({ status: 'published' });
+  const [isDark, setIsDark] = useState(false);
 
   const serviceDrivenOfferings = useMemo(() => {
     if (!services?.length) {
@@ -172,6 +174,30 @@ export default function OfferingDetail() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  // Theme detection
+  useEffect(() => {
+    const currentIsDark = document.documentElement.classList.contains('dark');
+    setIsDark(currentIsDark);
+
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = isDark ? 'light' : 'dark';
+    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    localStorage.setItem('theme', nextTheme);
+    setIsDark(nextTheme === 'dark');
+  };
 
   if (loading && !offering) {
     return (
@@ -252,7 +278,38 @@ export default function OfferingDetail() {
   };
 
   return (
-    <div style={{ backgroundColor: '#060c14', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#060c14', minHeight: '100vh', position: 'relative' }}>
+      <button
+        onClick={toggleTheme}
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 1000,
+          background: isDark ? '#ffffff' : '#000000',
+          border: 'none',
+          borderRadius: '50%',
+          width: '44px',
+          height: '44px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+        }}
+      >
+        {isDark ? (
+          <Sun size={24} color="#000000" />
+        ) : (
+          <Moon size={24} color="#ffffff" />
+        )}
+      </button>
       <HeroSection offering={offering} currentIndex={currentIndex} onBack={handleBack} />
       <OverviewSection offering={offering} onCTA={handleConsultation} />
       <FeaturesSection offering={offering} />
