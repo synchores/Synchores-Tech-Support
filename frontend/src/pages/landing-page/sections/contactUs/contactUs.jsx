@@ -4,6 +4,8 @@ import { useLoadScript } from "@react-google-maps/api";
 import ContactHero from "./components/ContactHero";
 import ContactInfoPanel from "./components/ContactInfoPanel";
 import ContactFormPanel from "./components/ContactFormPanel";
+import { toastError } from "../../../../services/admin-service/adminToast";
+import { useContactForm } from "../../../../hooks/useContactForm";
 
 const DEFAULT_CONTACT_BG = "https://images.unsplash.com/photo-1758611974287-8ca7147860a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMFVJJTIwZGVzaWduJTIwc2NyZWVuJTIwbW9kZXJufGVufDF8fHx8MTc3NjEzOTgwNXww&ixlib=rb-4.1.0&q=80&w=1080";
 
@@ -17,6 +19,7 @@ export function ContactUs({ companyInfo }) {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState(null);
+  const { submitContact } = useContactForm();
   const contactBg = resolveAssetUrl(companyInfo?.contactBgImage, DEFAULT_CONTACT_BG);
   const contactBgAlt = companyInfo?.contactBgImageAlt || "Contact";
   const contactEyebrow = companyInfo?.contactEyebrow || "LET'S WORK TOGETHER";
@@ -76,10 +79,33 @@ export function ContactUs({ companyInfo }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1600);
+
+    if (loading) return;
+
+    const payload = {
+      fullName: form.name.trim(),
+      email: form.email.trim(),
+      contactNumber: form.phone.trim(),
+      serviceType: form.service.trim(),
+      message: form.message.trim(),
+    };
+
+    if (!payload.fullName || !payload.email || !payload.contactNumber || !payload.serviceType || !payload.message) {
+      toastError(new Error("Please complete all required fields before sending your message."), "Incomplete form");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await submitContact(payload);
+      setSubmitted(true);
+    } catch (error) {
+      toastError(error, "Message not sent");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReset = () => {

@@ -155,6 +155,7 @@ export default function ContactFormPanel({
               placeholder="Enter Phone"
               value={form.phone}
               onChange={onChange}
+              required
               focused={focused}
               onFocus={onFocus}
               onBlur={onBlur}
@@ -177,6 +178,7 @@ export default function ContactFormPanel({
                 name="service"
                 value={form.service}
                 onChange={onChange}
+                required
                 style={{
                   ...inputStyle,
                   borderColor:
