@@ -3,7 +3,7 @@ FROM node:22 AS builder
 
 WORKDIR /app
 
-COPY package.json ./
+COPY package*.json ./
 
 RUN npm install --legacy-peer-deps
 
@@ -20,7 +20,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package.json ./
+COPY package*.json ./
 
 RUN npm install --omit=dev --legacy-peer-deps
 
