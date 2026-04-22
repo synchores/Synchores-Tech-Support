@@ -2,11 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { GqlThrottlerExceptionFilter } from './common/filters/gql-throttler-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Parse allowed origins ONCE
+  app.set('trust proxy', 1);
+  app.useGlobalFilters(new GqlThrottlerExceptionFilter());
+
+  // ✅ Dynamic CORS from ENV
   const allowedOrigins = process.env.FRONTEND_ORIGINS?.split(',') || [];
 
   app.enableCors({
