@@ -20,7 +20,7 @@ services:
       DB_SYNC: "false"
       PLAYGROUND: "false"
       PRODUCTION: "true"
-      AUTO_SCHEMA: "false"
+      AUTO_SCHEMA: "true"
 
       JWT_SECRET: ${JWT_SECRET}
       FRONTEND_ORIGINS: ${FRONTEND_ORIGINS}
