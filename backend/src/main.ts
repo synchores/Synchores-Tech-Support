@@ -6,29 +6,32 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // ✅ Dynamic CORS from ENV
+  // Parse allowed origins ONCE
   const allowedOrigins = process.env.FRONTEND_ORIGINS?.split(',') || [];
 
   app.enableCors({
     origin: (origin, callback) => {
-      const allowed = process.env.FRONTEND_ORIGINS?.split(',') || [];
+      // allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
 
-      if (!origin || allowed.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
     },
     credentials: true,
   });
 
-  // Serve static uploads
+  // Static uploads
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads',
   });
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  // Safe port handling (IMPORTANT for Docker)
+  const port = Number(process.env.PORT) || 3501;
+
+  await app.listen(port, '0.0.0.0');
 }
 
 bootstrap();

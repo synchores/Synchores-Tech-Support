@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+
+  # =========================
+  # BACKEND (NESTJS)
+  # =========================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: synchores-backend
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+      DB_SYNC: "false"
+      PLAYGROUND: "false"
+      PRODUCTION: "true"
+      AUTO_SCHEMA: "false"
+
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_ORIGINS: ${FRONTEND_ORIGINS}
+
+      MAIL_ENABLED: ${MAIL_ENABLED}
+      MAIL_FROM: ${MAIL_FROM}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_SECURE: ${SMTP_SECURE}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+
+    ports:
+      - "127.0.0.1:3501:3501"
+
+    volumes:
+      - ${UPLOADS_DIR:-/var/lib/synchores/uploads}:/app/uploads
+
+    restart: unless-stopped
+
+
+  # =========================
+  # FRONTEND - LANDING (beta)
+  # =========================
+  frontend_beta:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api/graphql
+        VITE_IMAGE_URL: /api
+    container_name: synchores-beta
+
+    ports:
+      - "127.0.0.1:3251:80"
+
+    restart: unless-stopped
+
+
+  # =========================
+  # FRONTEND - CMS (app)
+  # =========================
+  frontend_app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api/graphql
+        VITE_IMAGE_URL: /api
+    container_name: synchores-app
+
+    ports:
+      - "127.0.0.1:3252:80"
+
+    restart: unless-stopped
+
+
+networks:
+  default:
+    external: true
