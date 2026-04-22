@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -17,6 +18,8 @@ import { OrdersModule } from './modules/admin-modules/orders/orders.module';
 import { MailerModule } from './modules/general/mailer/mailer.module';
 import { InvoicesModule } from './modules/admin-modules/invoices/invoices.module';
 import { LandingPageModule } from './modules/admin-modules/landing-page/landing-page.module';
+import { ThrottlerModule, seconds } from '@nestjs/throttler';
+import { GqlThrottlerGuard } from './common/guards/gql-throttler.guard';
 
 @Module({
   imports: [
@@ -30,6 +33,12 @@ import { LandingPageModule } from './modules/admin-modules/landing-page/landing-
       playground: process.env.PLAYGROUND === 'true',
       context: ({ req }) => ({ req }),
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: seconds(60),
+        limit: 5,
+      },
+    ]),
     AuthModule,
     TicketsModule,
     ServicesModule,
@@ -44,6 +53,12 @@ import { LandingPageModule } from './modules/admin-modules/landing-page/landing-
     LandingPageModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: GqlThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
