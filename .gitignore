@@ -16,6 +16,7 @@ frontend/src/assets/screenshots/
 
 # Editor directories and files
 .env
+.env.prod
 .vscode/*
 !.vscode/extensions.json
 .idea
