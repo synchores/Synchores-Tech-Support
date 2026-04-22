@@ -34,6 +34,8 @@ export default function ContactFormPanel({
   mapCenter,
   mapContainerStyle,
   mapOptions,
+  cooldownRemaining = 0,
+  errors = {},
 }) {
   return (
     <motion.div
@@ -90,8 +92,9 @@ export default function ContactFormPanel({
           </p>
           <button
             onClick={onReset}
+            disabled={cooldownRemaining > 0}
             style={{
-              background: "transparent",
+              background: cooldownRemaining > 0 ? "rgba(30,127,212,0.3)" : "transparent",
               border: "1px solid #1e7fd4",
               borderRadius: "2px",
               padding: "8px 20px",
@@ -99,12 +102,14 @@ export default function ContactFormPanel({
               fontSize: "13px",
               fontWeight: 700,
               color: "#1e7fd4",
-              cursor: "pointer",
+              cursor: cooldownRemaining > 0 ? "not-allowed" : "pointer",
               textTransform: "uppercase",
               letterSpacing: "0.05em",
+              opacity: cooldownRemaining > 0 ? 0.6 : 1,
+              transition: "all 0.2s",
             }}
           >
-            SEND ANOTHER
+            {cooldownRemaining > 0 ? `WAIT ${cooldownRemaining}S` : "SEND ANOTHER"}
           </button>
         </motion.div>
       ) : (
@@ -117,13 +122,15 @@ export default function ContactFormPanel({
             transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
           >
             <ContactField
-              label="FULL NAME"
+              label="NAME"
               name="name"
               type="text"
               placeholder="Enter Name"
+              required
+              error={errors.name}
               value={form.name}
               onChange={onChange}
-              required
+              maxLength={100}
               focused={focused}
               onFocus={onFocus}
               onBlur={onBlur}
@@ -136,6 +143,8 @@ export default function ContactFormPanel({
               value={form.email}
               onChange={onChange}
               required
+              pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+              error={errors.email}
               focused={focused}
               onFocus={onFocus}
               onBlur={onBlur}
@@ -155,7 +164,7 @@ export default function ContactFormPanel({
               placeholder="Enter Phone"
               value={form.phone}
               onChange={onChange}
-              required
+              maxLength={20}
               focused={focused}
               onFocus={onFocus}
               onBlur={onBlur}
@@ -170,19 +179,21 @@ export default function ContactFormPanel({
                   textTransform: "uppercase",
                   letterSpacing: "0.15em",
                   margin: "0 0 6px 0",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
                 }}
               >
                 SERVICE NEEDED
+                <span style={{ color: "#ff4444", fontSize: "12px" }}>*</span>
               </p>
               <select
                 name="service"
                 value={form.service}
                 onChange={onChange}
-                required
                 style={{
                   ...inputStyle,
-                  borderColor:
-                    focused === "service" ? "#1e7fd4" : "var(--landing-border-strong)",
+                  borderColor: errors.service ? "#ff4444" : focused === "service" ? "#1e7fd4" : "var(--landing-border-strong)",
                   color: form.service ? "var(--landing-text)" : "var(--landing-text-soft)",
                   cursor: "pointer",
                 }}
@@ -197,6 +208,20 @@ export default function ContactFormPanel({
                 <option value="consultancy">Tech Consultancy</option>
                 <option value="other">Other</option>
               </select>
+              {errors.service && (
+                <p
+                  style={{
+                    fontFamily: "'Inter', Arial, sans-serif",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    color: "#ff4444",
+                    margin: "4px 0 0 0",
+                    padding: 0,
+                  }}
+                >
+                  {errors.service}
+                </p>
+              )}
             </div>
           </motion.div>
 
@@ -215,26 +240,43 @@ export default function ContactFormPanel({
                 textTransform: "uppercase",
                 letterSpacing: "0.15em",
                 margin: "0 0 6px 0",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
               }}
             >
               MESSAGE
+              <span style={{ color: "#ff4444", fontSize: "12px" }}>*</span>
             </p>
             <textarea
               name="message"
               value={form.message}
               onChange={onChange}
-              required
               rows={5}
+              maxLength={1000}
               placeholder="Tell us about your IT needs..."
               style={{
                 ...inputStyle,
-                borderColor:
-                  focused === "message" ? "#1e7fd4" : "var(--landing-border-strong)",
+                borderColor: errors.message ? "#ff4444" : focused === "message" ? "#1e7fd4" : "var(--landing-border-strong)",
                 resize: "none",
               }}
               onFocus={() => onFocus("message")}
               onBlur={onBlur}
             />
+            {errors.message && (
+              <p
+                style={{
+                  fontFamily: "'Inter', Arial, sans-serif",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  color: "#ff4444",
+                  margin: "4px 0 0 0",
+                  padding: 0,
+                }}
+              >
+                {errors.message}
+              </p>
+            )}
           </motion.div>
 
           <motion.button

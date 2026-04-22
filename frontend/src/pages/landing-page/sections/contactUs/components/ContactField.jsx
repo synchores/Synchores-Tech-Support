@@ -9,11 +9,14 @@ export default function ContactField({
   focused,
   onFocus,
   onBlur,
+  pattern,
+  maxLength,
+  error,
 }) {
   const fieldInputStyle = {
     width: "100%",
     backgroundColor: "var(--landing-surface)",
-    border: `1px solid ${focused === name ? "#1e7fd4" : "var(--landing-border-strong)"}`,
+    border: `1px solid ${error ? "#ff4444" : focused === name ? "#1e7fd4" : "var(--landing-border-strong)"}`,
     borderRadius: "2px",
     padding: "11px 13px",
     fontFamily: "'Inter', Arial, sans-serif",
@@ -37,9 +40,13 @@ export default function ContactField({
           textTransform: "uppercase",
           letterSpacing: "0.15em",
           margin: "0 0 6px 0",
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
         }}
       >
         {label}
+        {required && <span style={{ color: "#ff4444", fontSize: "12px" }}>*</span>}
       </p>
       <input
         type={type}
@@ -47,11 +54,26 @@ export default function ContactField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        required={required}
+        pattern={pattern}
+        maxLength={maxLength}
         style={fieldInputStyle}
         onFocus={() => onFocus(name)}
         onBlur={onBlur}
       />
+      {error && (
+        <p
+          style={{
+            fontFamily: "'Inter', Arial, sans-serif",
+            fontSize: "12px",
+            fontWeight: 500,
+            color: "#ff4444",
+            margin: "4px 0 0 0",
+            padding: 0,
+          }}
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }

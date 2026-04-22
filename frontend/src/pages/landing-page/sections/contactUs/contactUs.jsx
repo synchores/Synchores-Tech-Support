@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { useLoadScript } from "@react-google-maps/api";
 import ContactHero from "./components/ContactHero";
@@ -19,6 +19,8 @@ export function ContactUs({ companyInfo }) {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState(null);
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
+  const [errors, setErrors] = useState({});
   const { submitContact } = useContactForm();
   const contactBg = resolveAssetUrl(companyInfo?.contactBgImage, DEFAULT_CONTACT_BG);
   const contactBgAlt = companyInfo?.contactBgImageAlt || "Contact";
@@ -60,6 +62,14 @@ export function ContactUs({ companyInfo }) {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
   });
 
+  useEffect(() => {
+    if (cooldownRemaining <= 0) return;
+    const timer = setInterval(() => {
+      setCooldownRemaining((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldownRemaining]);
+
   const mapCenter = { lat: 14.365098137849008, lng: 120.93677433750133 };
   const mapContainerStyle = {
     width: "100%",
@@ -77,6 +87,9 @@ export function ContactUs({ companyInfo }) {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -84,6 +97,7 @@ export function ContactUs({ companyInfo }) {
 
     if (loading) return;
 
+    const newErrors = {};
     const payload = {
       fullName: form.name.trim(),
       email: form.email.trim(),
@@ -92,15 +106,31 @@ export function ContactUs({ companyInfo }) {
       message: form.message.trim(),
     };
 
-    if (!payload.fullName || !payload.email || !payload.contactNumber || !payload.serviceType || !payload.message) {
-      toastError(new Error("Please complete all required fields before sending your message."), "Incomplete form");
+    if (!payload.fullName) {
+      newErrors.name = "This field is required";
+    }
+    if (!payload.email) {
+      newErrors.email = "This field is required";
+    }
+    if (!payload.serviceType) {
+      newErrors.service = "This field is required";
+    }
+    if (!payload.message) {
+      newErrors.message = "This field is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    setErrors({});
 
     try {
       setLoading(true);
       await submitContact(payload);
       setSubmitted(true);
+      setCooldownRemaining(10);
     } catch (error) {
       toastError(error, "Message not sent");
     } finally {
@@ -111,6 +141,10 @@ export function ContactUs({ companyInfo }) {
   const handleReset = () => {
     setSubmitted(false);
     setForm({ name: "", email: "", phone: "", service: "", message: "" });
+    setErrors({});
+    if (cooldownRemaining > 0) {
+      setCooldownRemaining(0);
+    }
   };
 
   const handleFocus = (name) => setFocused(name);
@@ -153,6 +187,8 @@ export function ContactUs({ companyInfo }) {
             mapCenter={mapCenter}
             mapContainerStyle={mapContainerStyle}
             mapOptions={mapOptions}
+            cooldownRemaining={cooldownRemaining}
+            errors={errors}
           />
         </div>
       </div>
