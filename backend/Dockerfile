@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm ci
 
 COPY . .
 
@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 
 COPY package*.json ./
 
-RUN npm install --omit=dev --legacy-peer-deps
+RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/uploads ./uploads
