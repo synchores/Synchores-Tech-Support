@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import { useHeroSection } from "../../../../hooks/useLandingPageData";
-import TrueFocus from "../../../../components/layout/landing-contents/ui/trueFocus";
+import TrueFocus from "../../../../components/layout/landing-contents/ui/TrueFocus";
 import SplittingText from "../../../../components/layout/landing-contents/ui/SplittingText";
 
 const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";
