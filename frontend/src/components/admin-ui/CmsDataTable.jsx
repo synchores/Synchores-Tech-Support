@@ -1,5 +1,6 @@
 import { Copy, Pencil, ArrowUpDown } from "lucide-react";
 import { CmsActionMenu } from "./CmsActionMenu";
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 
 const FALLBACK_IMAGE = "https://placehold.co/64x40/e2e8f0/64748b?text=No+Image";
 
@@ -110,7 +111,7 @@ export function CmsDataTable({
                   </td>
                   <td className="px-4 py-3">
                     <img
-                      src={item.image ? `http://localhost:3000/${item.image}` : FALLBACK_IMAGE}
+                      src={item.image ? `${IMAGE_URL}/${item.image}` : FALLBACK_IMAGE}
                       alt={item.title}
                       className="h-10 w-16 rounded object-cover"
                       onError={(e) => {
