@@ -2,8 +2,10 @@ import { Type, FileText, Image as ImageIcon } from "lucide-react";
 import { TextInput, TextArea } from "../field";
 import { ImageUpload } from "../../landing-page/image-upload";
 
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+
 function getMediaPreviewSrc(path) {
-  return `http://localhost:3000${path}`;
+  return `${IMAGE_URL}${path}`;
 }
 
 export function HeroLandingEditorPanel({

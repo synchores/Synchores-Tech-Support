@@ -2,13 +2,14 @@ import { Copy, Pencil } from "lucide-react";
 import { CmsActionMenu } from "../../admin-ui/CmsActionMenu";
 
 const SERVICE_IMAGE_FALLBACK = "https://placehold.co/600x320/e2e8f0/64748b?text=No+Image";
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 
 function resolveServiceImageSrc(path = "") {
   const value = String(path || "").trim();
   if (!value) return SERVICE_IMAGE_FALLBACK;
   if (/^(https?:|data:|blob:)/i.test(value)) return value;
-  if (value.startsWith("/")) return `http://localhost:3000${value}`;
-  return `http://localhost:3000/${value}`;
+  if (value.startsWith("/")) return `${IMAGE_URL}${value}`;
+  return `${IMAGE_URL}/${value}`;
 }
 
 export function ServiceCardsGrid({ items, onEdit, onDuplicate }) {

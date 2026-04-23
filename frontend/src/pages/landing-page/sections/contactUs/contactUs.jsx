@@ -8,10 +8,11 @@ import { toastError } from "../../../../services/admin-service/adminToast";
 import { useContactForm } from "../../../../hooks/useContactForm";
 
 const DEFAULT_CONTACT_BG = "https://images.unsplash.com/photo-1758611974287-8ca7147860a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWIlMjBkZXZlbG9wbWVudCUyMFVJJTIwZGVzaWduJTIwc2NyZWVuJTIwbW9kZXJufGVufDF8fHx8MTc3NjEzOTgwNXww&ixlib=rb-4.1.0&q=80&w=1080";
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 
 function resolveAssetUrl(path, fallback) {
   if (!path) return fallback;
-  return path.startsWith("/uploads/") ? `http://localhost:3000${path}` : path;
+  return path.startsWith("/uploads/") ? `${IMAGE_URL}${path}` : path;
 }
 
 export function ContactUs({ companyInfo }) {

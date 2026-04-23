@@ -3,11 +3,12 @@ import { NavigationArrow } from "./NavigationArrow";
 import { DotIndicators } from "./DotIndicators";
 import { TitleOverlay } from "./TitleOverlay";
 
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 function toMediaUrl(path = '') {
   if (!path) return '';
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith('/uploads/')) return `http://localhost:3000${path}`;
-  if (path.startsWith('uploads/')) return `http://localhost:3000/${path}`;
+  if (path.startsWith('/uploads/')) return `${IMAGE_URL}${path}`;
+  if (path.startsWith('uploads/')) return `${IMAGE_URL}/${path}`;
   return path;
 }
 

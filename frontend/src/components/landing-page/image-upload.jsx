@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { Upload } from "lucide-react";
 
+
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 export function ImageUpload({
   onUpload,
   disabled = false,
   accept = "image/*",
-  uploadUrl = "http://localhost:3000/landing-page/upload/image",
+  uploadUrl = `${IMAGE_URL}/landing-page/upload/image`,
   buttonLabel = "Click to upload image",
   busyLabel = "Uploading...",
   ariaLabel = "Upload image",

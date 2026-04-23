@@ -1,5 +1,10 @@
+
+
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+
+
 function getMediaPreviewSrc(path) {
-  return `http://localhost:3000${path}`;
+  return `${IMAGE_URL}${path}`;
 }
 
 export function HeroLandingPreviewCard({ formData, isVideo }) {

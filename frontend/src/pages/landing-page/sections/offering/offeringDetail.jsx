@@ -11,6 +11,8 @@ import Footer from '../../../../components/layout/footer';
 import { Moon, Sun } from 'lucide-react';
 
 const THEME_PRIMARY = '#179cf9';
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+
 
 function toSlug(value = '') {
   return String(value)
@@ -24,8 +26,8 @@ function toSlug(value = '') {
 function toMediaUrl(path = '') {
   if (!path) return '';
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith('/uploads/')) return `http://localhost:3000${path}`;
-  if (path.startsWith('uploads/')) return `http://localhost:3000/${path}`;
+  if (path.startsWith('/uploads/')) return `${IMAGE_URL}${path}`;
+  if (path.startsWith('uploads/')) return `${IMAGE_URL}/${path}`;
   return path;
 }
 

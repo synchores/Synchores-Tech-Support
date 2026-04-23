@@ -9,7 +9,7 @@ const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";
 const FALLBACK_BACKGROUND = "/videos/tech_consult_vid3.mp4";
 const FALLBACK_FOCUS_TEXT = "BUSINESS SUCCESS";
 const GRAPHQL_URL =
-  import.meta.env.VITE_API_URL || import.meta.env.API_URL || "http://localhost:3000/graphql";
+  import.meta.env.VITE_API_URL || import.meta.env.API_URL;
 
 function getBackendOrigin() {
   try {

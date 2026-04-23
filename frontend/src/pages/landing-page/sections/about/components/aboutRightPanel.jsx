@@ -1,10 +1,12 @@
 import { motion } from "motion/react";
 import { TEAM_CODING_IMG } from "./constants";
 
+
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 export function AboutRightPanel({ imageSrc, imageAlt }) {
   const resolvedImageSrc = imageSrc
     ? imageSrc.startsWith("/uploads/")
-      ? `http://localhost:3000${imageSrc}`
+      ? `${IMAGE_URL}${imageSrc}`
       : imageSrc
     : TEAM_CODING_IMG;
 

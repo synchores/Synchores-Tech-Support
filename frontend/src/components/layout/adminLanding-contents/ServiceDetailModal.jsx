@@ -4,6 +4,7 @@ import { Field, TextInput, TextArea } from "../../admin-ui/field";
 import { CmsDrawer } from "../../admin-ui/CmsDrawer";
 
 const FALLBACK_IMAGE = "https://placehold.co/600x300/e2e8f0/64748b?text=Service+Image";
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 const THEME_PRIMARY = "#179cf9";
 const MAX_CATEGORY_LENGTH = 120;
 const MAX_CTA_BUTTON_LABEL_LENGTH = 160;
@@ -95,8 +96,8 @@ function serializeStructuredRows(rows, leftKey, rightKey) {
 function resolveImageSource(path = "") {
   if (!path) return FALLBACK_IMAGE;
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith("/")) return `http://localhost:3000${path}`;
-  return `http://localhost:3000/${path}`;
+  if (path.startsWith("/")) return `${IMAGE_URL}${path}`;
+  return `${IMAGE_URL}/${path}`;
 }
 
 function createInitialFormData(service = null) {
@@ -512,7 +513,7 @@ export function ServiceDetailModal({
       setUploadError("");
 
       const token = localStorage.getItem("accessToken");
-      const response = await fetch("http://localhost:3000/landing-page/upload/image", {
+      const response = await fetch(`${IMAGE_URL}/landing-page/upload/image`, {
         method: "POST",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),

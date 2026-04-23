@@ -49,6 +49,7 @@ export function DeploymentDetailModal({
   const isEditMode = !!deployment;
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 
   const [formData, setFormData] = useState({
     title: "",
@@ -95,7 +96,7 @@ export function DeploymentDetailModal({
     try {
       setUploading(true);
       const token = localStorage.getItem("accessToken");
-      const response = await fetch("http://localhost:3000/landing-page/upload/image", {
+      const response = await fetch(`${IMAGE_URL}/landing-page/upload/image`, {
         method: "POST",
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -337,7 +338,7 @@ export function DeploymentDetailModal({
         {formData.image && (
           <div style={{ marginTop: "0.25rem" }}>
             <img
-              src={`http://localhost:3000${formData.image}`}
+              src={`${IMAGE_URL}${formData.image}`}
               alt="Deployment preview"
               className="w-full h-40 rounded-lg object-cover border border-solid"
               style={{

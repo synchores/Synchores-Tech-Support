@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useCompanyInfo } from "./useLandingPageData";
 import { toastError, toastInfo, toastSuccess } from "../services/admin-service/adminToast";
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
 
 export const COMPANY_SETTINGS_SECTIONS = [
   "contactInfo",
@@ -238,7 +239,7 @@ export function useAdminCompanySettingsPage() {
   const getPreviewUrl = useCallback((path) => {
     if (!path) return "";
     if (path.startsWith("/uploads/")) {
-      return `http://localhost:3000${path}`;
+      return `${IMAGE_URL}${path}`;
     }
     return path;
   }, []);

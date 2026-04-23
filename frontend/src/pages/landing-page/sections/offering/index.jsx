@@ -7,6 +7,8 @@ import { OFFERINGS_DATA } from "./constants";
 import { useLandingServices } from "../../../../hooks/useLandingPageData";
 import { offerings as offeringTemplates } from "./data/offeringsData";
 
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+
 function toSlug(value = "") {
   return String(value)
     .trim()
@@ -19,8 +21,8 @@ function toSlug(value = "") {
 function toMediaUrl(path = "") {
   if (!path) return "";
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith("/uploads/")) return `http://localhost:3000${path}`;
-  if (path.startsWith("uploads/")) return `http://localhost:3000/${path}`;
+  if (path.startsWith("/uploads/")) return `${IMAGE_URL}${path}`;
+  if (path.startsWith("uploads/")) return `${IMAGE_URL}/${path}`;
   return path;
 }
 

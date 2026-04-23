@@ -1,9 +1,11 @@
 import { Copy, Pencil } from "lucide-react";
 import { CmsActionMenu } from "../CmsActionMenu";
 
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+
 function getCardImageSrc(imagePath) {
   return imagePath
-    ? `http://localhost:3000${imagePath}`
+    ? `${IMAGE_URL}${imagePath}`
     : "https://placehold.co/600x320/e2e8f0/64748b?text=No+Image";
 }
 

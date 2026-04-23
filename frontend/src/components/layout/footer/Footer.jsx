@@ -1,8 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 
+const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+
+
 function resolveAssetUrl(path, fallback) {
   if (!path) return fallback;
-  return path.startsWith("/uploads/") ? `http://localhost:3000${path}` : path;
+  return path.startsWith("/uploads/") ? `${IMAGE_URL}${path}` : path;
 }
 
 function normalizeExternalUrl(url) {
