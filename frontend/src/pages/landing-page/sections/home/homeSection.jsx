@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
 import { useHeroSection } from "../../../../hooks/useLandingPageData";
@@ -53,6 +53,25 @@ export default function Home() {
   const { hero } = useHeroSection();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof document === "undefined") return false;
+    return document.documentElement.classList.contains("dark");
+  });
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const root = document.documentElement;
+    const syncTheme = () => {
+      setIsDarkMode(root.classList.contains("dark"));
+    };
+
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleServicesClick = () => {
     if (location.pathname === "/") {
@@ -108,12 +127,34 @@ export default function Home() {
 
     return ["Scalable Tech Solutions", "Built for your"];
   }, [headline]);
+
+  const mobileHeadlineLines = useMemo(() => {
+    const words = headlineLines.join(" ").split(/\s+/).filter(Boolean);
+    if (words.length === 0) {
+      return ["Scalable Tech", "Solutions", "Built for your"];
+    }
+
+    // Keep mobile heading to exactly 3 base lines, with focus text as line 4.
+    const lineCount = 3;
+    const lines = [];
+    let cursor = 0;
+
+    for (let i = 0; i < lineCount; i += 1) {
+      const remainingWords = words.length - cursor;
+      const remainingLines = lineCount - i;
+      const take = Math.max(1, Math.ceil(remainingWords / remainingLines));
+      lines.push(words.slice(cursor, cursor + take).join(" "));
+      cursor += take;
+    }
+
+    return lines;
+  }, [headlineLines]);
   const mediaIsVideo = isVideoSource(mediaSrc);
 
   return (
     <section
       id="home"
-      className="relative w-full h-[550px] sm:h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] flex items-center justify-center overflow-hidden"
+      className="relative w-full h-screen min-h-[100svh] md:h-[700px] lg:h-[800px] xl:h-[900px] flex items-start md:items-center justify-center overflow-hidden"
       style={{ backgroundColor: "var(--landing-bg)" }}
     >
       {/* Dynamic Background (image/video) */}
@@ -139,22 +180,32 @@ export default function Home() {
       {/* Dark Overlay - Fixed darkness for video */}
       <div
         className="absolute inset-0"
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+        style={{ backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.28)" }}
       ></div>
+
+      {/* Light mode flat overlay to brighten video without fade effect */}
+      {!isDarkMode && (
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: "rgba(255, 255, 255, 0.333)" }}
+        ></div>
+      )}
 
       {/* Fadeout Gradient at Bottom - Fixed darkness for video */}
       <div
         className="absolute bottom-0 left-0 right-0 h-48"
         style={{
-          background: "linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent)",
+          background: isDarkMode
+            ? "linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent)"
+            : "linear-gradient(to top, rgba(0, 0, 0, 0.26), transparent)",
         }}
       ></div>
 
       {/* Content - 2 Column Grid */}
-      <div className="relative z-10 w-full flex items-start md:items-center justify-center px-4 sm:px-6">
+      <div className="relative z-10 w-full flex items-start md:items-center justify-center px-4 sm:px-6 pt-3 md:pt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 w-full max-w-2xl md:max-w-6xl mx-auto items-start md:items-center">
           {/* Left Column - Logo */}
-          <div className="flex justify-center items-center order-1 md:order-1">
+          <div className="flex justify-center items-center order-1 md:order-1 mt-[17%] md:mt-0">
             <motion.img
               src="/assets/synchores-logo-vertical.png"
               alt="Synchores Logo"
@@ -171,14 +222,14 @@ export default function Home() {
               className="text-[29px] sm:text-[32px] md:text-[36px] lg:text-[43px] xl:text-[58px] 2xl:text-[72px] font-bold mb-3 sm:mb-3.5 md:mb-4 tracking-wide leading-tight"
               style={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700 }}
             >
-              <SplittingText 
-                text={headlineLines.join(" ")} 
-                type="words"
-                delay={0}
-                inView={true}
-              />
-              <br />
               <span className="hidden md:inline">
+                <SplittingText 
+                  text={headlineLines.join(" ")} 
+                  type="words"
+                  delay={0}
+                  inView={true}
+                />
+                <br />
                 <motion.span
                   initial={{ opacity: 0, x: 150 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -195,7 +246,16 @@ export default function Home() {
                   />
                 </motion.span>
               </span>
-              <span className="md:hidden" style={{ color: "#0088ff" }}>{focusText}</span>
+              <span className="md:hidden">
+                {mobileHeadlineLines.map((line, index) => (
+                  <span key={`${line}-${index}`} className="block">
+                    {line}
+                  </span>
+                ))}
+                <span className="block" style={{ color: "#0088ff" }}>
+                  {focusText}
+                </span>
+              </span>
             </h1>
             <div className="flex flex-row gap-2 sm:gap-2.5 md:gap-3 lg:gap-4 justify-center md:justify-start mt-4 sm:mt-5 md:mt-6 lg:mt-8">
               <button onClick={handleServicesClick} className="flex-1 bg-[#0055aa] hover:bg-[#003d7a] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
