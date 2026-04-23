@@ -88,7 +88,7 @@ export default function ContactFormPanel({
               margin: "0 0 24px 0",
             }}
           >
-            Thank you for reaching out. We'll respond within one business day.
+            Thank you for reaching out. The team will respond ASAP.
           </p>
           <button
             onClick={onReset}
