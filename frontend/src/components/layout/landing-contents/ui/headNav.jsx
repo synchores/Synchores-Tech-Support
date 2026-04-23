@@ -119,7 +119,7 @@ export function Navbar({ activeSection, onNavigate }) {
   // Keep the top bar solid and high-contrast across routes.
   // On home section with no scroll, use 5% opacity; otherwise full color
   const isHomeSection = activeSection === "home";
-  const navBgColor = isHomeSection && !scrolled 
+  const navBgColor = isHomeSection && !scrolled && !isOnTechSupportPage
     ? `rgba(30, 127, 212, 0.05)`
     : THEME.colors.primary;
   const navTextColor = "#ffffff";
