@@ -436,28 +436,39 @@ export function Footer({ companyInfo }) {
         <p
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "clamp(19.25px, 3.025vw, 23.375px)",
+            fontSize: "clamp(12.25px, 3.025vw, 16.375px)",
             color: "#666666",
             margin: 0,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: "clamp(4px, 1vw, 8px)",
-            flexWrap: "wrap",
-            whiteSpace: "normal",
-            overflow: "visible",
+            flexWrap: "nowrap",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            width: "100%",
+            minWidth: 0,
           }}
         >
-          2026 all rights reserved
+          <span style={{ flexShrink: 0 }}>©2026</span>
           <img
             src={bottomLogo}
             alt={companyInfo?.companyLogoAlt || "Synchores"}
             style={{
               height: "clamp(26.88px, 3.7vw, 31.92px)",
               objectFit: "contain",
+              flexShrink: 0,
             }}
           />
-          Synchores Information Technology Solutions
+          <span
+            style={{
+              minWidth: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            Synchores Information Technology Solutions
+          </span>
         </p>
       </div>
     </footer>
