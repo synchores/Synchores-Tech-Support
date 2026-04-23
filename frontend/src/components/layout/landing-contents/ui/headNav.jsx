@@ -153,14 +153,14 @@ export function Navbar({ activeSection, onNavigate, isFallbackPage }) {
             </button>
 
             {/* Social Icons */}
-            <div className="hidden sm:flex items-center gap-3 ml-2">
+            <div className="flex items-center gap-3 ml-2">
               <a
                 href="https://www.facebook.com/synchores.itsolutions"
                 aria-label="Facebook"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors"
-                style={{ color: navTextColor }}
+                style={{ color: "#dddddd" }}
               >
                 <FacebookIcon />
               </a>
@@ -170,7 +170,7 @@ export function Navbar({ activeSection, onNavigate, isFallbackPage }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors"
-                style={{ color: navTextColor }}
+                style={{ color: "#dddddd" }}
               >
                 <InstagramIcon />
               </a>
@@ -180,7 +180,7 @@ export function Navbar({ activeSection, onNavigate, isFallbackPage }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors"
-                style={{ color: navTextColor }}
+                style={{ color: "#dddddd" }}
               >
                 <YouTubeIcon />
               </a>
@@ -250,7 +250,7 @@ export function Navbar({ activeSection, onNavigate, isFallbackPage }) {
             className="lg:hidden p-1"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
-            style={{ color: "#ffffff" }}
+            style={{ color: "#dddddd" }}
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -290,35 +290,29 @@ export function Navbar({ activeSection, onNavigate, isFallbackPage }) {
               </button>
             );
           })}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 py-2 px-3 text-sm"
-            style={{
-              color: mobileMenuTextColor,
-              border: `1px solid ${navBorderColor}`,
-              borderRadius: "6px",
-              background: isOnTechSupportPage
-                ? (isDark ? "rgba(30,127,212,0.2)" : "rgba(0,85,170,0.1)")
-                : (themeMode === "dark" ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.22)"),
-            }}
-          >
-            {themeMode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-            {themeMode === "dark" ? "Light Mode" : "Dark Mode"}
-          </button>
-          {/* Social icons on mobile */}
-          <div className="flex items-center gap-4 pt-2">
-            <a href="https://www.facebook.com/synchores.itsolutions" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ color: "#1e7fd4" }}>
-              <FacebookIcon />
-            </a>
-            <a href="https://www.instagram.com/synchores.itsolutions/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "#1e7fd4" }}>
-              <InstagramIcon />
-            </a>
-            <a href="https://www.youtube.com/@SynchoresIT" target="_blank" rel="noopener noreferrer" aria-label="YouTube" style={{ color: "#1e7fd4" }}>
-              <YouTubeIcon />
-            </a>
-          </div>
         </div>
       )}
+
+      {/* Mobile floating theme button for thumb reach */}
+      <button
+        onClick={toggleTheme}
+        className="lg:hidden fixed bottom-4 right-4 flex items-center justify-center shadow-lg"
+        aria-label="Toggle theme"
+        style={{
+          width: "48px",
+          height: "48px",
+          borderRadius: "9999px",
+          border: `1px solid ${navBorderColor}`,
+          backgroundColor: isOnTechSupportPage
+            ? (isDark ? "rgba(30,127,212,0.9)" : "rgba(0,85,170,0.9)")
+            : (themeMode === "dark" ? "rgba(17,17,17,0.9)" : "rgba(255,255,255,0.95)"),
+          color: themeMode === "dark" ? "#dddddd" : "#111111",
+          zIndex: 60,
+          cursor: "pointer",
+        }}
+      >
+        {themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
     </nav>
   );
 }

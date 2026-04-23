@@ -100,7 +100,7 @@ export default function TechSupportPage() {
               </div>
               <div className="flex items-start space-x-3">
                 <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: THEME.colors.accent }}></div>
-                <p style={{ color: textSecondary }}>24/7 support available</p>
+                <p style={{ color: textSecondary }}>Active Support</p>
               </div>
             </div>
           </div>
@@ -221,13 +221,13 @@ export default function TechSupportPage() {
             {/* Footer Links */}
             <div className="text-center space-y-2">
               <p className="text-sm transition-colors duration-300" style={{ color: textSecondary }}>
-                Don&apos;t have an account?{' '}
+                {/* Don&apos;t have an account?{' '}
                 <a href="#" className="font-medium transition-colors duration-300 hover:opacity-80" style={{ color: THEME.colors.accent }}>
                   Sign up
-                </a>
+                </a> */}
               </p>
               <a href="#" className="text-sm font-medium block transition-colors duration-300 hover:opacity-80" style={{ color: THEME.colors.accent }}>
-                Forgot your password?
+                Request New Password?
               </a>
             </div>
           </div>
