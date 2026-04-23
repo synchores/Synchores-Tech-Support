@@ -20,7 +20,7 @@ FROM node:22-slim
 
 WORKDIR /app
 
-RUN npm install -g serve
+RUN npm install serve
 
 COPY --from=builder /app/dist ./dist
 
