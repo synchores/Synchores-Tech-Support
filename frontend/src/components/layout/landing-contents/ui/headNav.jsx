@@ -4,7 +4,7 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { FacebookIcon, InstagramIcon, YouTubeIcon } from "./socialIcons";
 import { THEME } from "../../../../constant/theme.js"; // Adjust path to your constants
 
-export function Navbar({ activeSection, onNavigate }) {
+export function Navbar({ activeSection, onNavigate, isFallbackPage }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -118,8 +118,11 @@ export function Navbar({ activeSection, onNavigate }) {
 
   // Keep the top bar solid and high-contrast across routes.
   // On home section with no scroll, use 5% opacity; otherwise full color
+  // On fallback page, always use full opacity
   const isHomeSection = activeSection === "home";
-  const navBgColor = isHomeSection && !scrolled && !isOnTechSupportPage
+  const navBgColor = isFallbackPage
+    ? THEME.colors.primary
+    : isHomeSection && !scrolled && !isOnTechSupportPage
     ? `rgba(30, 127, 212, 0.05)`
     : THEME.colors.primary;
   const navTextColor = "#ffffff";

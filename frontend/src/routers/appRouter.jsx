@@ -31,6 +31,7 @@ import ClientPreOrder from "../pages/client-pages/clientPreOrder";
 import OfferingDetail from "../pages/landing-page/sections/offering/offeringDetail";
 import DeploymentsPage from "../pages/landing-page/deploymentsPage";
 import TechSupportPage from "../pages/landing-page/techSupportPage";
+import Fallback from "./fallback/fallback.jsx";
 
 
 const getRoleBasedHomePath = (user) => {
@@ -195,7 +196,7 @@ function AppRouter() {
 
           <Route
             path="*"
-            element={<Navigate to={token ? defaultAuthenticatedPath : "/login"} replace />}
+            element={<Fallback />}
           />
         </Routes>
       </div>
