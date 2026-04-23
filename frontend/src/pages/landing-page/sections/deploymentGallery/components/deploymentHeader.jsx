@@ -49,9 +49,9 @@ export function DeploymentHeader({ activeIndex, totalCount, onPrev, onNext }) {
             letterSpacing: "0.04em",
           }}
         >
-          Our Work,
+          Solutions,
           <br />
-          <span style={{ color: "#1e7fd4" }}>In The Field</span>
+          <span style={{ color: "#1e7fd4" }}>Implemented</span>
         </h2>
       </div>
 

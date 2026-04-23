@@ -25,11 +25,11 @@ export function ContactUs({ companyInfo }) {
   const { submitContact } = useContactForm();
   const contactBg = resolveAssetUrl(companyInfo?.contactBgImage, DEFAULT_CONTACT_BG);
   const contactBgAlt = companyInfo?.contactBgImageAlt || "Contact";
-  const contactEyebrow = companyInfo?.contactEyebrow || "LET'S WORK TOGETHER";
-  const contactHeading = companyInfo?.contactHeading || "HOW CAN WE HELP?";
+  const contactEyebrow = companyInfo?.contactEyebrow || "HOW CAN WE HELP?";
+  const contactHeading = companyInfo?.contactHeading || "DROP US A MESSAGE!";
   const contactIntroText =
     companyInfo?.contactIntroText ||
-    "Ready to transform your IT infrastructure? Our team of experts is here to help. Reach out and we'll get back to you within one business day.";
+    "Transform your IT infrastructure! Our team of experts is here to help. Reach out and we'll get back to you ASAP!";
   const contactInfo = [
     {
       icon: Phone,
