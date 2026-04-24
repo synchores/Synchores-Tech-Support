@@ -26,3 +26,5 @@ frontend/src/assets/screenshots/
 *.njsproj
 *.sln
 *.sw?
+
+/aicontent/

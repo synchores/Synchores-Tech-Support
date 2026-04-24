@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
+import { gsap } from "gsap";
 import { useHeroSection } from "../../../../hooks/useLandingPageData";
 import TrueFocus from "../../../../components/layout/landing-contents/ui/TrueFocus";
 import SplittingText from "../../../../components/layout/landing-contents/ui/SplittingText";
@@ -8,8 +9,7 @@ import SplittingText from "../../../../components/layout/landing-contents/ui/Spl
 const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";
 const FALLBACK_BACKGROUND = "/videos/tech_consult_vid3.webm";
 const FALLBACK_FOCUS_TEXT = "BUSINESS SUCCESS";
-const GRAPHQL_URL =
-  import.meta.env.VITE_API_URL || import.meta.env.API_URL;
+const GRAPHQL_URL = import.meta.env.VITE_API_URL || import.meta.env.API_URL;
 
 function getBackendOrigin() {
   try {
@@ -19,313 +19,225 @@ function getBackendOrigin() {
   }
 }
 
-function isVideoSource(src = "") {
-  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(src);
-}
-
 function resolveMediaSource(src = "") {
   if (!src) return src;
-
-  if (/^(https?:|data:|blob:)/i.test(src)) {
-    return src;
+  if (/^(https?:|data:|blob:)/i.test(src)) return src;
+  if (src.startsWith("/uploads/") || src.startsWith("uploads/")) {
+    const cleanSrc = src.startsWith("/") ? src : `/${src}`;
+    return `${getBackendOrigin()}${cleanSrc}`;
   }
-
-  if (src.startsWith("/uploads/")) {
-    return `${getBackendOrigin()}${src}`;
-  }
-
-  if (src.startsWith("uploads/")) {
-    return `${getBackendOrigin()}/${src}`;
-  }
-
   return src;
-}
-
-function getMediaType(src = "") {
-  const normalized = src.toLowerCase();
-  if (normalized.includes(".mp4")) return "video/mp4";
-  if (normalized.includes(".ogg")) return "video/ogg";
-  if (normalized.includes(".mov")) return "video/quicktime";
-  return "video/webm";
-}
-
-function deriveVideoThumbnail(src = "") {
-  return src.replace(/\.(mp4|webm|ogg|mov)(\?.*)?$/i, ".jpg");
 }
 
 export default function Home() {
   const { hero } = useHeroSection();
   const navigate = useNavigate();
   const location = useLocation();
-  const [videoFallbackLevel, setVideoFallbackLevel] = useState(0);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof document === "undefined") return false;
-    return document.documentElement.classList.contains("dark");
-  });
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [startInnerAnimations, setStartInnerAnimations] = useState(false);
 
+  // Animation Refs
+  const stageRef = useRef(null);
+  const logoWrapperRef = useRef(null);
+  const logoImgRef = useRef(null);
+  const whiteOverlayRef = useRef(null);
+  const textGroupRefs = useRef([]);
+  const ctaRef = useRef(null);
+  const videoRef = useRef(null);
+  const rightColumnRef = useRef(null);
+
+  // Data Resolution
+  const headline = useMemo(() => hero?.headline?.trim() || FALLBACK_HEADLINE, [hero?.headline]);
+  const mediaSrc = useMemo(() => resolveMediaSource(hero?.backgroundImage?.trim() || FALLBACK_BACKGROUND), [hero?.backgroundImage]);
+  const focusText = useMemo(() => hero?.focusText?.trim() || FALLBACK_FOCUS_TEXT, [hero?.focusText]);
+
+  // Theme Sync
   useEffect(() => {
     if (typeof document === "undefined") return;
-
     const root = document.documentElement;
-    const syncTheme = () => {
-      setIsDarkMode(root.classList.contains("dark"));
-    };
-
+    const syncTheme = () => setIsDarkMode(root.classList.contains("dark"));
     syncTheme();
     const observer = new MutationObserver(syncTheme);
     observer.observe(root, { attributes: true, attributeFilter: ["class"] });
-
     return () => observer.disconnect();
   }, []);
 
   const handleServicesClick = () => {
     if (location.pathname === "/") {
-      // Already on landing page, scroll directly
-      const element = document.getElementById("offering");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      document.getElementById("offering")?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      // On a different page, navigate with state
       navigate("/", { state: { scrollTo: "offering" } });
     }
   };
 
   const handleLearnMoreClick = () => {
     if (location.pathname === "/") {
-      // Already on landing page, scroll directly
-      const element = document.getElementById("about");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      document.getElementById("about")?.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      // On a different page, navigate with state
       navigate("/", { state: { scrollTo: "about" } });
     }
   };
 
-  const headline = useMemo(() => {
-    const value = hero?.headline?.trim();
-    return value || FALLBACK_HEADLINE;
-  }, [hero?.headline]);
+  // Splitting headline into the 4 requested groups
+  const textGroups = useMemo(() => {
+    const lines = headline.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const line1Words = (lines[0] || "Scalable Tech Solutions").split(" ");
 
-  const mediaSrc = useMemo(() => {
-    const value = hero?.backgroundImage?.trim();
-    return resolveMediaSource(value || FALLBACK_BACKGROUND);
-  }, [hero?.backgroundImage]);
-
-  const focusText = useMemo(() => {
-    const value = hero?.focusText?.trim();
-    return value || FALLBACK_FOCUS_TEXT;
-  }, [hero?.focusText]);
-
-  const headlineLines = useMemo(() => {
-    const normalized = headline.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-
-    if (normalized.length >= 2) {
-      return normalized.slice(0, 2);
-    }
-
-    if (normalized.length === 1) {
-      return [normalized[0]];
-    }
-
-    return ["Scalable Tech Solutions", "Built for your"];
-  }, [headline]);
-
-  const mobileHeadlineLines = useMemo(() => {
-    const words = headlineLines.join(" ").split(/\s+/).filter(Boolean);
-    if (words.length === 0) {
-      return ["Scalable Tech", "Solutions", "Built for your"];
-    }
-
-    // Keep mobile heading to exactly 3 base lines, with focus text as line 4.
-    const lineCount = 3;
-    const lines = [];
-    let cursor = 0;
-
-    for (let i = 0; i < lineCount; i += 1) {
-      const remainingWords = words.length - cursor;
-      const remainingLines = lineCount - i;
-      const take = Math.max(1, Math.ceil(remainingWords / remainingLines));
-      lines.push(words.slice(cursor, cursor + take).join(" "));
-      cursor += take;
-    }
-
-    return lines;
-  }, [headlineLines]);
-  const mediaIsVideo = isVideoSource(mediaSrc);
-  const fallbackVideoSrc = useMemo(() => resolveMediaSource(FALLBACK_BACKGROUND), []);
-  const fallbackPosterSrc = useMemo(() => deriveVideoThumbnail(fallbackVideoSrc), [fallbackVideoSrc]);
+    return [
+      line1Words.slice(0, 2).join(" "), // "Scalable Tech"
+      line1Words.slice(2).join(" "),     // "Solutions Built"
+      lines[1] || "for your",             // "for your"
+      focusText                           // "Business Success"
+    ];
+  }, [headline, focusText]);
 
   useEffect(() => {
-    setVideoFallbackLevel(0);
-  }, [mediaSrc]);
+    const ctx = gsap.context(() => {
+      let mm = gsap.matchMedia();
 
-  const activeVideoSrc = useMemo(() => {
-    if (!mediaIsVideo) return "";
-    if (videoFallbackLevel === 0) return mediaSrc;
-    return fallbackVideoSrc;
-  }, [fallbackVideoSrc, mediaIsVideo, mediaSrc, videoFallbackLevel]);
+      mm.add("(min-width: 768px)", () => {
+        // DESKTOP ANIMATION
+        const tl = gsap.timeline({
+          defaults: { ease: "power4.inOut" },
+          onComplete: () => setStartInnerAnimations(true)
+        });
 
-  const fallbackImageSrc = useMemo(() => {
-    if (!mediaIsVideo) return mediaSrc;
-    return fallbackPosterSrc;
-  }, [fallbackPosterSrc, mediaIsVideo, mediaSrc]);
+        // INITIAL STATE: Absolute Center Lock
+        gsap.set(logoWrapperRef.current, {
+          left: "50%",
+          top: "50%",
+          xPercent: -50,
+          yPercent: -50,
+          clipPath: "inset(0% 0% 45% 0%)"
+        });
+        gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.4)", scale: 0.4, opacity: 0 });
+        gsap.set(textGroupRefs.current, { opacity: 0, x: 0, y: 0 });
+        gsap.set(ctaRef.current, { opacity: 0, y: 40 });
+        gsap.set(rightColumnRef.current, {
+          left: "50%",
+          top: "50%",
+          xPercent: -50,
+          yPercent: -50,
+          opacity: 0
+        });
+
+        // PHASE 1: The Mark Only (Small & Gray & CENTERED)
+        tl.to(logoImgRef.current, { opacity: 1, duration: 1.2 })
+          .to(logoImgRef.current, {
+            scale: 1,
+            duration: 1.2,
+            ease: "back.out(1.5)"
+          }, "+=0.2")
+
+        // PHASE 2: Color Reveal + Expand to Full Logo (STILL CENTERED)
+        tl.to(logoImgRef.current, { filter: "grayscale(0%) brightness(1)", duration: 0.8 })
+          .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.8 }, "-=0.2")
+          .to(whiteOverlayRef.current, { opacity: 0, duration: 1 }, "-=0.4")
+
+        // HOLD AT CENTER: Give user time to see the full logo centered
+        tl.addLabel("centered_hold", "+=1.0")
+
+        // PHASE 3: Centrifugal Split (From Absolute Center)
+        tl.addLabel("split", "centered_hold")
+          .to(textGroupRefs.current[0], { x: "-160%", opacity: 1, duration: 0.8 }, "split")
+          .to(textGroupRefs.current[1], { x: "-160%", y: 55, opacity: 1, duration: 0.8 }, "split+=0.1")
+          .to(textGroupRefs.current[2], { x: "160%", opacity: 1, duration: 0.8 }, "split")
+          .to(textGroupRefs.current[3], { x: "160%", y: 55, opacity: 1, duration: 0.8 }, "split+=0.1")
+
+        // PHASE 4: The Portal Shift (Logo to Left, Text to Right)
+        tl.addLabel("portal", "+=0.2")
+          .to(logoWrapperRef.current, { left: "28%", scale: 2, duration: 1.2, ease: "power3.inOut" }, "portal")
+          .to(rightColumnRef.current, { left: "65%", opacity: 1, duration: 1.2, ease: "power3.inOut" }, "portal")
+          .to(textGroupRefs.current, {
+            x: 0,
+            y: (i) => i * 65,
+            duration: 1.2,
+            stagger: 0.05,
+            ease: "power2.inOut"
+          }, "portal")
+
+        // PHASE 5: Final Polish
+        tl.to(videoRef.current, { opacity: 1, duration: 1.5 }, "-=1")
+          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=1.2");
+      });
+
+      mm.add("(max-width: 767px)", () => {
+        // MOBILE ANIMATION
+        const tl = gsap.timeline({ onComplete: () => setStartInnerAnimations(true) });
+        gsap.set([logoImgRef.current, textGroupRefs.current, ctaRef.current], { opacity: 0, y: 20 });
+        tl.to(logoImgRef.current, { opacity: 1, y: 0, duration: 1 })
+          .to(whiteOverlayRef.current, { opacity: 0, duration: 0.5 }, "-=0.5")
+          .to(textGroupRefs.current, { opacity: 1, y: (i) => i * 40, duration: 0.6, stagger: 0.1 })
+          .to(videoRef.current, { opacity: 1, duration: 1 }, "-=0.5")
+          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.6 }, "-=0.3");
+      });
+
+    }, stageRef);
+    return () => ctx.revert();
+  }, [textGroups]);
 
   return (
-    <section
-      id="home"
-      className="relative w-full h-screen min-h-[100svh] md:h-[700px] lg:h-[800px] xl:h-[900px] flex items-start md:items-center justify-center overflow-hidden"
-      style={{ backgroundColor: "var(--landing-bg)" }}
-    >
-      {/* Dynamic Background (image/video) */}
-      {mediaIsVideo && videoFallbackLevel < 2 ? (
-        <video
-          key={activeVideoSrc}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster={fallbackPosterSrc}
-          className="absolute inset-0 w-full h-full object-cover"
-          onError={() => {
-            setVideoFallbackLevel((prev) => {
-              if (prev === 0 && mediaSrc !== fallbackVideoSrc) return 1;
-              return 2;
-            });
-          }}
-        >
-          <source src={activeVideoSrc} type={getMediaType(activeVideoSrc)} />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <img
-          src={fallbackImageSrc}
-          alt="Hero background"
-          className="absolute inset-0 w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = "/assets/homeImgFback.jpg";
-          }}
-        />
-      )}
+    <section id="home" ref={stageRef} className="relative w-full h-screen min-h-[100svh] flex items-center justify-center overflow-hidden bg-white">
 
-      {/* Dark Overlay - Fixed darkness for video */}
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.28)" }}
-      ></div>
+      <video ref={videoRef} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none">
+        <source src={mediaSrc} type="video/webm" />
+      </video>
 
-      {/* Light mode flat overlay to brighten video without fade effect */}
-      {!isDarkMode && (
-        <div
-          className="absolute inset-0"
-          style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
-        ></div>
-      )}
+      <div className="absolute inset-0 z-[1]" style={{ backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.45)" : "rgba(0, 0, 0, 0.25)" }}></div>
+      <div ref={whiteOverlayRef} className="absolute inset-0 bg-white z-[50] pointer-events-none"></div>
 
-      {/* Fadeout Gradient at Bottom - Fixed darkness for video */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-48"
-        style={{
-          background: isDarkMode
-            ? "linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent)"
-            : "linear-gradient(to top, rgba(0, 0, 0, 0.26), transparent)",
-        }}
-      ></div>
+      <div className="relative z-[20] w-full h-full">
 
-      {/* Content - 2 Column Grid */}
-      <div className="relative z-10 w-full flex items-start md:items-center justify-center px-4 sm:px-6 pt-[max(6px,env(safe-area-inset-top))] sm:pt-3 md:pt-0">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 w-full max-w-2xl md:max-w-6xl mx-auto items-start md:items-center">
-          {/* Left Column - Logo */}
-          <div className="flex justify-center items-center order-1 md:order-1 mt-[clamp(24px,10svh,88px)] sm:mt-[clamp(28px,9svh,92px)] md:mt-0">
-            <motion.img
+        {/* Stage Container */}
+        <div className="relative w-full h-full">
+
+          {/* Logo Container (Absolute Viewport Centered) */}
+          <div ref={logoWrapperRef} className="absolute flex flex-col items-center z-[30] pointer-events-none">
+            <img
+              ref={logoImgRef}
               src="/assets/synchores-logo-vertical.png"
-              alt="Synchores Logo"
-              className="w-full max-w-[clamp(176px,48vw,230px)] sm:max-w-[215px] md:max-w-sm lg:max-w-lg xl:max-w-2xl object-contain"
-              initial={{ opacity: 0, x: -150 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
+              alt="Synchores"
+              className="w-full max-w-[200px] md:max-w-[480px] lg:max-w-[580px] xl:max-w-[650px] object-contain"
             />
           </div>
 
-          {/* Right Column - Text & CTA */}
-          <div className="text-white text-center md:text-left order-2 md:order-2">
-            <h1
-              className="text-[32px] sm:text-[32px] md:text-[36px] lg:text-[43px] xl:text-[58px] 2xl:text-[72px] font-bold mb-3 sm:mb-3.5 md:mb-4 tracking-wide leading-tight"
-              style={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700 }}
-            >
-              <span className="hidden md:inline">
-                <SplittingText 
-                  text={headlineLines.join(" ")} 
-                  type="words"
-                  delay={0}
-                  inView={true}
-                />
-                <br />
-                <motion.span
-                  initial={{ opacity: 0, x: 150 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.7, delay: 1.6, ease: "easeOut" }}
-                >
-                  <TrueFocus
-                    sentence={focusText}
-                    manualMode={false}
-                    blurAmount={5}
-                    borderColor="#0088ff"
-                    glowColor="rgba(0, 136, 255, 0.6)"
-                    animationDuration={2.5}
-                    pauseBetweenAnimations={2.5}
-                  />
-                </motion.span>
-              </span>
-              <span className="md:hidden">
-                {mobileHeadlineLines.map((line, index) => (
-                  <span key={`${line}-${index}`} className="block">
-                    {line}
-                  </span>
-                ))}
-                <span className="block">
-                  <TrueFocus
-                    sentence={focusText}
-                    manualMode={false}
-                    blurAmount={5}
-                    borderColor="#0088ff"
-                    glowColor="rgba(0, 136, 255, 0.6)"
-                    animationDuration={2.5}
-                    pauseBetweenAnimations={2.5}
-                    className="block"
-                  />
-                </span>
-              </span>
-            </h1>
-            <div className="flex flex-row gap-2 sm:gap-2.5 md:gap-3 lg:gap-4 justify-center md:justify-start mt-4 sm:mt-5 md:mt-6 lg:mt-8">
-              <button
-                onClick={handleServicesClick}
-                className="flex-1 bg-[#0055aa]/90 text-white font-medium py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 rounded-full border border-[#4ea8ff]/45 shadow-[0_8px_20px_rgba(0,85,170,0.26)] hover:bg-[#004893] hover:shadow-[0_10px_24px_rgba(0,72,147,0.3)] transition-all duration-300 text-sm sm:text-sm md:text-base backdrop-blur-sm"
-              >
+          {/* Right Column Container (Moves in Phase 4) */}
+          <div ref={rightColumnRef} className="absolute flex flex-col items-center md:items-start min-h-[300px] md:min-h-[450px] w-full md:w-auto">
+            <div className="relative">
+              {textGroups.map((text, i) => (
+                <div key={i} ref={el => textGroupRefs.current[i] = el}
+                  className="absolute left-0 right-0 md:right-auto overflow-hidden text-center md:text-left py-1 whitespace-nowrap">
+                  {i < 3 ? (
+                    <SplittingText text={text}
+                      className="uppercase font-bold tracking-tighter text-white text-[24px] md:text-[38px] lg:text-[48px] xl:text-[58px] leading-none"
+                      style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                    />
+                  ) : (
+                    <TrueFocus sentence={text} manualMode={!startInnerAnimations}
+                      blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
+                      className="text-[#0088ff] font-bold text-[32px] md:text-[52px] lg:text-[64px] xl:text-[76px] uppercase tracking-tighter leading-none" />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <motion.div ref={ctaRef} className="flex flex-row gap-4 mt-12 md:mt-[300px] lg:mt-[360px] w-full justify-center md:justify-start z-[40]">
+              <button onClick={handleServicesClick}
+                className="bg-[#0055aa] text-white px-8 md:px-12 py-3.5 rounded-full font-bold text-sm md:text-lg border border-[#4ea8ff]/30 shadow-2xl hover:bg-[#004488] transition-all">
                 Services
               </button>
-              <button
-                onClick={handleLearnMoreClick}
-                className="flex-1 bg-white/8 border border-white/60 text-white font-medium py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 rounded-full hover:bg-white hover:text-[#0055aa] hover:border-white transition-all duration-300 text-sm sm:text-sm md:text-base backdrop-blur-sm"
-              >
+              <button onClick={handleLearnMoreClick}
+                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 md:px-12 py-3.5 rounded-full font-bold text-sm md:text-lg hover:bg-white hover:text-[#0055aa] transition-all">
                 Learn More
               </button>
-            </div>
+            </motion.div>
           </div>
+
         </div>
       </div>
 
-      {/* Diagonal Slice at Bottom */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-12 sm:h-16 md:h-24 translate-y-[10px]"
-        style={{
-          backgroundColor: "var(--landing-bg-strong)",
-          clipPath: "polygon(0 50%, 100% 0, 100% 100%, 0 100%)",
-        }}
-      ></div>
+      <div className="absolute bottom-0 left-0 right-0 h-16 md:h-24 z-[25] bg-[var(--landing-bg-strong)]"
+        style={{ clipPath: "polygon(0 60%, 100% 0, 100% 100%, 0 100%)" }}></div>
     </section>
   );
 }
