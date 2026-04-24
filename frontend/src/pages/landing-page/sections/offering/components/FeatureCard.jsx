@@ -73,6 +73,19 @@ function resolveFeatureFallbackImage(item, index) {
   return '/assets/placeholder-service.jpg';
 }
 
+function normalizeImageSources(imagePath, fallbackImage) {
+  const placeholder = '/assets/placeholder-service.jpg';
+  const primary = toMediaUrl(imagePath) || fallbackImage || placeholder;
+  const fallback = fallbackImage || placeholder;
+
+  return {
+    primary,
+    // Ensure fallback is different from primary to avoid looping on same broken URL.
+    fallback: primary === fallback ? placeholder : fallback,
+    placeholder,
+  };
+}
+
 export function FeatureCard({ offerings: dynamicOfferings }) {
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -130,9 +143,11 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
   );
 
   const renderFeatureIcon = (imagePath, fallbackImage, prioritize = false) => {
+    const { primary, fallback, placeholder } = normalizeImageSources(imagePath, fallbackImage);
+
     return (
       <img 
-        src={imagePath} 
+        src={primary}
         alt="Feature illustration"
         className="w-full h-full object-cover rounded-xl"
         loading={prioritize ? 'eager' : 'lazy'}
@@ -145,7 +160,14 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
           WebkitBackfaceVisibility: 'hidden'
         }}
         onError={(e) => {
-          e.currentTarget.src = fallbackImage || '/assets/placeholder-service.jpg';
+          const currentSrc = e.currentTarget.getAttribute('src') || '';
+
+          if (currentSrc === fallback || currentSrc === placeholder) {
+            e.currentTarget.src = placeholder;
+            return;
+          }
+
+          e.currentTarget.src = fallback;
         }}
       />
     );
