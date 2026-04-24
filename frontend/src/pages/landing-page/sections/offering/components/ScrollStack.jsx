@@ -87,9 +87,10 @@ const ScrollStack = ({
       const dt = Math.min(0.05, Math.max(0.001, (time - lastTime) / 1000));
       lastRafTimeRef.current = time;
 
-      // Capped velocity keeps the stacking motion uniform even when scrollTop jumps.
-      const maxTranslateVelocity = Math.max(800, containerHeight * 3); // px / sec
-      const maxTranslateStep = maxTranslateVelocity * dt;
+      const isCompactViewport = containerHeight < 760;
+      // Exponential smoothing keeps follow motion consistent across frame rates and input speeds.
+      const followStrength = isCompactViewport ? 10 : 14;
+      const alpha = 1 - Math.exp(-followStrength * dt);
 
       cardsRef.current.forEach((card, i) => {
         if (!card) return;
@@ -100,13 +101,9 @@ const ScrollStack = ({
         const current = lastTransformsRef.current.get(i) ?? target;
 
         const deltaY = target.translateY - current.translateY;
-        const stepY =
-          Math.abs(deltaY) <= maxTranslateStep
-            ? deltaY
-            : Math.sign(deltaY) * maxTranslateStep;
 
         const next = {
-          translateY: current.translateY + stepY,
+          translateY: current.translateY + (deltaY * alpha),
           // Keep these instant for now (they're typically constant in this component).
           scale: target.scale,
           rotation: target.rotation,
@@ -257,6 +254,7 @@ const ScrollStack = ({
 
       const raf = time => {
         lenis.raf(time);
+        updateCardTransforms();
         animateCardTransforms(time);
         animationFrameRef.current = requestAnimationFrame(raf);
       };
@@ -286,6 +284,7 @@ const ScrollStack = ({
 
       const raf = time => {
         lenis.raf(time);
+        updateCardTransforms();
         animateCardTransforms(time);
         animationFrameRef.current = requestAnimationFrame(raf);
       };
@@ -294,7 +293,7 @@ const ScrollStack = ({
       lenisRef.current = lenis;
       return lenis;
     }
-  }, [animateCardTransforms, handleScroll, useWindowScroll]);
+  }, [animateCardTransforms, handleScroll, updateCardTransforms, useWindowScroll]);
 
   useLayoutEffect(() => {
     const scroller = scrollerRef.current;
