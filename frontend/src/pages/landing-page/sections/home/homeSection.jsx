@@ -7,6 +7,7 @@ import SplittingText from "../../../../components/layout/landing-contents/ui/Spl
 
 const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";
 const FALLBACK_BACKGROUND = "/videos/tech_consult_vid3.webm";
+const FALLBACK_BACKGROUND_MOBILE = "/videos/FallbackMobile.mp4";
 const FALLBACK_FOCUS_TEXT = "BUSINESS SUCCESS";
 const GRAPHQL_URL =
   import.meta.env.VITE_API_URL || import.meta.env.API_URL;
@@ -62,6 +63,10 @@ export default function Home() {
     if (typeof document === "undefined") return false;
     return document.documentElement.classList.contains("dark");
   });
+  const [isMobileViewport, setIsMobileViewport] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 767px)").matches;
+  });
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -76,6 +81,22 @@ export default function Home() {
     observer.observe(root, { attributes: true, attributeFilter: ["class"] });
 
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const handleViewportChange = (event) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleViewportChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleViewportChange);
+    };
   }, []);
 
   const handleServicesClick = () => {
@@ -155,7 +176,10 @@ export default function Home() {
     return lines;
   }, [headlineLines]);
   const mediaIsVideo = isVideoSource(mediaSrc);
-  const fallbackVideoSrc = useMemo(() => resolveMediaSource(FALLBACK_BACKGROUND), []);
+  const fallbackVideoSrc = useMemo(
+    () => resolveMediaSource(isMobileViewport ? FALLBACK_BACKGROUND_MOBILE : FALLBACK_BACKGROUND),
+    [isMobileViewport]
+  );
   const fallbackPosterSrc = useMemo(() => deriveVideoThumbnail(fallbackVideoSrc), [fallbackVideoSrc]);
 
   useEffect(() => {
