@@ -6,7 +6,7 @@ import TrueFocus from "../../../../components/layout/landing-contents/ui/TrueFoc
 import SplittingText from "../../../../components/layout/landing-contents/ui/SplittingText";
 
 const FALLBACK_HEADLINE = "Scalable Tech Solutions\nBuilt for your";
-const FALLBACK_BACKGROUND = "/videos/tech_consult_vid3.mp4";
+const FALLBACK_BACKGROUND = "/videos/tech_consult_vid3.webm";
 const FALLBACK_FOCUS_TEXT = "BUSINESS SUCCESS";
 const GRAPHQL_URL =
   import.meta.env.VITE_API_URL || import.meta.env.API_URL;
@@ -47,6 +47,10 @@ function getMediaType(src = "") {
   if (normalized.includes(".ogg")) return "video/ogg";
   if (normalized.includes(".mov")) return "video/quicktime";
   return "video/webm";
+}
+
+function deriveVideoThumbnail(src = "") {
+  return src.replace(/\.(mp4|webm|ogg|mov)(\?.*)?$/i, ".jpg");
 }
 
 export default function Home() {
@@ -152,6 +156,7 @@ export default function Home() {
   }, [headlineLines]);
   const mediaIsVideo = isVideoSource(mediaSrc);
   const fallbackVideoSrc = useMemo(() => resolveMediaSource(FALLBACK_BACKGROUND), []);
+  const fallbackPosterSrc = useMemo(() => deriveVideoThumbnail(fallbackVideoSrc), [fallbackVideoSrc]);
 
   useEffect(() => {
     setVideoFallbackLevel(0);
@@ -165,8 +170,8 @@ export default function Home() {
 
   const fallbackImageSrc = useMemo(() => {
     if (!mediaIsVideo) return mediaSrc;
-    return "/assets/placeholder-service.jpg";
-  }, [mediaIsVideo, mediaSrc]);
+    return fallbackPosterSrc;
+  }, [fallbackPosterSrc, mediaIsVideo, mediaSrc]);
 
   return (
     <section
@@ -183,7 +188,7 @@ export default function Home() {
           loop
           playsInline
           preload="auto"
-          poster="/assets/placeholder-service.jpg"
+          poster={fallbackPosterSrc}
           className="absolute inset-0 w-full h-full object-cover"
           onError={() => {
             setVideoFallbackLevel((prev) => {
@@ -200,6 +205,9 @@ export default function Home() {
           src={fallbackImageSrc}
           alt="Hero background"
           className="absolute inset-0 w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "/assets/homeImgFback.jpg";
+          }}
         />
       )}
 

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Skeleton } from 'boneyard-js/react';
-import '../../bones/registry';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Skeleton } from "boneyard-js/react";
+import "../../bones/registry";
 import Home from "./sections/home/homeSection";
 import OfferingSection from "./sections/offering";
 import AboutSection from "./sections/about/aboutSection";
@@ -37,7 +37,7 @@ export default function LandingPage() {
 
     Object.entries(timings).forEach(([key, delay]) => {
       const timeoutId = setTimeout(() => {
-        setLoadingStates(prev => ({ ...prev, [key]: false }));
+        setLoadingStates((prev) => ({ ...prev, [key]: false }));
       }, delay);
 
       timeoutIds.push(timeoutId);
@@ -55,7 +55,7 @@ export default function LandingPage() {
     const timer = setTimeout(() => {
       const element = document.getElementById(targetSection);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
       }
       navigate(location.pathname, { replace: true, state: {} });
     }, 50);
@@ -66,22 +66,41 @@ export default function LandingPage() {
   return (
     <div className="w-full h-full">
       <Home />
-      <Skeleton name="offering-section" loading={loadingStates.offering} fixture={<OfferingSection />}>
-        <OfferingSection />
-      </Skeleton>
-      <Skeleton name="about-section" loading={loadingStates.about} fixture={<AboutSection companyInfo={companyInfo} />}>
+
+      <OfferingSection />
+      <Skeleton
+        name="about-section"
+        loading={loadingStates.about}
+        fixture={<AboutSection companyInfo={companyInfo} />}
+      >
         <AboutSection companyInfo={companyInfo} />
       </Skeleton>
-      <Skeleton name="about-alternate-section" loading={loadingStates.about} fixture={<AboutSectionAlternate companyInfo={companyInfo} />}>
+      <Skeleton
+        name="about-alternate-section"
+        loading={loadingStates.about}
+        fixture={<AboutSectionAlternate companyInfo={companyInfo} />}
+      >
         <AboutSectionAlternate companyInfo={companyInfo} />
       </Skeleton>
-      <Skeleton name="deployment-section" loading={loadingStates.deployment} fixture={<DeploymentGallery />}>
+      <Skeleton
+        name="deployment-section"
+        loading={loadingStates.deployment}
+        fixture={<DeploymentGallery />}
+      >
         <DeploymentGallery />
       </Skeleton>
-      <Skeleton name="contact-section" loading={loadingStates.contact} fixture={<ContactUs companyInfo={companyInfo} />}>
+      <Skeleton
+        name="contact-section"
+        loading={loadingStates.contact}
+        fixture={<ContactUs companyInfo={companyInfo} />}
+      >
         <ContactUs companyInfo={companyInfo} />
       </Skeleton>
-      <Skeleton name="footer-section" loading={loadingStates.footer} fixture={<Footer companyInfo={companyInfo} />}>
+      <Skeleton
+        name="footer-section"
+        loading={loadingStates.footer}
+        fixture={<Footer companyInfo={companyInfo} />}
+      >
         <Footer companyInfo={companyInfo} />
       </Skeleton>
     </div>
