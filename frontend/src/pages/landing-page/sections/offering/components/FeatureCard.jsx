@@ -194,7 +194,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
               key={idx}
               itemClassName="hover:shadow-[0_24px_50px_rgba(12,51,94,0.14)] transition-shadow duration-300 cursor-pointer"
               style={{
-                backgroundColor: isDarkMode ? 'var(--card-bg)' : '#7bbdff',
+                backgroundColor: isDarkMode ? 'var(--card-bg)' : '#cce9ff',
                 opacity: 1,
                 border: "1px solid var(--landing-border-strong)",
               }}
@@ -215,40 +215,46 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                 >
                   <button
                     type="button"
-                    className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase"
+                    className="inline-flex w-fit px-3.5 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium tracking-[0.14em] uppercase rounded-full transition-all duration-300 backdrop-blur-sm"
                     style={{
                       color: isDarkMode ? 'var(--landing-text)' : '#052a4d',
                       border: isDarkMode
-                        ? '1px solid var(--landing-border-strong)'
-                        : '1px solid rgba(5, 42, 77, 0.28)',
+                        ? '1px solid rgba(255, 255, 255, 0.35)'
+                        : '1px solid rgba(5, 42, 77, 0.32)',
                       background: isDarkMode
-                        ? 'var(--landing-surface-soft)'
-                        : 'rgba(255, 255, 255, 0.36)',
-                      transition: 'all 0.2s ease',
+                        ? 'rgba(255, 255, 255, 0.08)'
+                        : 'rgba(255, 255, 255, 0.48)',
+                      boxShadow: isDarkMode
+                        ? '0 6px 16px rgba(0,0,0,0.22)'
+                        : '0 6px 16px rgba(5, 42, 77, 0.12)',
                     }}
                     onMouseEnter={(e) => {
                       if (isDarkMode) {
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.16)';
-                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.42)';
+                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.5)';
                         e.currentTarget.style.color = '#ffffff';
+                        e.currentTarget.style.boxShadow = '0 8px 18px rgba(0,0,0,0.28)';
                         return;
                       }
 
                       e.currentTarget.style.background = '#0055aa';
-                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.45)';
+                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.5)';
                       e.currentTarget.style.color = '#ffffff';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 85, 170, 0.28)';
                     }}
                     onMouseLeave={(e) => {
                       if (isDarkMode) {
-                        e.currentTarget.style.background = 'var(--landing-surface-soft)';
-                        e.currentTarget.style.border = '1px solid var(--landing-border-strong)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.35)';
                         e.currentTarget.style.color = 'var(--landing-text)';
+                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.22)';
                         return;
                       }
 
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.36)';
-                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.28)';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.48)';
+                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.32)';
                       e.currentTarget.style.color = '#052a4d';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 42, 77, 0.12)';
                     }}
                   >
                     Learn More

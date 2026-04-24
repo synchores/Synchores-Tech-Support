@@ -301,10 +301,16 @@ export default function Home() {
               </span>
             </h1>
             <div className="flex flex-row gap-2 sm:gap-2.5 md:gap-3 lg:gap-4 justify-center md:justify-start mt-4 sm:mt-5 md:mt-6 lg:mt-8">
-              <button onClick={handleServicesClick} className="flex-1 bg-[#0055aa] hover:bg-[#003d7a] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-sm sm:text-sm md:text-base">
+              <button
+                onClick={handleServicesClick}
+                className="flex-1 bg-[#0055aa]/90 text-white font-medium py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 rounded-full border border-[#4ea8ff]/45 shadow-[0_8px_20px_rgba(0,85,170,0.26)] hover:bg-[#004893] hover:shadow-[0_10px_24px_rgba(0,72,147,0.3)] transition-all duration-300 text-sm sm:text-sm md:text-base backdrop-blur-sm"
+              >
                 Services
               </button>
-              <button onClick={handleLearnMoreClick} className="flex-1 bg-transparent border-2 border-white hover:bg-white hover:text-[#0055aa] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-sm sm:text-sm md:text-base">
+              <button
+                onClick={handleLearnMoreClick}
+                className="flex-1 bg-white/8 border border-white/60 text-white font-medium py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 rounded-full hover:bg-white hover:text-[#0055aa] hover:border-white transition-all duration-300 text-sm sm:text-sm md:text-base backdrop-blur-sm"
+              >
                 Learn More
               </button>
             </div>
