@@ -187,7 +187,7 @@ export default function Home() {
       {!isDarkMode && (
         <div
           className="absolute inset-0"
-          style={{ backgroundColor: "rgba(255, 255, 255, 0.333)" }}
+          style={{ backgroundColor: "rgba(255, 255, 255, 0)" }}
         ></div>
       )}
 
@@ -202,14 +202,14 @@ export default function Home() {
       ></div>
 
       {/* Content - 2 Column Grid */}
-      <div className="relative z-10 w-full flex items-start md:items-center justify-center px-4 sm:px-6 pt-3 md:pt-0">
+      <div className="relative z-10 w-full flex items-start md:items-center justify-center px-4 sm:px-6 pt-[max(6px,env(safe-area-inset-top))] sm:pt-3 md:pt-0">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 w-full max-w-2xl md:max-w-6xl mx-auto items-start md:items-center">
           {/* Left Column - Logo */}
-          <div className="flex justify-center items-center order-1 md:order-1 mt-[17%] md:mt-0">
+          <div className="flex justify-center items-center order-1 md:order-1 mt-[clamp(24px,10svh,88px)] sm:mt-[clamp(28px,9svh,92px)] md:mt-0">
             <motion.img
               src="/assets/synchores-logo-vertical.png"
               alt="Synchores Logo"
-              className="w-full max-w-[200px] sm:max-w-[215px] md:max-w-sm lg:max-w-lg xl:max-w-2xl object-contain"
+              className="w-full max-w-[clamp(176px,48vw,230px)] sm:max-w-[215px] md:max-w-sm lg:max-w-lg xl:max-w-2xl object-contain"
               initial={{ opacity: 0, x: -150 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
@@ -219,7 +219,7 @@ export default function Home() {
           {/* Right Column - Text & CTA */}
           <div className="text-white text-center md:text-left order-2 md:order-2">
             <h1
-              className="text-[29px] sm:text-[32px] md:text-[36px] lg:text-[43px] xl:text-[58px] 2xl:text-[72px] font-bold mb-3 sm:mb-3.5 md:mb-4 tracking-wide leading-tight"
+              className="text-[32px] sm:text-[32px] md:text-[36px] lg:text-[43px] xl:text-[58px] 2xl:text-[72px] font-bold mb-3 sm:mb-3.5 md:mb-4 tracking-wide leading-tight"
               style={{ fontFamily: "var(--font-outfit), sans-serif", fontWeight: 700 }}
             >
               <span className="hidden md:inline">
@@ -258,10 +258,10 @@ export default function Home() {
               </span>
             </h1>
             <div className="flex flex-row gap-2 sm:gap-2.5 md:gap-3 lg:gap-4 justify-center md:justify-start mt-4 sm:mt-5 md:mt-6 lg:mt-8">
-              <button onClick={handleServicesClick} className="flex-1 bg-[#0055aa] hover:bg-[#003d7a] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
+              <button onClick={handleServicesClick} className="flex-1 bg-[#0055aa] hover:bg-[#003d7a] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-sm sm:text-sm md:text-base">
                 Services
               </button>
-              <button onClick={handleLearnMoreClick} className="flex-1 bg-transparent border-2 border-white hover:bg-white hover:text-[#0055aa] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-xs sm:text-sm md:text-base">
+              <button onClick={handleLearnMoreClick} className="flex-1 bg-transparent border-2 border-white hover:bg-white hover:text-[#0055aa] text-white font-semibold py-2 sm:py-2.5 md:py-3 px-4 sm:px-6 md:px-8 rounded-3xl transition-colors text-sm sm:text-sm md:text-base">
                 Learn More
               </button>
             </div>

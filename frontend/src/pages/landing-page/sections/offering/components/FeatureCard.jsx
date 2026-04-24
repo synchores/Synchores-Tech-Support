@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ScrollStack, { ScrollStackItem } from './ScrollStack';
 import { offerings } from '../data/offeringsData';
@@ -21,6 +22,26 @@ function splitLines(value = '') {
 
 export function FeatureCard({ offerings: dynamicOfferings }) {
   const navigate = useNavigate();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof document === 'undefined') return false;
+    return document.documentElement.classList.contains('dark');
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const root = document.documentElement;
+    const syncTheme = () => {
+      setIsDarkMode(root.classList.contains('dark'));
+    };
+
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
+
   const features = dynamicOfferings?.length
     ? dynamicOfferings.map((item, index) => ({
         id: item.id || `service-${index + 1}`,
@@ -37,7 +58,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
   const renderBulletIcon = () => (
     <svg
       className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
-      style={{ color: "var(--landing-text-soft)" }}
+      style={{ color: isDarkMode ? 'var(--landing-text-soft)' : '#0f4a86' }}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -84,7 +105,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
               key={idx}
               itemClassName="hover:shadow-[0_24px_50px_rgba(12,51,94,0.14)] transition-shadow duration-300 cursor-pointer"
               style={{
-                backgroundColor: "var(--card-bg)",
+                backgroundColor: isDarkMode ? 'var(--card-bg)' : '#7bbdff',
                 opacity: 1,
                 border: "1px solid var(--landing-border-strong)",
               }}
@@ -103,25 +124,55 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                   className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
-                  <span
+                  <button
+                    type="button"
                     className="inline-flex w-fit px-3 py-1 text-[10px] sm:text-xs font-bold tracking-[0.14em] uppercase"
                     style={{
-                      color: "var(--landing-text)",
-                      border: "1px solid var(--landing-border-strong)",
-                      background: "var(--landing-surface-soft)",
+                      color: isDarkMode ? 'var(--landing-text)' : '#052a4d',
+                      border: isDarkMode
+                        ? '1px solid var(--landing-border-strong)'
+                        : '1px solid rgba(5, 42, 77, 0.28)',
+                      background: isDarkMode
+                        ? 'var(--landing-surface-soft)'
+                        : 'rgba(255, 255, 255, 0.36)',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (isDarkMode) {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.16)';
+                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.42)';
+                        e.currentTarget.style.color = '#ffffff';
+                        return;
+                      }
+
+                      e.currentTarget.style.background = '#0055aa';
+                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.45)';
+                      e.currentTarget.style.color = '#ffffff';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (isDarkMode) {
+                        e.currentTarget.style.background = 'var(--landing-surface-soft)';
+                        e.currentTarget.style.border = '1px solid var(--landing-border-strong)';
+                        e.currentTarget.style.color = 'var(--landing-text)';
+                        return;
+                      }
+
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.36)';
+                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.28)';
+                      e.currentTarget.style.color = '#052a4d';
                     }}
                   >
-                    Service {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
-                  </span>
+                    Learn More
+                  </button>
                   <h2
                     className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold tracking-wide break-words uppercase"
-                    style={{ color: "var(--landing-text)" }}
+                    style={{ color: isDarkMode ? 'var(--landing-text)' : '#052a4d' }}
                   >
                     {feature.title}
                   </h2>
                   <p
                     className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl leading-relaxed break-words"
-                    style={{ color: "var(--landing-text-muted)" }}
+                    style={{ color: isDarkMode ? 'var(--landing-text-muted)' : '#0d3f72' }}
                   >
                     {feature.description}
                   </p>
@@ -130,7 +181,9 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                   <div
                     className="my-1 sm:my-3 md:my-4 h-px opacity-90"
                     style={{
-                      background: "linear-gradient(to right, var(--landing-border-strong), transparent)",
+                      background: isDarkMode
+                        ? 'linear-gradient(to right, var(--landing-border-strong), transparent)'
+                        : 'linear-gradient(to right, rgba(5, 42, 77, 0.3), transparent)',
                     }}
                   ></div>
                   
@@ -147,9 +200,9 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                             {renderBulletIcon()}
                             <span
                               className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg break-words pt-0.5"
-                              style={{ color: "var(--landing-text-soft)" }}
+                              style={{ color: isDarkMode ? 'var(--landing-text-soft)' : '#0f4a86' }}
                             >
-                              <span className="font-bold" style={{ color: "var(--landing-text)" }}>{firstWord}</span> {restWords}
+                              <span className="font-bold" style={{ color: isDarkMode ? 'var(--landing-text)' : '#052a4d' }}>{firstWord}</span> {restWords}
                             </span>
                           </li>
                         );

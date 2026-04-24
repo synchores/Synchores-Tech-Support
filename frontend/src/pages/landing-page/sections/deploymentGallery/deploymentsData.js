@@ -6,6 +6,7 @@ export const deployments = [
     label: "Security and Surveillance",
     project: "Biometric Access Control: Plus Time and Attendance",
     type: "Security and Surveillance",
+    watermarkVideo: "/videos/fingerprint-scan.mp4",
   },
   {
     id: 3,
@@ -13,6 +14,7 @@ export const deployments = [
     label: "Security and Surveillance",
     project: "Surveillance Video Wall",
     type: "Security and Surveillance",
+    watermarkVideo: "/videos/camera.mp4",
   },
   {
     id: 4,
@@ -20,5 +22,6 @@ export const deployments = [
     label: "Telecommunications and Computers",
     project: "Teleconference System",
     type: "Telecommunications",
+    watermarkVideo: "/videos/customer-support.mp4",
   },
 ];

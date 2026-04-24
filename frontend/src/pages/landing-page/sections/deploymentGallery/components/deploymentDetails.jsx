@@ -1,26 +1,51 @@
+import { resolveWatermarkVideo } from "../watermarkVideo";
+
 export function DeploymentDetails({ current, activeIndex, deployments, onGoTo }) {
+  const watermarkVideo = resolveWatermarkVideo(current);
+
   return (
     <div
       style={{
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         gap: "0",
       }}
     >
-      {/* Number */}
+      {/* Fingerprint video watermark (replaces number watermark) */}
       <div
         style={{
-          fontFamily: "'Orbitron', Arial, sans-serif",
-          fontSize: "clamp(4rem, 8vw, 7rem)",
-          fontWeight: 900,
-          color: "rgba(30,127,212,0.08)",
-          lineHeight: 1,
+          width: "clamp(170px, 26vw, 260px)",
+          height: "clamp(76px, 11vw, 116px)",
           marginBottom: "-8px",
-          userSelect: "none",
+          borderRadius: "4px",
+          overflow: "hidden",
+          backgroundColor: "transparent",
+          opacity: 0.16,
+          pointerEvents: "none",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "flex-start",
         }}
       >
-        {String(activeIndex + 1).padStart(2, "0")}
+        <video
+          key={watermarkVideo.key}
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            objectPosition: "left center",
+            display: "block",
+          }}
+          aria-hidden="true"
+        >
+          <source src={watermarkVideo.src} type="video/mp4" />
+        </video>
       </div>
 
       <div

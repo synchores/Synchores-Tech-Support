@@ -7,16 +7,24 @@ import { DeploymentImage } from "./deploymentImage";
 import { DeploymentDetails } from "./deploymentDetails";
 
 export function DeploymentCarousel() {
+  const TRANSITION_DURATION_SECONDS = 3;
+  const AUTOPLAY_INTERVAL_MS = 7000;
+  const RESUME_AUTOPLAY_DELAY_MS = 7000;
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [autoplay, setAutoplay] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
   const navigate = useNavigate();
 
   const goTo = (index, dir) => {
+    if (isAnimating || index === activeIndex) return;
+
     setDirection(dir);
+    setIsAnimating(true);
     setActiveIndex(index);
     setAutoplay(false);
-    setTimeout(() => setAutoplay(true), 5000); // Resume autoplay after 5 seconds
+    setTimeout(() => setAutoplay(true), RESUME_AUTOPLAY_DELAY_MS);
   };
 
   const prev = () => {
@@ -30,17 +38,18 @@ export function DeploymentCarousel() {
   };
 
   useEffect(() => {
-    if (!autoplay) return;
+    if (!autoplay || isAnimating) return;
 
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) =>
         prevIndex === deployments.length - 1 ? 0 : prevIndex + 1
       );
       setDirection(1);
-    }, 3000);
+      setIsAnimating(true);
+    }, AUTOPLAY_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [autoplay]);
+  }, [autoplay, isAnimating]);
 
 
 
@@ -69,7 +78,8 @@ export function DeploymentCarousel() {
             initial={{ opacity: 0, x: direction * 80 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -direction * 80 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+            transition={{ duration: TRANSITION_DURATION_SECONDS, ease: "easeInOut" }}
+            onAnimationComplete={() => setIsAnimating(false)}
           >
             <div
               style={{
