@@ -35,6 +35,44 @@ function splitLines(value = '') {
     .filter(Boolean);
 }
 
+function toSlug(value = '') {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function resolveFeatureFallbackImage(item, index) {
+  const slugCandidates = [
+    item?.id,
+    item?.title,
+    item?.displayTitle,
+    item?.category
+  ]
+    .map((value) => toSlug(value || ''))
+    .filter(Boolean);
+
+  const matchedTemplate = offerings.find((template) => {
+    const templateSlugs = [template.id, template.title, template.displayTitle]
+      .map((value) => toSlug(value || ''))
+      .filter(Boolean);
+
+    return slugCandidates.some((candidate) => templateSlugs.includes(candidate));
+  });
+
+  if (matchedTemplate?.image) {
+    return toMediaUrl(matchedTemplate.image);
+  }
+
+  if (offerings[index]?.image) {
+    return toMediaUrl(offerings[index].image);
+  }
+
+  return '/assets/placeholder-service.jpg';
+}
+
 export function FeatureCard({ offerings: dynamicOfferings }) {
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -63,12 +101,17 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
         title: item.title || 'UNTITLED SERVICE',
         description:
           item.description || 'Service details will be available soon.',
-        image: toMediaUrl(item.image) || '/assets/placeholder-service.jpg',
+        fallbackImage: item.fallbackImage || resolveFeatureFallbackImage(item, index),
+        image: toMediaUrl(item.image) || item.fallbackImage || resolveFeatureFallbackImage(item, index),
         bullets: splitLines(item.points).length
           ? splitLines(item.points)
           : item.bullets || [item.subtitle || item.description || 'Core business service'],
       }))
-    : offerings;
+    : offerings.map((item, index) => ({
+        ...item,
+        fallbackImage: resolveFeatureFallbackImage(item, index),
+        image: toMediaUrl(item.image) || resolveFeatureFallbackImage(item, index),
+      }));
 
   const renderBulletIcon = () => (
     <svg
@@ -86,7 +129,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
     </svg>
   );
 
-  const renderFeatureIcon = (imagePath, prioritize = false) => {
+  const renderFeatureIcon = (imagePath, fallbackImage, prioritize = false) => {
     return (
       <img 
         src={imagePath} 
@@ -102,7 +145,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
           WebkitBackfaceVisibility: 'hidden'
         }}
         onError={(e) => {
-          e.currentTarget.src = '/assets/placeholder-service.jpg';
+          e.currentTarget.src = fallbackImage || '/assets/placeholder-service.jpg';
         }}
       />
     );
@@ -140,7 +183,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                   className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
-                  {renderFeatureIcon(feature.image, idx === 0)}
+                  {renderFeatureIcon(feature.image, feature.fallbackImage, idx === 0)}
                 </div>
 
                 {/* Column 1: Text Content - Bottom on mobile, Left on desktop */}
