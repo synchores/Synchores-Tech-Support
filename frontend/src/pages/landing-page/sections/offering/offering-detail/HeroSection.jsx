@@ -16,6 +16,9 @@ export default function HeroSection({ offering, currentIndex, onBack }) {
       <img
         src={offering.image}
         alt={offering.title}
+        onError={(e) => {
+          e.currentTarget.src = offering.fallbackImage || '/assets/synchores-logo-vertical.jpg';
+        }}
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
       />
 

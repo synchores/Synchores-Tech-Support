@@ -111,6 +111,32 @@ function parseProcessLines(value = '') {
     .filter(Boolean);
 }
 
+function resolveCategoryFallbackImage(service, fallback) {
+  // First choice: direct static template image matched by slug/title.
+  const directTemplateImage = toMediaUrl(fallback?.image);
+  if (directTemplateImage) {
+    return directTemplateImage;
+  }
+
+  // Second choice: explicit category -> offeringsData template mapping.
+  const categorySlug = toSlug(service?.category || service?.title || '');
+  let templateId = '';
+
+  if (categorySlug.includes('infrastructure')) {
+    templateId = 'it-infrastructure';
+  } else if (categorySlug.includes('software') || categorySlug.includes('web')) {
+    templateId = 'software-web-development';
+  } else if (categorySlug.includes('consult')) {
+    templateId = 'tech-consultancy';
+  }
+
+  const mappedTemplateImage = toMediaUrl(
+    offerings.find((item) => item.id === templateId)?.image
+  );
+
+  return mappedTemplateImage || '/assets/placeholder-service.jpg';
+}
+
 export default function OfferingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -127,6 +153,7 @@ export default function OfferingDetail() {
       const fallback = offerings.find(
         (item) => toSlug(item.id) === slug || toSlug(item.title) === slug,
       );
+      const fallbackImage = resolveCategoryFallbackImage(service, fallback);
 
       return {
         ...(fallback || {}),
@@ -172,7 +199,10 @@ export default function OfferingDetail() {
           `Connect with our team to explore how ${service.title || fallback?.title || 'this service'} can transform your operations and drive growth.`,
         ctaButtonLabel: service.ctaButtonLabel || fallback?.ctaButtonLabel || 'Schedule Consultation',
         shortDescription: service.description || fallback?.description || '',
-        image: toMediaUrl(service.image) || fallback?.image || '/assets/placeholder-service.jpg',
+        fallbackImage,
+        image:
+          toMediaUrl(service.image) ||
+          fallbackImage,
       };
     });
   }, [services]);
