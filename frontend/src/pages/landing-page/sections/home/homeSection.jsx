@@ -252,8 +252,17 @@ export default function Home() {
                     {line}
                   </span>
                 ))}
-                <span className="block" style={{ color: "#0088ff" }}>
-                  {focusText}
+                <span className="block">
+                  <TrueFocus
+                    sentence={focusText}
+                    manualMode={false}
+                    blurAmount={5}
+                    borderColor="#0088ff"
+                    glowColor="rgba(0, 136, 255, 0.6)"
+                    animationDuration={2.5}
+                    pauseBetweenAnimations={2.5}
+                    className="block"
+                  />
                 </span>
               </span>
             </h1>
