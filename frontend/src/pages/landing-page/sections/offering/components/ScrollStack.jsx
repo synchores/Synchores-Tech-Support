@@ -42,6 +42,7 @@ const ScrollStack = ({
   const lastTransformsRef = useRef(new Map());
   const isUpdatingRef = useRef(false);
   const lastRafTimeRef = useRef(0);
+  const lenisScrollTopRef = useRef(null);
 
   const calculateProgress = useCallback((scrollTop, start, end) => {
     if (scrollTop < start) return 0;
@@ -50,16 +51,18 @@ const ScrollStack = ({
   }, []);
 
   const getScrollData = useCallback(() => {
+    const lenisScrollTop = lenisScrollTopRef.current;
+
     if (useWindowScroll) {
       return {
-        scrollTop: window.scrollY,
+        scrollTop: typeof lenisScrollTop === 'number' ? lenisScrollTop : window.scrollY,
         containerHeight: window.innerHeight,
         scrollContainer: document.documentElement
       };
     } else {
       const scroller = scrollerRef.current;
       return {
-        scrollTop: scroller.scrollTop,
+        scrollTop: typeof lenisScrollTop === 'number' ? lenisScrollTop : scroller.scrollTop,
         containerHeight: scroller.clientHeight,
         scrollContainer: scroller
       };
@@ -89,7 +92,7 @@ const ScrollStack = ({
 
       const isCompactViewport = containerHeight < 760;
       // Exponential smoothing keeps follow motion consistent across frame rates and input speeds.
-      const followStrength = isCompactViewport ? 10 : 14;
+      const followStrength = isCompactViewport ? 8.5 : 12;
       const alpha = 1 - Math.exp(-followStrength * dt);
 
       cardsRef.current.forEach((card, i) => {
@@ -110,20 +113,12 @@ const ScrollStack = ({
           blur: target.blur
         };
 
-        const hasChanged =
-          Math.abs((current.translateY ?? 0) - (next.translateY ?? 0)) > 0.05 ||
-          Math.abs((current.scale ?? 1) - (next.scale ?? 1)) > 0.001 ||
-          Math.abs((current.rotation ?? 0) - (next.rotation ?? 0)) > 0.1 ||
-          Math.abs((current.blur ?? 0) - (next.blur ?? 0)) > 0.1;
+        const transform = `translate3d(0, ${next.translateY.toFixed(3)}px, 0) scale(${next.scale.toFixed(4)}) rotate(${next.rotation.toFixed(3)}deg)`;
+        const filter = next.blur > 0 ? `blur(${next.blur.toFixed(3)}px)` : '';
 
-        if (hasChanged) {
-          const transform = `translate3d(0, ${Math.round(next.translateY * 100) / 100}px, 0) scale(${next.scale}) rotate(${next.rotation}deg)`;
-          const filter = next.blur > 0 ? `blur(${next.blur}px)` : '';
-
-          card.style.transform = transform;
-          card.style.opacity = '1';
-          card.style.filter = filter;
-        }
+        card.style.transform = transform;
+        card.style.opacity = '1';
+        card.style.filter = filter;
 
         lastTransformsRef.current.set(i, next);
       });
@@ -188,8 +183,8 @@ const ScrollStack = ({
       }
 
       const newTransform = {
-        translateY: Math.round(translateY * 100) / 100,
-        scale: Math.round(scale * 1000) / 1000,
+        translateY,
+        scale,
         rotation: 0,
         blur: 0
       };
@@ -200,7 +195,7 @@ const ScrollStack = ({
       // Initialize current transform to avoid a first-frame jump.
       if (!lastTransformsRef.current.has(i)) {
         lastTransformsRef.current.set(i, newTransform);
-        const transform = `translate3d(0, ${newTransform.translateY}px, 0) scale(${newTransform.scale}) rotate(${newTransform.rotation}deg)`;
+        const transform = `translate3d(0, ${newTransform.translateY.toFixed(3)}px, 0) scale(${newTransform.scale.toFixed(4)}) rotate(${newTransform.rotation.toFixed(3)}deg)`;
         card.style.transform = transform;
         card.style.opacity = '1';
       }
@@ -232,28 +227,35 @@ const ScrollStack = ({
     getElementOffset
   ]);
 
-  const handleScroll = useCallback(() => {
-    updateCardTransforms();
-  }, [updateCardTransforms]);
-
   const setupLenis = useCallback(() => {
     if (useWindowScroll) {
       const lenis = new Lenis({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1,
         infinite: false,
-        wheelMultiplier: 1,
+        wheelMultiplier: 0.9,
         lerp: 0.1,
         syncTouch: true,
-        syncTouchLerp: 0.075
+        syncTouchLerp: 0.1
       });
 
-      lenis.on('scroll', handleScroll);
+      lenis.on('scroll', (event) => {
+        const animated = event?.animatedScroll;
+        const absolute = event?.scroll;
+        if (typeof animated === 'number') {
+          lenisScrollTopRef.current = animated;
+        } else if (typeof absolute === 'number') {
+          lenisScrollTopRef.current = absolute;
+        }
+      });
 
       const raf = time => {
         lenis.raf(time);
+        if (typeof lenis.animatedScroll === 'number') {
+          lenisScrollTopRef.current = lenis.animatedScroll;
+        }
         updateCardTransforms();
         animateCardTransforms(time);
         animationFrameRef.current = requestAnimationFrame(raf);
@@ -272,18 +274,29 @@ const ScrollStack = ({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1,
         infinite: false,
-        wheelMultiplier: 1,
+        wheelMultiplier: 0.9,
         lerp: 0.1,
         syncTouch: true,
-        syncTouchLerp: 0.075
+        syncTouchLerp: 0.1
       });
 
-      lenis.on('scroll', handleScroll);
+      lenis.on('scroll', (event) => {
+        const animated = event?.animatedScroll;
+        const absolute = event?.scroll;
+        if (typeof animated === 'number') {
+          lenisScrollTopRef.current = animated;
+        } else if (typeof absolute === 'number') {
+          lenisScrollTopRef.current = absolute;
+        }
+      });
 
       const raf = time => {
         lenis.raf(time);
+        if (typeof lenis.animatedScroll === 'number') {
+          lenisScrollTopRef.current = lenis.animatedScroll;
+        }
         updateCardTransforms();
         animateCardTransforms(time);
         animationFrameRef.current = requestAnimationFrame(raf);
@@ -293,7 +306,7 @@ const ScrollStack = ({
       lenisRef.current = lenis;
       return lenis;
     }
-  }, [animateCardTransforms, handleScroll, updateCardTransforms, useWindowScroll]);
+  }, [animateCardTransforms, updateCardTransforms, useWindowScroll]);
 
   useLayoutEffect(() => {
     const scroller = scrollerRef.current;
@@ -383,6 +396,7 @@ const ScrollStack = ({
       targetsCache.clear();
       isUpdatingRef.current = false;
       lastRafTimeRef.current = 0;
+      lenisScrollTopRef.current = null;
     };
   }, [
     itemDistance,

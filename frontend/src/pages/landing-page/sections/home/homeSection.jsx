@@ -53,6 +53,7 @@ export default function Home() {
   const { hero } = useHeroSection();
   const navigate = useNavigate();
   const location = useLocation();
+  const [videoFallbackLevel, setVideoFallbackLevel] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof document === "undefined") return false;
     return document.documentElement.classList.contains("dark");
@@ -150,6 +151,22 @@ export default function Home() {
     return lines;
   }, [headlineLines]);
   const mediaIsVideo = isVideoSource(mediaSrc);
+  const fallbackVideoSrc = useMemo(() => resolveMediaSource(FALLBACK_BACKGROUND), []);
+
+  useEffect(() => {
+    setVideoFallbackLevel(0);
+  }, [mediaSrc]);
+
+  const activeVideoSrc = useMemo(() => {
+    if (!mediaIsVideo) return "";
+    if (videoFallbackLevel === 0) return mediaSrc;
+    return fallbackVideoSrc;
+  }, [fallbackVideoSrc, mediaIsVideo, mediaSrc, videoFallbackLevel]);
+
+  const fallbackImageSrc = useMemo(() => {
+    if (!mediaIsVideo) return mediaSrc;
+    return "/assets/placeholder-service.jpg";
+  }, [mediaIsVideo, mediaSrc]);
 
   return (
     <section
@@ -158,20 +175,29 @@ export default function Home() {
       style={{ backgroundColor: "var(--landing-bg)" }}
     >
       {/* Dynamic Background (image/video) */}
-      {mediaIsVideo ? (
+      {mediaIsVideo && videoFallbackLevel < 2 ? (
         <video
+          key={activeVideoSrc}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          poster="/assets/placeholder-service.jpg"
           className="absolute inset-0 w-full h-full object-cover"
+          onError={() => {
+            setVideoFallbackLevel((prev) => {
+              if (prev === 0 && mediaSrc !== fallbackVideoSrc) return 1;
+              return 2;
+            });
+          }}
         >
-          <source src={mediaSrc} type={getMediaType(mediaSrc)} />
+          <source src={activeVideoSrc} type={getMediaType(activeVideoSrc)} />
           Your browser does not support the video tag.
         </video>
       ) : (
         <img
-          src={mediaSrc}
+          src={fallbackImageSrc}
           alt="Hero background"
           className="absolute inset-0 w-full h-full object-cover"
         />

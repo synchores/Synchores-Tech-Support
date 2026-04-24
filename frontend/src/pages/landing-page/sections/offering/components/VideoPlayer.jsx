@@ -4,11 +4,27 @@ import { DotIndicators } from "./DotIndicators";
 import { TitleOverlay } from "./TitleOverlay";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+const GRAPHQL_URL = import.meta.env.VITE_API_URL || import.meta.env.API_URL;
+
+function getMediaBaseUrl() {
+  if (IMAGE_URL) {
+    return IMAGE_URL.replace(/\/$/, '');
+  }
+
+  try {
+    return new URL(GRAPHQL_URL).origin;
+  } catch {
+    return 'http://localhost:3000';
+  }
+}
+
+const MEDIA_BASE_URL = getMediaBaseUrl();
+
 function toMediaUrl(path = '') {
   if (!path) return '';
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith('/uploads/')) return `${IMAGE_URL}${path}`;
-  if (path.startsWith('uploads/')) return `${IMAGE_URL}/${path}`;
+  if (path.startsWith('/uploads/')) return `${MEDIA_BASE_URL}${path}`;
+  if (path.startsWith('uploads/')) return `${MEDIA_BASE_URL}/${path}`;
   return path;
 }
 
@@ -48,6 +64,8 @@ export function VideoPlayer({ current, onPrev, onNext, onDotClick, activeIndex, 
               loop
               playsInline
               muted
+              preload="auto"
+              poster={imageSrc || '/assets/placeholder-service.jpg'}
               className="w-full h-full object-cover"
             />
           </div>
@@ -91,6 +109,8 @@ export function VideoPlayer({ current, onPrev, onNext, onDotClick, activeIndex, 
             src={imageSrc}
             alt={current.title || 'Service image'}
             className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
             onError={(e) => {
               e.currentTarget.src = '/assets/placeholder-service.jpg';
             }}

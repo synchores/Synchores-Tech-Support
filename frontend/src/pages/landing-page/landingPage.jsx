@@ -16,7 +16,6 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { companyInfo } = useCompanyInfo();
   const [loadingStates, setLoadingStates] = useState({
-    home: true,
     offering: true,
     about: true,
     deployment: true,
@@ -27,7 +26,6 @@ export default function LandingPage() {
   // Simulate loading delays for each section
   useEffect(() => {
     const timings = {
-      home: 500,
       offering: 1200,
       about: 1800,
       deployment: 2400,
@@ -35,11 +33,19 @@ export default function LandingPage() {
       footer: 3500,
     };
 
+    const timeoutIds = [];
+
     Object.entries(timings).forEach(([key, delay]) => {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setLoadingStates(prev => ({ ...prev, [key]: false }));
       }, delay);
+
+      timeoutIds.push(timeoutId);
     });
+
+    return () => {
+      timeoutIds.forEach((timeoutId) => clearTimeout(timeoutId));
+    };
   }, []);
 
   useEffect(() => {
@@ -59,9 +65,7 @@ export default function LandingPage() {
 
   return (
     <div className="w-full h-full">
-      <Skeleton name="home-section" loading={loadingStates.home} fixture={<Home />}>
-        <Home />
-      </Skeleton>
+      <Home />
       <Skeleton name="offering-section" loading={loadingStates.offering} fixture={<OfferingSection />}>
         <OfferingSection />
       </Skeleton>

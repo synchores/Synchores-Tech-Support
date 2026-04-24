@@ -4,12 +4,27 @@ import ScrollStack, { ScrollStackItem } from './ScrollStack';
 import { offerings } from '../data/offeringsData';
 
 const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
+const GRAPHQL_URL = import.meta.env.VITE_API_URL || import.meta.env.API_URL;
+
+function getMediaBaseUrl() {
+  if (IMAGE_URL) {
+    return IMAGE_URL.replace(/\/$/, '');
+  }
+
+  try {
+    return new URL(GRAPHQL_URL).origin;
+  } catch {
+    return 'http://localhost:3000';
+  }
+}
+
+const MEDIA_BASE_URL = getMediaBaseUrl();
 
 function toMediaUrl(path = '') {
   if (!path) return '';
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith('/uploads/')) return `${IMAGE_URL}${path}`;
-  if (path.startsWith('uploads/')) return `${IMAGE_URL}/${path}`;
+  if (path.startsWith('/uploads/')) return `${MEDIA_BASE_URL}${path}`;
+  if (path.startsWith('uploads/')) return `${MEDIA_BASE_URL}/${path}`;
   return path;
 }
 
@@ -71,12 +86,21 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
     </svg>
   );
 
-  const renderFeatureIcon = (imagePath) => {
+  const renderFeatureIcon = (imagePath, prioritize = false) => {
     return (
       <img 
         src={imagePath} 
         alt="Feature illustration"
         className="w-full h-full object-cover rounded-xl"
+        loading={prioritize ? 'eager' : 'lazy'}
+        fetchPriority={prioritize ? 'high' : 'auto'}
+        decoding="async"
+        style={{
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden'
+        }}
         onError={(e) => {
           e.currentTarget.src = '/assets/placeholder-service.jpg';
         }}
@@ -116,7 +140,7 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
                   className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
-                  {renderFeatureIcon(feature.image)}
+                  {renderFeatureIcon(feature.image, idx === 0)}
                 </div>
 
                 {/* Column 1: Text Content - Bottom on mobile, Left on desktop */}
