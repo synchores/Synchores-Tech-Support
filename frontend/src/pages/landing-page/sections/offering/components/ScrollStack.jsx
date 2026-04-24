@@ -31,25 +31,22 @@ const ScrollStack = ({
   staggerCards = false
 }) => {
   const scrollerRef = useRef(null);
+  const endMarkerRef = useRef(null);
+  const endSpacerRef = useRef(null);
   const stackCompletedRef = useRef(false);
   const animationFrameRef = useRef(null);
   const lenisRef = useRef(null);
   const cardsRef = useRef([]);
   const cardPositionsRef = useRef([]);
+  const targetTransformsRef = useRef(new Map());
   const lastTransformsRef = useRef(new Map());
   const isUpdatingRef = useRef(false);
+  const lastRafTimeRef = useRef(0);
 
   const calculateProgress = useCallback((scrollTop, start, end) => {
     if (scrollTop < start) return 0;
     if (scrollTop > end) return 1;
     return (scrollTop - start) / (end - start);
-  }, []);
-
-  const parsePercentage = useCallback((value, containerHeight) => {
-    if (typeof value === 'string' && value.includes('%')) {
-      return (parseFloat(value) / 100) * containerHeight;
-    }
-    return parseFloat(value);
   }, []);
 
   const getScrollData = useCallback(() => {
@@ -81,6 +78,62 @@ const ScrollStack = ({
     [useWindowScroll]
   );
 
+  const animateCardTransforms = useCallback(
+    (time) => {
+      if (!cardsRef.current.length) return;
+
+      const { containerHeight } = getScrollData();
+      const lastTime = lastRafTimeRef.current || time;
+      const dt = Math.min(0.05, Math.max(0.001, (time - lastTime) / 1000));
+      lastRafTimeRef.current = time;
+
+      // Capped velocity keeps the stacking motion uniform even when scrollTop jumps.
+      const maxTranslateVelocity = Math.max(800, containerHeight * 3); // px / sec
+      const maxTranslateStep = maxTranslateVelocity * dt;
+
+      cardsRef.current.forEach((card, i) => {
+        if (!card) return;
+
+        const target = targetTransformsRef.current.get(i);
+        if (!target) return;
+
+        const current = lastTransformsRef.current.get(i) ?? target;
+
+        const deltaY = target.translateY - current.translateY;
+        const stepY =
+          Math.abs(deltaY) <= maxTranslateStep
+            ? deltaY
+            : Math.sign(deltaY) * maxTranslateStep;
+
+        const next = {
+          translateY: current.translateY + stepY,
+          // Keep these instant for now (they're typically constant in this component).
+          scale: target.scale,
+          rotation: target.rotation,
+          blur: target.blur
+        };
+
+        const hasChanged =
+          Math.abs((current.translateY ?? 0) - (next.translateY ?? 0)) > 0.05 ||
+          Math.abs((current.scale ?? 1) - (next.scale ?? 1)) > 0.001 ||
+          Math.abs((current.rotation ?? 0) - (next.rotation ?? 0)) > 0.1 ||
+          Math.abs((current.blur ?? 0) - (next.blur ?? 0)) > 0.1;
+
+        if (hasChanged) {
+          const transform = `translate3d(0, ${Math.round(next.translateY * 100) / 100}px, 0) scale(${next.scale}) rotate(${next.rotation}deg)`;
+          const filter = next.blur > 0 ? `blur(${next.blur}px)` : '';
+
+          card.style.transform = transform;
+          card.style.opacity = '1';
+          card.style.filter = filter;
+        }
+
+        lastTransformsRef.current.set(i, next);
+      });
+    },
+    [getScrollData]
+  );
+
   const updateCardTransforms = useCallback(() => {
     if (!cardsRef.current.length || isUpdatingRef.current) return;
 
@@ -88,23 +141,21 @@ const ScrollStack = ({
 
     const { scrollTop, containerHeight } = getScrollData();
 
-    const endElement = useWindowScroll
-      ? document.querySelector('.scroll-stack-end')
-      : scrollerRef.current?.querySelector('.scroll-stack-end');
+    const endElement = endMarkerRef.current ?? scrollerRef.current?.querySelector('.scroll-stack-end');
 
     const endElementTop = endElement ? getElementOffset(endElement) : 0;
 
     const firstCardTop = cardPositionsRef.current[0];
-    const lastCardIndex = cardsRef.current.length - 1;
 
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
 
       const cardTop = cardPositionsRef.current[i];
-      const pinStep = containerHeight * 0.2;
+      const isCompactViewport = containerHeight < 760;
+      const pinStep = containerHeight * (isCompactViewport ? 0.14 : 0.2);
       const triggerLead = containerHeight * 0.1;
       const settleFactor = 0.28;
-      const effectiveStackDistance = 0;
+      const effectiveStackDistance = itemStackDistance || 10;
 
       // Ensure incoming cards paint above previous cards while stacking.
       card.style.zIndex = String(1000 + i);
@@ -116,7 +167,7 @@ const ScrollStack = ({
       
       const pinStart = triggerStart + (i * pinStep);
       const rawPinEnd = endElementTop - (containerHeight - stackAnchorTop);
-      const minPinDuration = i === lastCardIndex ? 1.05 : 0.4;
+      const minPinDuration = isCompactViewport ? 0.18 : 0.3;
       const pinEnd = Math.max(rawPinEnd, pinStart + containerHeight * minPinDuration);
 
       const settleEnd = pinStart + containerHeight * settleFactor;
@@ -146,23 +197,15 @@ const ScrollStack = ({
         blur: 0
       };
 
-      const lastTransform = lastTransformsRef.current.get(i);
-      const hasChanged =
-        !lastTransform ||
-        Math.abs(lastTransform.translateY - newTransform.translateY) > 0.1 ||
-        Math.abs(lastTransform.scale - newTransform.scale) > 0.001 ||
-        Math.abs(lastTransform.rotation - newTransform.rotation) > 0.1 ||
-        Math.abs(lastTransform.blur - newTransform.blur) > 0.1;
+      // Store the target transform; rAF loop will animate towards it.
+      targetTransformsRef.current.set(i, newTransform);
 
-      if (hasChanged) {
+      // Initialize current transform to avoid a first-frame jump.
+      if (!lastTransformsRef.current.has(i)) {
+        lastTransformsRef.current.set(i, newTransform);
         const transform = `translate3d(0, ${newTransform.translateY}px, 0) scale(${newTransform.scale}) rotate(${newTransform.rotation}deg)`;
-        const filter = newTransform.blur > 0 ? `blur(${newTransform.blur}px)` : '';
-
         card.style.transform = transform;
         card.style.opacity = '1';
-        card.style.filter = filter;
-
-        lastTransformsRef.current.set(i, newTransform);
       }
 
       if (i === cardsRef.current.length - 1) {
@@ -188,7 +231,8 @@ const ScrollStack = ({
     onStackComplete,
     staggerCards,
     calculateProgress,
-    getScrollData
+    getScrollData,
+    getElementOffset
   ]);
 
   const handleScroll = useCallback(() => {
@@ -213,6 +257,7 @@ const ScrollStack = ({
 
       const raf = time => {
         lenis.raf(time);
+        animateCardTransforms(time);
         animationFrameRef.current = requestAnimationFrame(raf);
       };
       animationFrameRef.current = requestAnimationFrame(raf);
@@ -241,6 +286,7 @@ const ScrollStack = ({
 
       const raf = time => {
         lenis.raf(time);
+        animateCardTransforms(time);
         animationFrameRef.current = requestAnimationFrame(raf);
       };
       animationFrameRef.current = requestAnimationFrame(raf);
@@ -248,21 +294,20 @@ const ScrollStack = ({
       lenisRef.current = lenis;
       return lenis;
     }
-  }, [handleScroll, useWindowScroll]);
+  }, [animateCardTransforms, handleScroll, useWindowScroll]);
 
   useLayoutEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
     const cards = Array.from(
-      useWindowScroll
-        ? document.querySelectorAll('.scroll-stack-card')
-        : scroller.querySelectorAll('.scroll-stack-card')
+      scroller.querySelectorAll('.scroll-stack-card')
     );
 
     cardsRef.current = cards;
     cardPositionsRef.current = cards.map((card) => getElementOffset(card));
     const transformsCache = lastTransformsRef.current;
+    const targetsCache = targetTransformsRef.current;
 
     cards.forEach((card, i) => {
       if (i < cards.length - 1) {
@@ -281,9 +326,44 @@ const ScrollStack = ({
 
     updateCardTransforms();
 
+    // Ensure only the minimum extra scroll needed to release the final pin.
+    const updateEndSpacer = () => {
+      const { containerHeight } = getScrollData();
+      const endMarker = endMarkerRef.current;
+      const spacer = endSpacerRef.current;
+      const cardsCount = cardsRef.current.length;
+      if (!spacer || !endMarker || cardsCount === 0) return;
+
+      const firstCardTop = cardPositionsRef.current[0] ?? 0;
+      const triggerLead = containerHeight * 0.1;
+      const isCompactViewport = containerHeight < 760;
+      const pinStep = containerHeight * (isCompactViewport ? 0.14 : 0.2);
+      const minPinDuration = isCompactViewport ? 0.18 : 0.3;
+
+      const triggerStart = firstCardTop - triggerLead;
+      const lastPinStart = triggerStart + ((cardsCount - 1) * pinStep);
+      const minPinEnd = lastPinStart + (containerHeight * minPinDuration);
+
+      const endMarkerTop = getElementOffset(endMarker);
+      const maxScrollWithoutSpacer = endMarkerTop - containerHeight;
+      const safetyBuffer = isCompactViewport ? 8 : 14;
+      const requiredSpacer = Math.max(
+        1,
+        Math.ceil(minPinEnd - maxScrollWithoutSpacer + safetyBuffer)
+      );
+
+      const maxDynamicSpacer = Math.round(containerHeight * (isCompactViewport ? 0.18 : 0.28));
+      const finalSpacer = Math.max(1, Math.min(requiredSpacer, maxDynamicSpacer));
+
+      spacer.style.height = `${finalSpacer}px`;
+    };
+
+    updateEndSpacer();
+
     // Recalculate positions on resize
     const handleResize = () => {
       cardPositionsRef.current = cards.map((card) => getElementOffset(card));
+      updateEndSpacer();
       updateCardTransforms();
     };
 
@@ -301,7 +381,9 @@ const ScrollStack = ({
       cardsRef.current = [];
       cardPositionsRef.current = [];
       transformsCache.clear();
+      targetsCache.clear();
       isUpdatingRef.current = false;
+      lastRafTimeRef.current = 0;
     };
   }, [
     itemDistance,
@@ -318,7 +400,8 @@ const ScrollStack = ({
     staggerCards,
     setupLenis,
     updateCardTransforms,
-    getElementOffset
+    getElementOffset,
+    getScrollData
   ]);
 
   // Container styles based on scroll mode
@@ -348,8 +431,10 @@ const ScrollStack = ({
     <div className={containerClassName} ref={scrollerRef} style={containerStyles}>
       <div className="scroll-stack-inner px-2 sm:px-4 md:px-8 lg:px-12 xl:px-20 py-4 sm:py-6 md:py-8">
         {children}
-        {/* Spacer so the last pin can release cleanly */}
-        <div className="scroll-stack-end w-full h-px" />
+        {/* End marker used for release math */}
+        <div ref={endMarkerRef} className="scroll-stack-end w-full h-px" />
+        {/* Extra scroll room; must not affect end marker position */}
+        <div ref={endSpacerRef} className="scroll-stack-spacer w-full h-px" />
       </div>
     </div>
   );
