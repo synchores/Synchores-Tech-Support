@@ -1,4 +1,5 @@
 import { Query, Mutation, Resolver, Args, Int } from '@nestjs/graphql';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { LandingServiceCardService } from './landing-service-card.service';
 import { LandingServiceCardTbl } from './entity/landing-service-card.tbl';
 import { CreateLandingServiceCardDto } from './dto/create-landing-service-card.dto';
@@ -12,6 +13,12 @@ export class LandingServiceCardResolver {
   ) {}
 
   @Query(() => [LandingServiceCardTbl], { name: 'getAllLandingServiceCards' })
+  @Throttle({
+    default: {
+      ttl: seconds(60),
+      limit: 60,
+    },
+  })
   async getAllServiceCards(
     @Args('search', { nullable: true }) search?: string,
     @Args('status', { type: () => ContentStatus, nullable: true })

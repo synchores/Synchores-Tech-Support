@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import {
   GET_HERO_SECTION_QUERY,
@@ -81,6 +82,12 @@ function normalizeDeployment(deployment) {
   };
 }
 
+function sanitizeQueryVariables(variables) {
+  return Object.fromEntries(
+    Object.entries(variables).filter(([, value]) => value !== undefined)
+  );
+}
+
 // ─── HERO SECTION HOOK ───────────────────────────────────────────────────
 export function useHeroSection() {
   const { data, loading, error, refetch } = useQuery(GET_HERO_SECTION_QUERY, {
@@ -138,21 +145,35 @@ export function useHeroSection() {
 
 // ─── LANDING SERVICES HOOK ───────────────────────────────────────────────
 export function useLandingServices(filters = {}) {
-  const queryVariables = {
-    search: filters.search || undefined,
-    status: toGraphQLStatus(filters.status) || undefined,
-    category: filters.category || undefined,
-  };
-
-  const landingServiceRefetchQueries = [
-    { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
-    { query: GET_ALL_LANDING_SERVICES_QUERY, variables: {} },
-  ];
-
-  const { data, loading, error, refetch } = useQuery(
-    GET_ALL_LANDING_SERVICES_QUERY,
-    { errorPolicy: "all", variables: queryVariables }
+  const queryVariables = useMemo(
+    () =>
+      sanitizeQueryVariables({
+        search: filters.search || undefined,
+        status: toGraphQLStatus(filters.status) || undefined,
+        category: filters.category || undefined,
+      }),
+    [filters.search, filters.status, filters.category]
   );
+
+  const landingServiceRefetchQueries = useMemo(
+    () => [
+      { query: GET_ALL_LANDING_SERVICES_QUERY, variables: queryVariables },
+      { query: GET_ALL_LANDING_SERVICES_QUERY },
+    ],
+    [queryVariables]
+  );
+
+  const { data, previousData, loading, error, refetch } = useQuery(
+    GET_ALL_LANDING_SERVICES_QUERY,
+    {
+      errorPolicy: "all",
+      variables: queryVariables,
+      returnPartialData: true,
+    }
+  );
+
+  const serviceSource =
+    data?.getAllLandingServiceCards || previousData?.getAllLandingServiceCards || [];
 
   const [createCardMutation] = useMutation(
     CREATE_LANDING_SERVICE_CARD_MUTATION
@@ -190,7 +211,7 @@ export function useLandingServices(filters = {}) {
 
   const updateService = async (input) => {
     try {
-      const currentServices = data?.getAllLandingServiceCards || [];
+      const currentServices = serviceSource;
       const currentService = currentServices.find(
         (s) => s.cardId === input.cardId
       );
@@ -277,7 +298,7 @@ export function useLandingServices(filters = {}) {
   };
 
   return {
-    services: (data?.getAllLandingServiceCards || []).map(normalizeService),
+    services: serviceSource.map(normalizeService),
     loading,
     error,
     createService,
