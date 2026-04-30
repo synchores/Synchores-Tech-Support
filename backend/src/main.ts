@@ -33,7 +33,7 @@ async function bootstrap() {
   });
 
   // Safe port handling (IMPORTANT for Docker)
-  const port = Number(process.env.PORT) || 3501;
+  const port = Number(process.env.PORT) || 3000;
 
   await app.listen(port, '0.0.0.0');
 }
