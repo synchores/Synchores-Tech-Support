@@ -44,6 +44,8 @@ function toMediaUrl(path = "") {
 export default function OfferingSection() {
   const { services } = useLandingServices({ status: "published" });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const offeringsData = useMemo(() => {
     if (!services?.length) {
@@ -90,7 +92,12 @@ export default function OfferingSection() {
   }, [services]);
 
   const goTo = useCallback((index) => {
+    setIsTransitioning(true);
     setActiveIndex(index);
+    setProgress(0);
+    
+    // Reset transition state after animation
+    setTimeout(() => setIsTransitioning(false), 800);
   }, []);
 
   useEffect(() => {
@@ -116,15 +123,25 @@ export default function OfferingSection() {
     goTo(newIndex);
   };
 
-  // Auto-advance every 4 seconds
+  // Auto-advance Engine with Progress Tracking
   useEffect(() => {
     if (offeringsData.length <= 1) return undefined;
 
-    const timer = setTimeout(() => {
-      next();
-    }, 4000);
+    const duration = 5000; // 5 seconds per slide
+    const interval = 50; // Update every 50ms
+    const step = (interval / duration) * 100;
 
-    return () => clearTimeout(timer);
+    const timer = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          next();
+          return 0;
+        }
+        return prev + step;
+      });
+    }, interval);
+
+    return () => clearInterval(timer);
   }, [activeIndex, offeringsData.length]);
 
   const current = offeringsData[activeIndex] || offeringsData[0];
@@ -143,16 +160,16 @@ export default function OfferingSection() {
       </div>
 
       {/* Offering Tabs */}
-      <OfferingTabs offerings={offeringsData} activeIndex={activeIndex} onTabClick={goTo} />
+      <OfferingTabs offerings={offeringsData} activeIndex={activeIndex} onTabClick={goTo} progress={progress} />
 
       {/* Video Player */}
       <VideoPlayer
-        current={current}
+        offerings={offeringsData}
+        activeIndex={activeIndex}
         onPrev={prev}
         onNext={next}
         onDotClick={goTo}
-        activeIndex={activeIndex}
-        offerings={offeringsData}
+        isTransitioning={isTransitioning}
       />
 
       {/* Description Panel */}
