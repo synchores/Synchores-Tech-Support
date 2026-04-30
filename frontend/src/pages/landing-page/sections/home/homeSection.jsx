@@ -94,7 +94,7 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  // Viewport Sync (origin/main)
+  // Viewport Sync
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -129,9 +129,10 @@ export default function Home() {
   // --- STABLE MEDIA ENGINE: Monitor Source Handoff ---
   useEffect(() => {
     if (videoRef.current) {
-      // Manually load and play to preserve Autoplay Permission
-      videoRef.current.load();
-      videoRef.current.play().catch(() => {});
+      if (videoRef.current.tagName === "VIDEO") {
+        videoRef.current.load();
+        videoRef.current.play().catch(() => {});
+      }
       
       // Force visibility if animation already finished
       if (hasPlayedIntroRef.current) {
@@ -172,14 +173,14 @@ export default function Home() {
         });
 
         // Forced Playback ignition
-        if (videoRef.current) {
+        if (videoRef.current && videoRef.current.tagName === "VIDEO") {
           videoRef.current.load();
           videoRef.current.play().catch(() => {});
         }
 
         // --- PHASE 0: INITIAL STATE (Reset for resilience) ---
-        gsap.set(whiteOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1 });
-        gsap.set(videoRef.current, { opacity: hasPlayedIntroRef.current ? 1 : 0 });
+        gsap.set(whiteOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1, zIndex: 100 });
+        gsap.set(".hero-bg-media", { opacity: hasPlayedIntroRef.current ? 1 : 0, zIndex: 5 });
         
         gsap.set(logoWrapperRef.current, {
           left: "50%", top: "50%", xPercent: -50, yPercent: -50,
@@ -239,7 +240,7 @@ export default function Home() {
 
         tl.addLabel("final", "-=0.2")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power2.out" }, "final")
-          .to(videoRef.current, { opacity: 1, duration: 1.5 }, "final")
+          .to(".hero-bg-media", { opacity: 1, duration: 1.5 }, "final")
           .to(ctaRef.current, { opacity: 1, duration: 1 }, "final+=0.5")
           .set(whiteOverlayRef.current, { autoAlpha: 0 })
           .set(".right-mask-portal", { overflow: "visible" });
@@ -266,8 +267,8 @@ export default function Home() {
         }
 
         // --- PHASE 0: IMMEDIATE REVEAL (Mobile Only) ---
-        gsap.set(whiteOverlayRef.current, { autoAlpha: 0 });
-        gsap.set(videoRef.current, { opacity: 1 });
+        gsap.set(whiteOverlayRef.current, { autoAlpha: 0, zIndex: 100 });
+        gsap.set(".hero-bg-media", { opacity: 1, zIndex: 5 });
         gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.6)" });
 
         gsap.set(".left-mask-split", { display: "none" });
@@ -348,7 +349,7 @@ export default function Home() {
         <div className="relative w-full h-full overflow-hidden">
 
           {/* Logo Container (The Shield) */}
-          <div ref={logoWrapperRef} className="absolute flex flex-col items-center z-[100] pointer-events-none">
+          <div ref={logoWrapperRef} className="absolute flex flex-col items-center z-[110] pointer-events-none">
             <img
               ref={logoImgRef}
               src="/assets/synchores-logo-vertical.png"

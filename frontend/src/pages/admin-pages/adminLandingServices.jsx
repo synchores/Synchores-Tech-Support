@@ -22,6 +22,8 @@ export function AdminLandingServices() {
     drawerOpen,
     editingService,
     loading,
+    error,
+    queryErrorMessage,
     stats,
     categories,
     paginatedServices,
@@ -45,6 +47,7 @@ export function AdminLandingServices() {
     handleSingleStatusChange,
     handleDuplicate,
     handleSubmit,
+    handleRetryFetch,
   } = useAdminLandingServicesPage();
 
   return (
@@ -84,6 +87,27 @@ export function AdminLandingServices() {
           archivedCount={stats.archived}
           onToggleArchived={handleToggleArchived}
         />
+
+        {error && (
+          <div
+            className="rounded-lg border px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+            style={{
+              borderColor: "#f59e0b",
+              background: "rgba(245, 158, 11, 0.12)",
+              color: "var(--foreground)",
+            }}
+          >
+            <p className="text-sm">{queryErrorMessage}</p>
+            <button
+              type="button"
+              onClick={handleRetryFetch}
+              className="text-xs px-3 py-1.5 rounded-md border"
+              style={{ borderColor: "var(--border)", background: "var(--card)" }}
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         {view === "table" ? (
           <CmsDataTable

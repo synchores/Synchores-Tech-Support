@@ -3,12 +3,39 @@ import { useLandingServices } from "./useLandingPageData";
 import { toastError, toastSuccess } from "../services/admin-service/adminToast";
 
 const STATUS_ORDER = ["published", "draft", "archived"];
+const ARCHIVE_TOGGLE_DEBOUNCE_MS = 250;
+
+function getQueryErrorMessage(error) {
+  if (!error) return null;
+
+  const graphQLErrorCodes = (error.graphQLErrors || [])
+    .map((item) => item?.extensions?.code)
+    .filter(Boolean);
+
+  const networkErrorCode =
+    error.networkError?.result?.errors?.[0]?.extensions?.code;
+
+  const hasRateLimitCode =
+    graphQLErrorCodes.includes("TOO_MANY_REQUESTS") ||
+    networkErrorCode === "TOO_MANY_REQUESTS";
+
+  const fallbackMessage = String(error.message || "").toUpperCase();
+  const hasRateLimitMessage =
+    fallbackMessage.includes("TOO MANY REQUESTS") || fallbackMessage.includes("429");
+
+  if (hasRateLimitCode || hasRateLimitMessage) {
+    return "Too many refreshes in a short time. Please wait a few seconds, then retry.";
+  }
+
+  return "Could not refresh services right now. Showing the last available data.";
+}
 
 export function useAdminLandingServicesPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [showArchived, setShowArchived] = useState(false);
+  const [debouncedShowArchived, setDebouncedShowArchived] = useState(false);
   const [view, setView] = useState("table");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -21,19 +48,29 @@ export function useAdminLandingServicesPage() {
   const {
     services,
     loading,
+    error,
+    refetch,
     createService,
     updateService,
     duplicateService,
     bulkUpdateServiceStatus,
   } = useLandingServices({
     search,
-    status: showArchived
+    status: debouncedShowArchived
       ? "archived"
       : statusFilter === "all" || statusFilter === "archived"
       ? ""
       : statusFilter,
     category: categoryFilter === "all" ? "" : categoryFilter,
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedShowArchived(showArchived);
+    }, ARCHIVE_TOGGLE_DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [showArchived]);
 
   const normalized = useMemo(() => {
     const sorted = [...services].sort((a, b) => {
@@ -56,7 +93,7 @@ export function useAdminLandingServicesPage() {
   }, [services]);
 
   const visibleServices = useMemo(() => {
-    if (showArchived) {
+    if (debouncedShowArchived) {
       return normalized.filter((item) => item.status === "archived");
     }
 
@@ -66,7 +103,7 @@ export function useAdminLandingServicesPage() {
     }
 
     return activeOnly.filter((item) => item.status === statusFilter);
-  }, [normalized, showArchived, statusFilter]);
+  }, [normalized, debouncedShowArchived, statusFilter]);
 
   const totalItems = visibleServices.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
@@ -229,6 +266,12 @@ export function useAdminLandingServicesPage() {
     }
   };
 
+  const handleRetryFetch = async () => {
+    await refetch();
+  };
+
+  const queryErrorMessage = useMemo(() => getQueryErrorMessage(error), [error]);
+
   return {
     search,
     setSearch,
@@ -244,6 +287,8 @@ export function useAdminLandingServicesPage() {
     drawerOpen,
     editingService,
     loading,
+    error,
+    queryErrorMessage,
     stats,
     categories,
     paginatedServices,
@@ -267,5 +312,6 @@ export function useAdminLandingServicesPage() {
     handleSingleStatusChange,
     handleDuplicate,
     handleSubmit,
+    handleRetryFetch,
   };
 }
