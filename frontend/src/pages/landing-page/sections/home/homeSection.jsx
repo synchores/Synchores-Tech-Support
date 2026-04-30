@@ -40,6 +40,7 @@ export default function Home() {
     return window.matchMedia("(max-width: 767px)").matches;
   });
   const [startInnerAnimations, setStartInnerAnimations] = useState(false);
+  const hasPlayedIntroRef = useRef(false);
   const [videoFallbackLevel, setVideoFallbackLevel] = useState(0);
 
   // Animation Refs
@@ -107,6 +108,20 @@ export default function Home() {
     ];
   }, [focusText]);
 
+  // --- STABLE MEDIA ENGINE: Monitor Source Handoff ---
+  useEffect(() => {
+    if (videoRef.current) {
+      // Manually load and play to preserve Autoplay Permission
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+      
+      // Force visibility if animation already finished
+      if (hasPlayedIntroRef.current) {
+        gsap.set(videoRef.current, { opacity: 1 });
+      }
+    }
+  }, [activeVideoSrc]);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       let mm = gsap.matchMedia();
@@ -132,12 +147,21 @@ export default function Home() {
 
         const tl = gsap.timeline({
           defaults: { ease: "power4.inOut" },
-          onComplete: () => setStartInnerAnimations(true)
+          onComplete: () => {
+            setStartInnerAnimations(true);
+            hasPlayedIntroRef.current = true;
+          }
         });
 
+        // Forced Playback ignition
+        if (videoRef.current) {
+          videoRef.current.load();
+          videoRef.current.play().catch(() => {});
+        }
+
         // --- PHASE 0: INITIAL STATE (Reset for resilience) ---
-        gsap.set(whiteOverlayRef.current, { opacity: 1 });
-        gsap.set(videoRef.current, { opacity: 0 });
+        gsap.set(whiteOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1 });
+        gsap.set(videoRef.current, { opacity: hasPlayedIntroRef.current ? 1 : 0 });
         
         gsap.set(logoWrapperRef.current, {
           left: "50%", top: "50%", xPercent: -50, yPercent: -50,
@@ -162,7 +186,7 @@ export default function Home() {
         // --- PHASE 2: Color Reveal ---
         tl.addLabel("reveal", "+=0.2")
           .to(logoImgRef.current, { filter: "grayscale(0%) brightness(1)", duration: 1 }, "reveal")
-          .to(whiteOverlayRef.current, { opacity: 0, duration: 1.2 }, "reveal")
+          .to(whiteOverlayRef.current, { autoAlpha: 0, duration: 1.2 }, "reveal")
           .to(logoWrapperRef.current, { scale: 1, duration: 1 }, "reveal")
 
         // --- PHASE 3: Symmetrical Centered Split (Anchored) ---
@@ -195,48 +219,74 @@ export default function Home() {
           
           .to(ctaRef.current, { x: cfg.portalTextX, y: cfg.portalCtaY + "vh", duration: 1.6, ease: "power3.inOut" }, "portal")
 
-        // --- PHASE 5: Final Polish ---
         tl.addLabel("final", "-=0.2")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power2.out" }, "final")
           .to(videoRef.current, { opacity: 1, duration: 1.5 }, "final")
           .to(ctaRef.current, { opacity: 1, duration: 1 }, "final+=0.5")
+          .set(whiteOverlayRef.current, { autoAlpha: 0 })
           .set(".right-mask-portal", { overflow: "visible" });
+
+        if (hasPlayedIntroRef.current) {
+          tl.progress(1);
+          gsap.set(whiteOverlayRef.current, { autoAlpha: 0 });
+        }
       });
 
       mm.add("(max-width: 767px)", () => {
         // MOBILE ANIMATION
         const tl = gsap.timeline({
           defaults: { ease: "power3.out" },
-          onComplete: () => setStartInnerAnimations(true)
+          onComplete: () => {
+            setStartInnerAnimations(true);
+            hasPlayedIntroRef.current = true;
+          }
         });
 
+        if (videoRef.current) {
+          videoRef.current.load();
+          videoRef.current.play().catch(() => {});
+        }
+
         // Reset for resilience
-        gsap.set(whiteOverlayRef.current, { opacity: 1 });
-        gsap.set(videoRef.current, { opacity: 0 });
+        gsap.set(whiteOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1 });
+        gsap.set(videoRef.current, { opacity: hasPlayedIntroRef.current ? 1 : 0 });
+        gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.6)" });
 
         gsap.set(".left-mask-split", { display: "none" });
         gsap.set(logoWrapperRef.current, { 
-          left: "50%", top: "28%", scale: 1.0, opacity: 0, xPercent: -50, yPercent: -50 
+          left: "50%", top: "32%", scale: 0.15, opacity: 0, xPercent: -50, yPercent: -50,
+          clipPath: "inset(0% 0% 25% 0%)"
         });
         gsap.set(rightMainRefs.current, { 
           left: "50%", top: "52%", opacity: 0, y: 40, xPercent: -50, yPercent: 0, x: 0,
           transformOrigin: "center center", autoAlpha: 1 
         });
         gsap.set(ctaRef.current, { 
-          left: "50%", top: "82%", opacity: 0, y: 40, xPercent: -50, x: 0 
+          left: "50%", top: "88%", opacity: 0, y: 40, xPercent: -50, x: 0 
         });
 
-        tl.to(logoWrapperRef.current, { opacity: 1, scale: 1.15, duration: 1.2, ease: "expo.out" })
-          .to(whiteOverlayRef.current, { opacity: 0, duration: 0.8 }, "-=0.8")
+        tl.to(whiteOverlayRef.current, { autoAlpha: 0, duration: 1.2, ease: "power2.out" })
+          .to(videoRef.current, { opacity: 1, duration: 1.2 }, 0)
+          .to(logoWrapperRef.current, { opacity: 1, scale: 0.8, duration: 1.2, ease: "expo.out" }, 0.2)
+          .addLabel("reveal", "+=0.2")
+          .to(logoImgRef.current, { filter: "grayscale(0%) brightness(1)", duration: 1 }, "reveal")
+          .to(logoWrapperRef.current, { scale: 1.1, duration: 1 }, "reveal")
+          .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2 }, "reveal+=0.5")
+          
           .to(rightMainRefs.current, {
             opacity: 1,
-            y: (i) => i * 36,
+            y: (i) => i * 42,
             duration: 1.0,
             stagger: 0.1,
             ease: "power2.out"
-          }, "-=0.6")
-          .to(videoRef.current, { opacity: 1, duration: 1.5 }, "-=1.2")
-          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.8");
+          }, "reveal+=0.3")
+          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+          .set(whiteOverlayRef.current, { autoAlpha: 0 });
+
+        if (hasPlayedIntroRef.current) {
+          tl.progress(1);
+          gsap.set(whiteOverlayRef.current, { autoAlpha: 0 });
+        }
       });
 
     }, stageRef);
@@ -248,15 +298,16 @@ export default function Home() {
 
       <video 
         ref={videoRef} 
-        key={activeVideoSrc}
         autoPlay 
         muted 
         loop 
         playsInline 
+        preload="auto"
+        poster="/assets/hero-bg-poster.jpg"
         className="absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none"
         onError={() => setVideoFallbackLevel(prev => prev + 1)}
       >
-        <source src={activeVideoSrc} type="video/webm" />
+        <source src={activeVideoSrc} type="video/mp4" />
       </video>
 
       <div className="absolute inset-0 z-[1]" style={{ backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.28)" }}></div>
@@ -284,7 +335,7 @@ export default function Home() {
                 <div key={i} ref={el => leftSplitRefs.current[i] = el}
                   className="absolute left-full top-[45%] whitespace-nowrap">
                   <SplittingText text={text}
-                    className="uppercase font-bold tracking-tighter text-white text-[32px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05]"
+                    className="uppercase font-bold tracking-tighter text-white text-[40px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05]"
                     style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
                   />
                 </div>
@@ -299,14 +350,14 @@ export default function Home() {
                     className="absolute left-0 top-[45%] whitespace-nowrap text-center md:text-left w-full md:w-auto">
                     {i < 3 ? (
                       <SplittingText text={text}
-                        className="uppercase font-bold tracking-tighter text-white text-[24px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05] inline-block"
+                        className="uppercase font-bold tracking-tighter text-white text-[40px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05] inline-block"
                         style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
                       />
                     ) : (
                       <div className="flex justify-center md:justify-start w-full md:w-auto">
                         <TrueFocus sentence={text} manualMode={!startInnerAnimations}
                           blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
-                          className="text-[#0088ff] font-bold text-[32px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" />
+                          className="text-[#0088ff] font-bold text-[40px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" />
                       </div>
                     )}
                   </div>
