@@ -166,24 +166,28 @@ export default function Home() {
       });
 
       mm.add("(max-width: 767px)", () => {
-        // MOBILE ANIMATION (Hide duplicates)
+        // MOBILE ANIMATION (Optimized for slant clearance)
         const tl = gsap.timeline({
           defaults: { ease: "power3.out" },
           onComplete: () => setStartInnerAnimations(true)
         });
 
-        gsap.set(".left-mask-split", { display: "none" }); // Critical fix for mobile duplicate text
-        gsap.set(logoWrapperRef.current, { left: "50%", top: "25%", scale: 0.6, opacity: 0, xPercent: -50, yPercent: -50 });
-        gsap.set(rightMainRefs.current, { left: "50%", top: "45%", opacity: 0, y: 30, xPercent: -50, autoAlpha: 1 });
-        gsap.set(ctaRef.current, { left: "50%", top: "82%", opacity: 0, y: 30, xPercent: -50 });
+        gsap.set(".left-mask-split", { display: "none" });
+        gsap.set(logoWrapperRef.current, { left: "50%", top: "28%", scale: 1.0, opacity: 0, xPercent: -50, yPercent: -50 });
+        gsap.set(rightMainRefs.current, { left: "50%", top: "52%", opacity: 0, y: 40, xPercent: -50, autoAlpha: 1 });
+        gsap.set(ctaRef.current, { left: "50%", top: "82%", opacity: 0, y: 40, xPercent: -50 });
 
-        tl.to(logoWrapperRef.current, { opacity: 1, scale: 0.8, duration: 1.2 })
+        tl.to(logoWrapperRef.current, { opacity: 1, scale: 1.15, duration: 1.2, ease: "expo.out" })
           .to(whiteOverlayRef.current, { opacity: 0, duration: 0.8 }, "-=0.8")
           .to(rightMainRefs.current, {
-            opacity: 1, y: (i) => i * 42, duration: 0.8, stagger: 0.1
-          }, "-=0.4")
+            opacity: 1,
+            y: (i) => i * 36,
+            duration: 1.0,
+            stagger: 0.1,
+            ease: "power2.out"
+          }, "-=0.6")
           .to(videoRef.current, { opacity: 1, duration: 1.5 }, "-=1.2")
-          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.6");
+          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.8");
       });
 
     }, stageRef);
@@ -209,14 +213,14 @@ export default function Home() {
               ref={logoImgRef}
               src="/assets/synchores-logo-vertical.png"
               alt="Synchores"
-              className="w-full max-w-[180px] md:max-w-[440px] lg:max-w-[520px] xl:max-w-[580px] object-contain"
+              className="w-full max-w-[220px] md:max-w-[440px] lg:max-w-[520px] xl:max-w-[580px] object-contain"
             />
           </div>
 
           {/* Content Stage */}
           <div className="absolute inset-0 z-[50] pointer-events-none">
             
-            {/* Left Mask Split (Portal Effect) */}
+            {/* Left Mask Split (Phase 3 Only) */}
             <div className="left-mask-split absolute left-0 top-0 w-1/2 h-full overflow-hidden">
               {textGroups.slice(0, 2).map((text, i) => (
                 <div key={i} ref={el => leftSplitRefs.current[i] = el}
@@ -230,31 +234,33 @@ export default function Home() {
             </div>
 
             {/* Right Mask Portal (Main Assembly) */}
-            <div className="right-mask-portal absolute left-1/2 top-0 w-1/2 h-full overflow-hidden">
+            <div className="right-mask-portal absolute left-0 md:left-1/2 w-full md:w-1/2 h-full overflow-hidden">
               <div className="relative w-full h-full">
                 {textGroups.map((text, i) => (
                   <div key={i} ref={el => rightMainRefs.current[i] = el}
-                    className="absolute left-0 top-[45%] whitespace-nowrap">
+                    className="absolute left-0 top-[45%] whitespace-nowrap text-center md:text-left w-full md:w-auto">
                     {i < 3 ? (
                       <SplittingText text={text}
-                        className="uppercase font-bold tracking-tighter text-white text-[24px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05]"
+                        className="uppercase font-bold tracking-tighter text-white text-[24px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05] inline-block"
                         style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
                       />
                     ) : (
-                      <TrueFocus sentence={text} manualMode={!startInnerAnimations}
-                        blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
-                        className="text-[#0088ff] font-bold text-[32px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" />
+                      <div className="flex justify-center md:justify-start w-full md:w-auto">
+                        <TrueFocus sentence={text} manualMode={!startInnerAnimations}
+                          blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
+                          className="text-[#0088ff] font-bold text-[32px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" />
+                      </div>
                     )}
                   </div>
                 ))}
 
-                <motion.div ref={ctaRef} className="absolute left-0 top-[45%] flex flex-row gap-4 w-full justify-center md:justify-start z-[40]">
+                <motion.div ref={ctaRef} className="absolute left-0 top-[45%] flex flex-row gap-3 w-full justify-center md:justify-start z-[40]">
                   <button onClick={handleServicesClick}
-                    className="bg-[#0055aa] text-white px-10 md:px-14 py-4 rounded-full font-bold text-base md:text-lg border border-[#4ea8ff]/30 shadow-2xl hover:bg-[#004488] transition-all pointer-events-auto">
+                    className="bg-[#0055aa] text-white px-8 md:px-14 py-3 md:py-4 rounded-full font-bold text-sm md:text-lg border border-[#4ea8ff]/30 shadow-2xl hover:bg-[#004488] transition-all pointer-events-auto">
                     Services
                   </button>
                   <button onClick={handleLearnMoreClick}
-                    className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 md:px-14 py-4 rounded-full font-bold text-base md:text-lg hover:bg-white hover:text-[#0055aa] transition-all pointer-events-auto">
+                    className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 md:px-14 py-3 md:py-4 rounded-full font-bold text-sm md:text-lg hover:bg-white hover:text-[#0055aa] transition-all pointer-events-auto">
                     Learn More
                   </button>
                 </motion.div>
