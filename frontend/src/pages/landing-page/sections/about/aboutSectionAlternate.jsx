@@ -1,12 +1,23 @@
+import { useRef } from "react";
+import { useScroll, useTransform } from "motion/react";
 import { NAVY, SECOND_ABOUT_IMG, AboutLeftImagePanel, AboutRightContentPanel } from "./components";
 
 export function AboutSectionAlternate({ companyInfo }) {
+  const containerRef = useRef(null);
+
+  // Track scroll progress of this section
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
   return (
     <section
+      ref={containerRef}
       id="about-alternate"
       style={{
         position: "relative",
-        overflow: "hidden",
+        overflow: "hidden", // Prevent parallax overflow
         backgroundColor: NAVY,
       }}
     >
@@ -21,6 +32,7 @@ export function AboutSectionAlternate({ companyInfo }) {
         <AboutLeftImagePanel
           imageSrc={companyInfo?.aboutImage2 || SECOND_ABOUT_IMG}
           imageAlt={companyInfo?.aboutImage2Alt}
+          scrollYProgress={scrollYProgress}
         />
         <AboutRightContentPanel
           eyebrow={companyInfo?.commitmentEyebrow}
@@ -28,6 +40,7 @@ export function AboutSectionAlternate({ companyInfo }) {
           statement={companyInfo?.commitmentStatement || companyInfo?.whatWeDoParagraph2}
           valuesLabel={companyInfo?.valuesLabel}
           valuesStatement={companyInfo?.valuesStatement}
+          scrollYProgress={scrollYProgress}
         />
       </div>
 

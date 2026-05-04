@@ -1,12 +1,23 @@
+import { useRef } from "react";
+import { useScroll, useTransform } from "motion/react";
 import { NAVY, AboutLeftPanel, AboutRightPanel } from "./components";
 
 export function AboutSection({ companyInfo }) {
+  const containerRef = useRef(null);
+  
+  // Track scroll progress of this section
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
   return (
     <section
+      ref={containerRef}
       id="about"
       style={{
         position: "relative",
-        overflow: "hidden",
+        overflow: "hidden", // Prevent parallax overflow
         backgroundColor: NAVY,
       }}
     >
@@ -25,10 +36,12 @@ export function AboutSection({ companyInfo }) {
           paragraph2={companyInfo?.aboutParagraph2 || companyInfo?.whatWeDoParagraph1}
           missionLabel={companyInfo?.missionLabel}
           missionStatement={companyInfo?.missionStatement}
+          scrollYProgress={scrollYProgress}
         />
         <AboutRightPanel
           imageSrc={companyInfo?.aboutImage1}
           imageAlt={companyInfo?.aboutImage1Alt}
+          scrollYProgress={scrollYProgress}
         />
       </div>
 
@@ -48,4 +61,3 @@ export function AboutSection({ companyInfo }) {
 }
 
 export default AboutSection;
-

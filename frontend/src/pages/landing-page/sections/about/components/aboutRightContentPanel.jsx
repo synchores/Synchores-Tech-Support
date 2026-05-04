@@ -1,4 +1,5 @@
-import { motion } from "motion/react";
+import { useState, useEffect } from "react";
+import { motion, useTransform } from "motion/react";
 import { NAVY, BLUE_VIVID } from "./constants";
 import { Separator } from "./separator";
 
@@ -8,7 +9,22 @@ export function AboutRightContentPanel({
   statement,
   valuesLabel,
   valuesStatement,
+  scrollYProgress
 }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Parallax: Text appears "near" (moves more significantly)
+  // Amplified range for noticeable movement
+  const yNear = useTransform(scrollYProgress, [0, 1], [150, -150]);
+  const y = isMobile ? 0 : yNear;
+
   const commitmentHeadingText = (heading || "OUR COMMITMENT").trim();
   const headingParts = commitmentHeadingText.includes("\n")
     ? commitmentHeadingText.split("\n").map((part) => part.trim()).filter(Boolean)
@@ -61,117 +77,119 @@ export function AboutRightContentPanel({
         }}
       />
 
-      {/* Eyebrow */}
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.45 }}
-        style={{
-          fontFamily: "'Inter', Arial, sans-serif",
-          fontSize: "11px",
-          fontWeight: 700,
-          color: BLUE_VIVID,
-          textTransform: "uppercase",
-          letterSpacing: "0.2em",
-          margin: "0 0 14px 0",
-        }}
-      >
-        {eyebrow || "Why Choose Us"}
-      </motion.p>
-
-      {/* Heading */}
-      <motion.h2
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.08 }}
-        style={{
-          fontFamily: "'Orbitron', Arial, sans-serif",
-          fontSize: "clamp(2rem, 4vw, 3rem)",
-          fontWeight: 900,
-          color: "#ffffff",
-          lineHeight: 1.1,
-          margin: "0 0 0 0",
-          textTransform: "uppercase",
-          letterSpacing: "0.03em",
-        }}
-      >
-        {headingTop}
-        <br />
-        <span
-          style={{
-            WebkitTextStroke: "1px rgba(255,255,255,0.25)",
-            color: "transparent",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            backgroundImage: `linear-gradient(135deg, #ffffff 40%, ${BLUE_VIVID} 100%)`,
-          }}
-        >
-          {headingBottom}
-        </span>
-      </motion.h2>
-
-      <Separator />
-
-      {/* Body copy */}
-      <motion.p
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        style={{
-          fontFamily: "'Inter', Arial, sans-serif",
-          fontSize: "clamp(14px, 1.4vw, 16px)",
-          fontWeight: 400,
-          color: "rgba(255,255,255,0.82)",
-          lineHeight: 1.75,
-          margin: "0 0 36px 0",
-        }}
-      >
-        {commitmentStatement}
-      </motion.p>
-
-      {/* Value highlight */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 1.0 }}
-        style={{
-          marginTop: "40px",
-          padding: "18px 22px",
-          background: "rgba(30,127,212,0.1)",
-          border: "1px solid rgba(77,166,255,0.3)",
-          borderLeft: `3px solid ${BLUE_VIVID}`,
-          borderRadius: "2px",
-        }}
-      >
-        <p
+      <motion.div style={{ y }}>
+        {/* Eyebrow */}
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "10px",
+            fontSize: "11px",
             fontWeight: 700,
             color: BLUE_VIVID,
             textTransform: "uppercase",
-            letterSpacing: "0.18em",
-            margin: "0 0 6px 0",
+            letterSpacing: "0.2em",
+            margin: "0 0 14px 0",
           }}
         >
-          {valuesLabel || "Our Values"}
-        </p>
-        <p
+          {eyebrow || "Why Choose Us"}
+        </motion.p>
+
+        {/* Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.08 }}
+          style={{
+            fontFamily: "'Orbitron', Arial, sans-serif",
+            fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontWeight: 900,
+            color: "#ffffff",
+            lineHeight: 1.1,
+            margin: "0 0 0 0",
+            textTransform: "uppercase",
+            letterSpacing: "0.03em",
+          }}
+        >
+          {headingTop}
+          <br />
+          <span
+            style={{
+              WebkitTextStroke: "1px rgba(255,255,255,0.25)",
+              color: "transparent",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              backgroundImage: `linear-gradient(135deg, #ffffff 40%, ${BLUE_VIVID} 100%)`,
+            }}
+          >
+            {headingBottom}
+          </span>
+        </motion.h2>
+
+        <Separator />
+
+        {/* Body copy */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
-            fontSize: "13px",
-            color: "rgba(255,255,255,0.6)",
-            lineHeight: 1.65,
-            margin: 0,
-            fontStyle: "italic",
+            fontSize: "clamp(14px, 1.4vw, 16px)",
+            fontWeight: 400,
+            color: "rgba(255,255,255,0.82)",
+            lineHeight: 1.75,
+            margin: "0 0 36px 0",
           }}
         >
-          "{valuesStatement || "Quality, innovation, and reliability are at the heart of everything we do."}"
-        </p>
+          {commitmentStatement}
+        </motion.p>
+
+        {/* Value highlight */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          style={{
+            marginTop: "40px",
+            padding: "18px 22px",
+            background: "rgba(30,127,212,0.1)",
+            border: "1px solid rgba(77,166,255,0.3)",
+            borderLeft: `3px solid ${BLUE_VIVID}`,
+            borderRadius: "2px",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'Inter', Arial, sans-serif",
+              fontSize: "10px",
+              fontWeight: 700,
+              color: BLUE_VIVID,
+              textTransform: "uppercase",
+              letterSpacing: "0.18em",
+              margin: "0 0 6px 0",
+            }}
+          >
+            {valuesLabel || "Our Values"}
+          </p>
+          <p
+            style={{
+              fontFamily: "'Inter', Arial, sans-serif",
+              fontSize: "13px",
+              color: "rgba(255,255,255,0.6)",
+              lineHeight: 1.65,
+              margin: 0,
+              fontStyle: "italic",
+            }}
+          >
+            "{valuesStatement || "Quality, innovation, and reliability are at the heart of everything we do."}"
+          </p>
+        </motion.div>
       </motion.div>
     </div>
   );

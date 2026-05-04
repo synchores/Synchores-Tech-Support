@@ -1,9 +1,24 @@
-import { motion } from "motion/react";
+import { useState, useEffect } from "react";
+import { motion, useTransform } from "motion/react";
 import { TEAM_CODING_IMG } from "./constants";
 
-
 const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
-export function AboutRightPanel({ imageSrc, imageAlt }) {
+
+export function AboutRightPanel({ imageSrc, imageAlt, scrollYProgress }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Parallax: Image appears "far" (moves less significantly)
+  // Amplified range for noticeable movement
+  const yFar = useTransform(scrollYProgress, [0, 1], [70, -70]);
+  const y = isMobile ? 0 : yFar;
+
   const resolvedImageSrc = imageSrc
     ? imageSrc.startsWith("/uploads/")
       ? `${IMAGE_URL}${imageSrc}`
@@ -31,6 +46,7 @@ export function AboutRightPanel({ imageSrc, imageAlt }) {
         style={{
           position: "absolute",
           inset: 0,
+          y // Applying parallax y offset
         }}
       >
         <img
@@ -38,9 +54,11 @@ export function AboutRightPanel({ imageSrc, imageAlt }) {
           alt={imageAlt || "Synchores team"}
           style={{
             width: "100%",
-            height: "100%",
+            height: "140%", // Taller to cover amplified parallax movement
             objectFit: "cover",
             display: "block",
+            position: "absolute",
+            top: "-20%" // Center the taller image
           }}
         />
         {/* Blue-tinted overlay to blend with the navy panel */}

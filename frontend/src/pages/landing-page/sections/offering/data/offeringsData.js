@@ -49,7 +49,7 @@ export const offerings = [
       { step: '03', label: 'Deploy', description: 'We implement and test each layer with minimal downtime.' },
       { step: '04', label: 'Optimize', description: 'We monitor and fine-tune to sustain peak performance.' },
     ],
-    image: '/assets/infa2.png',
+    image: '/uploads/services-images/infa2.png',
     video: '/videos/itinfa_vid_lowqual.mp4',
   },
   {
@@ -102,7 +102,7 @@ export const offerings = [
       { step: '03', label: 'Validate', description: 'We test for reliability, security, and usability.' },
       { step: '04', label: 'Launch', description: 'We deploy confidently and support continuous improvement.' },
     ],
-    image: '/assets/webdev1.png',
+    image: '/uploads/services-images/webdev1.png',
     video: '/videos/webdev_vid3.mp4',
   },
   {
@@ -155,7 +155,7 @@ export const offerings = [
       { step: '03', label: 'Guide', description: 'We support execution through regular advisory checkpoints.' },
       { step: '04', label: 'Measure', description: 'We track outcomes and optimize strategy continuously.' },
     ],
-    image: '/assets/tech-consultancy-2.png',
+    image: '/uploads/services-images/tech-consultancy-2.png',
     video: '/videos/tech_consultancy.mp4',
   },
 ];
