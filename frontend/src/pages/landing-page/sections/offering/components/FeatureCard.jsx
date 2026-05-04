@@ -23,9 +23,19 @@ const MEDIA_BASE_URL = getMediaBaseUrl();
 function toMediaUrl(path = '') {
   if (!path) return '';
   if (/^(https?:|data:|blob:)/i.test(path)) return path;
-  if (path.startsWith('/uploads/')) return `${MEDIA_BASE_URL}${path}`;
-  if (path.startsWith('uploads/')) return `${MEDIA_BASE_URL}/${path}`;
-  return path;
+
+  const baseUrl = MEDIA_BASE_URL.replace(/\/$/, '');
+  const cleanPath = path.startsWith('/') ? path : '/' + path;
+
+  // Standard absolute URL construction: 
+  // If the path is a local upload, we must ensure it uses the full backend origin.
+  // On live host, this will resolve to your production domain.
+  // On local, this will resolve to http://localhost:3000.
+  if (cleanPath.startsWith('/uploads/')) {
+    return `${baseUrl}${cleanPath}`;
+  }
+
+  return cleanPath;
 }
 
 function splitLines(value = '') {
@@ -127,62 +137,71 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
       }));
 
   const renderBulletIcon = () => (
-    <svg
-      className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
-      style={{ color: isDarkMode ? 'var(--landing-text-soft)' : '#0f4a86' }}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="20 6 9 17 4 12"></polyline>
-      <path d="M3 6h18v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"></path>
-    </svg>
+    <div className="mt-1 p-1 rounded-md bg-blue-500/10">
+      <svg
+        className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0"
+        style={{ color: '#0066ff' }}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
   );
 
   const renderFeatureIcon = (imagePath, fallbackImage, prioritize = false) => {
     const { primary, fallback, placeholder } = normalizeImageSources(imagePath, fallbackImage);
 
     return (
-      <img 
-        src={primary}
-        alt="Feature illustration"
-        className="w-full h-full object-cover rounded-xl"
-        loading={prioritize ? 'eager' : 'lazy'}
-        fetchPriority={prioritize ? 'high' : 'auto'}
-        decoding="async"
-        style={{
-          transform: 'translateZ(0)',
-          WebkitTransform: 'translateZ(0)',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden'
-        }}
-        onError={(e) => {
-          const currentSrc = e.currentTarget.getAttribute('src') || '';
-
-          if (currentSrc === fallback || currentSrc === placeholder) {
-            e.currentTarget.src = placeholder;
-            return;
-          }
-
-          e.currentTarget.src = fallback;
-        }}
-      />
+      <div className="relative w-full h-full group overflow-hidden">
+        <img 
+          src={primary}
+          alt="Feature illustration"
+          className="w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-105"
+          loading={prioritize ? 'eager' : 'lazy'}
+          fetchPriority={prioritize ? 'high' : 'auto'}
+          decoding="async"
+          style={{
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+          }}
+          onError={(e) => {
+            const currentSrc = e.currentTarget.getAttribute('src') || '';
+            if (currentSrc === fallback || currentSrc === placeholder) {
+              e.currentTarget.src = placeholder;
+              return;
+            }
+            e.currentTarget.src = fallback;
+          }}
+        />
+        {/* Inner Vignette for Premium Look */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent pointer-events-none" />
+      </div>
     );
   };
 
   return (
-    <div className="w-full py-2 sm:py-4 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden" style={{ background: "linear-gradient(to bottom-right, var(--landing-bg) 0%, var(--landing-bg-strong) 100%)" }}>
-      <div className="w-full max-w-[1400px] mx-auto rounded-lg sm:rounded-2xl">
-        {/* ScrollStack Features */}
+    <div className="w-full py-12 sm:py-20 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden" style={{ background: "var(--landing-bg)" }}>
+      <div className="w-full max-w-[1400px] mx-auto">
+        <div className="mb-12 sm:mb-20 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0055aa] uppercase">
+            Platform Capabilities
+          </h2>
+          <p className="mt-4 text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+            Explore the advanced technological solutions powering our enterprise-grade ecosystem.
+          </p>
+        </div>
+
         <ScrollStack
           className="min-h-auto"
-          itemDistance={15}
-          itemScale={0.04}
-          itemStackDistance={10}
-          stackPosition="25%"
+          itemDistance={24}
+          itemScale={0.05}
+          itemStackDistance={12}
+          stackPosition="20%"
           scaleEndPosition="5%"
           baseScale={1}
           blurAmount={0}
@@ -192,118 +211,83 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
           {features.map((feature, idx) => (
             <ScrollStackItem
               key={idx}
-              itemClassName="hover:shadow-[0_24px_50px_rgba(12,51,94,0.14)] transition-shadow duration-300 cursor-pointer"
+              itemClassName="hover:shadow-2xl transition-all duration-500 cursor-pointer"
               style={{
-                backgroundColor: isDarkMode ? 'var(--card-bg)' : '#cce9ff',
+                backgroundColor: isDarkMode ? '#020b18' : '#ffffff',
+                backdropFilter: 'blur(16px)',
                 opacity: 1,
-                border: "1px solid var(--landing-border-strong)",
+                border: isDarkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,85,170,0.1)",
+                borderRadius: '2.5rem'
               }}
             >
-              <div className="flex flex-col md:flex-row h-full w-full gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12">
-                {/* Column 2: Image - Top on mobile, Right on desktop */}
+              <div className="flex flex-col md:flex-row h-full w-full gap-6 md:gap-12 lg:gap-16">
+                {/* Column 2: Image */}
                 <div
-                  className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last"
+                  className="w-full md:flex-1 h-56 sm:h-72 md:h-full overflow-hidden order-first md:order-last p-2"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
                   {renderFeatureIcon(feature.image, feature.fallbackImage, idx === 0)}
                 </div>
 
-                {/* Column 1: Text Content - Bottom on mobile, Left on desktop */}
+                {/* Column 1: Text Content */}
                 <div
-                  className="flex-1 flex flex-col justify-center min-w-0 p-0 gap-2 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8"
+                  className="flex-1 flex flex-col justify-center min-w-0 p-4 sm:p-6 lg:p-8 gap-4 sm:gap-6"
                   onClick={() => navigate(`/offering/${feature.id}`)}
                 >
-                  <button
-                    type="button"
-                    className="inline-flex w-fit px-3.5 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium tracking-[0.14em] uppercase rounded-full transition-all duration-300 backdrop-blur-sm"
-                    style={{
-                      color: isDarkMode ? 'var(--landing-text)' : '#052a4d',
-                      border: isDarkMode
-                        ? '1px solid rgba(255, 255, 255, 0.35)'
-                        : '1px solid rgba(5, 42, 77, 0.32)',
-                      background: isDarkMode
-                        ? 'rgba(255, 255, 255, 0.08)'
-                        : 'rgba(255, 255, 255, 0.48)',
-                      boxShadow: isDarkMode
-                        ? '0 6px 16px rgba(0,0,0,0.22)'
-                        : '0 6px 16px rgba(5, 42, 77, 0.12)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (isDarkMode) {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.16)';
-                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.5)';
-                        e.currentTarget.style.color = '#ffffff';
-                        e.currentTarget.style.boxShadow = '0 8px 18px rgba(0,0,0,0.28)';
-                        return;
-                      }
+                  <div className="flex items-center gap-3">
+                    <span className="w-8 h-[2px] bg-[#0066ff]" />
+                    <span className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-[#0066ff]">
+                      Advanced Capability
+                    </span>
+                  </div>
 
-                      e.currentTarget.style.background = '#0055aa';
-                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.5)';
-                      e.currentTarget.style.color = '#ffffff';
-                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 85, 170, 0.28)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (isDarkMode) {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                        e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.35)';
-                        e.currentTarget.style.color = 'var(--landing-text)';
-                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.22)';
-                        return;
-                      }
-
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.48)';
-                      e.currentTarget.style.border = '1px solid rgba(5, 42, 77, 0.32)';
-                      e.currentTarget.style.color = '#052a4d';
-                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(5, 42, 77, 0.12)';
-                    }}
-                  >
-                    Learn More
-                  </button>
                   <h2
-                    className="text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold tracking-wide break-words uppercase"
-                    style={{ color: isDarkMode ? 'var(--landing-text)' : '#052a4d' }}
+                    className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight break-words uppercase leading-tight"
+                    style={{ color: isDarkMode ? '#ffffff' : '#020b18' }}
                   >
                     {feature.title}
                   </h2>
+                  
                   <p
-                    className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl leading-relaxed break-words"
-                    style={{ color: isDarkMode ? 'var(--landing-text-muted)' : '#0d3f72' }}
+                    className="text-sm sm:text-base lg:text-lg xl:text-xl leading-relaxed text-gray-500 dark:text-gray-400"
                   >
                     {feature.description}
                   </p>
                   
-                  {/* Separator Line */}
-                  <div
-                    className="my-1 sm:my-3 md:my-4 h-px opacity-90"
-                    style={{
-                      background: isDarkMode
-                        ? 'linear-gradient(to right, var(--landing-border-strong), transparent)'
-                        : 'linear-gradient(to right, rgba(5, 42, 77, 0.3), transparent)',
-                    }}
-                  ></div>
+                  <div className="h-px w-full bg-gradient-to-r from-gray-200 dark:from-white/10 to-transparent" />
                   
-                  {/* Bullets List */}
                   {feature.bullets && (
-                    <ul className="mt-1 sm:mt-3 md:mt-4 space-y-1 sm:space-y-2 md:space-y-3">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
                       {feature.bullets.map((bullet, bulletIdx) => {
                         const words = bullet.split(' ');
                         const firstWord = words[0];
                         const restWords = words.slice(1).join(' ');
                         
                         return (
-                          <li key={bulletIdx} className="flex items-start gap-1.5 sm:gap-2 md:gap-3">
+                          <li key={bulletIdx} className="flex items-start gap-3">
                             {renderBulletIcon()}
                             <span
-                              className="text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg break-words pt-0.5"
-                              style={{ color: isDarkMode ? 'var(--landing-text-soft)' : '#0f4a86' }}
+                              className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-300 pt-0.5 leading-snug"
                             >
-                              <span className="font-bold" style={{ color: isDarkMode ? 'var(--landing-text)' : '#052a4d' }}>{firstWord}</span> {restWords}
+                              <span className="font-bold text-gray-900 dark:text-white">{firstWord}</span> {restWords}
                             </span>
                           </li>
                         );
                       })}
                     </ul>
                   )}
+
+                  <div className="mt-6">
+                    <button
+                      type="button"
+                      className="group flex items-center gap-2 px-6 py-3 bg-[#0066ff] hover:bg-[#0055ee] text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20"
+                    >
+                      Learn More
+                      <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </ScrollStackItem>
