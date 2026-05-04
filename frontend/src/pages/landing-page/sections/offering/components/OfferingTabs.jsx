@@ -7,31 +7,39 @@ export function OfferingTabs({ offerings, activeIndex, onTabClick, progress }) {
           <button
             key={offering.id}
             onClick={() => onTabClick(index)}
-            className="group relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold transition-all text-sm sm:text-base whitespace-nowrap overflow-hidden"
+            className="group relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold transition-all text-sm sm:text-base whitespace-nowrap overflow-hidden border-[1.5px]"
             style={{
               background: "transparent",
-              border: isActive
-                ? "1.5px solid #1e7fd4"
-                : `1.5px solid var(--landing-border-strong)`,
-              color: isActive ? "#ffffff" : "var(--landing-text-soft)", // Text white when active to contrast with fill
+              borderColor: isActive ? "#1e7fd4" : "var(--landing-border-strong)",
               cursor: "pointer",
-              transition: "all 0.3s ease"
             }}
           >
-            {/* The Timer Fill Background (Inside the Pill) */}
-            <div 
-              className="absolute left-0 top-0 h-full bg-[#1e7fd4] transition-all ease-linear z-0"
+            {/* BASE LAYER (The 'Unfilled' Text) */}
+            <span 
+              className="relative z-0 transition-opacity duration-300"
               style={{ 
-                width: isActive ? `${progress}%` : "0%",
-                opacity: isActive ? 1 : 0,
-                transition: isActive ? "width 100ms linear" : "opacity 0.3s ease"
+                color: "#1e7fd4",
+                opacity: isActive ? 1 : 0.6
               }}
-            />
-
-            {/* Label - Relative to stay above fill */}
-            <span className="relative z-10">
+            >
               {offering.title}
             </span>
+
+            {/* PROGRESS LAYER (The 'Filled' Text Overlay) */}
+            <div 
+              className="absolute left-0 top-0 h-full bg-[#1e7fd4] overflow-hidden pointer-events-none z-10"
+              style={{ 
+                width: isActive ? `${progress}%` : "0%",
+                transition: isActive ? "width 100ms linear" : "width 0.3s ease"
+              }}
+            >
+              {/* This span must have identical padding/size as the base to align perfectly */}
+              <span 
+                className="absolute left-0 top-0 h-full flex items-center px-6 sm:px-8 text-white font-bold whitespace-nowrap"
+              >
+                {offering.title}
+              </span>
+            </div>
           </button>
         );
       })}

@@ -147,7 +147,7 @@ const ScrollStack = ({
       const pinStep = containerHeight * (isCompactViewport ? 0.14 : 0.2);
       const triggerLead = containerHeight * 0.1;
       const settleFactor = 0.28;
-      const effectiveStackDistance = itemStackDistance || 10;
+      const effectiveStackDistance = itemStackDistance !== undefined ? itemStackDistance : 10;
 
       // Ensure incoming cards paint above previous cards while stacking.
       card.style.zIndex = String(1000 + i);

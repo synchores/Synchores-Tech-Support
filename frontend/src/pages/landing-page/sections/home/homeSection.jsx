@@ -55,7 +55,7 @@ export default function Home() {
   const stageRef = useRef(null);
   const logoWrapperRef = useRef(null);
   const logoImgRef = useRef(null);
-  const whiteOverlayRef = useRef(null);
+  const blurOverlayRef = useRef(null);
   const leftSplitRefs = useRef([]);
   const rightMainRefs = useRef([]);
   const ctaRef = useRef(null);
@@ -179,8 +179,8 @@ export default function Home() {
         }
 
         // --- PHASE 0: INITIAL STATE (Reset for resilience) ---
-        gsap.set(whiteOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1, zIndex: 100 });
-        gsap.set(".hero-bg-media", { opacity: hasPlayedIntroRef.current ? 1 : 0, zIndex: 5 });
+        gsap.set(blurOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1, zIndex: 100 });
+        gsap.set(".hero-bg-media", { opacity: 1, zIndex: 5 });
         
         gsap.set(logoWrapperRef.current, {
           left: "50%", top: "50%", xPercent: -50, yPercent: -50,
@@ -205,11 +205,11 @@ export default function Home() {
         // --- PHASE 2: Color Reveal ---
         tl.addLabel("reveal", "+=0.2")
           .to(logoImgRef.current, { filter: "grayscale(0%) brightness(1)", duration: 1 }, "reveal")
-          .to(whiteOverlayRef.current, { autoAlpha: 0, duration: 1.2 }, "reveal")
           .to(logoWrapperRef.current, { scale: 1, duration: 1 }, "reveal")
 
         // --- PHASE 3: Symmetrical Centered Split (Anchored) ---
         tl.addLabel("split", "+=0.3")
+          .to(".hero-bg-media", { filter: "blur(0px)", duration: 1.5 }, "split")
           .set([leftSplitRefs.current, rightMainRefs.current.slice(2, 4)], { autoAlpha: 1 })
           .to(leftSplitRefs.current[0], { xPercent: -100, x: `-${cfg.splitGap}`, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split")
           .to(leftSplitRefs.current[1], { xPercent: -100, x: `-${cfg.splitGap}`, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.2")
@@ -240,14 +240,12 @@ export default function Home() {
 
         tl.addLabel("final", "-=0.2")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power2.out" }, "final")
-          .to(".hero-bg-media", { opacity: 1, duration: 1.5 }, "final")
           .to(ctaRef.current, { opacity: 1, duration: 1 }, "final+=0.5")
-          .set(whiteOverlayRef.current, { autoAlpha: 0 })
           .set(".right-mask-portal", { overflow: "visible" });
 
         if (hasPlayedIntroRef.current) {
           tl.progress(1);
-          gsap.set(whiteOverlayRef.current, { autoAlpha: 0 });
+          gsap.set(".hero-bg-media", { filter: "blur(0px)" });
         }
       });
 
@@ -267,8 +265,8 @@ export default function Home() {
         }
 
         // --- PHASE 0: IMMEDIATE REVEAL (Mobile Only) ---
-        gsap.set(whiteOverlayRef.current, { autoAlpha: 0, zIndex: 100 });
-        gsap.set(".hero-bg-media", { opacity: 1, zIndex: 5 });
+        gsap.set(".hero-bg-media", { opacity: 1, zIndex: 10, filter: "blur(0px)" });
+        gsap.set(".loading-gradient", { opacity: 0 });
         gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.6)" });
 
         gsap.set(".left-mask-split", { display: "none" });
@@ -298,11 +296,11 @@ export default function Home() {
             ease: "power2.out"
           }, "reveal+=0.3")
           .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
-          .set(whiteOverlayRef.current, { autoAlpha: 0 });
+          .set(".hero-bg-media", { filter: "blur(0px)" });
 
         if (hasPlayedIntroRef.current) {
           tl.progress(1);
-          gsap.set(whiteOverlayRef.current, { autoAlpha: 0 });
+          gsap.set(".hero-bg-media", { filter: "blur(0px)" });
         }
       });
 
@@ -311,7 +309,7 @@ export default function Home() {
   }, [textGroups]);
 
   return (
-    <section id="home" ref={stageRef} className="relative w-full h-screen min-h-[100svh] flex items-center justify-center overflow-hidden bg-white">
+    <section id="home" ref={stageRef} className="relative w-full h-screen min-h-[100svh] flex items-center justify-center overflow-hidden bg-black">
 
       {isVideoSource(activeVideoSrc) ? (
         <video 
@@ -324,6 +322,7 @@ export default function Home() {
           preload="auto"
           poster="/assets/hero-bg-poster.jpg"
           className="hero-bg-media absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none z-[0]"
+          style={{ filter: isMobileViewport ? "none" : "blur(40px)" }}
           onError={() => setVideoFallbackLevel(prev => prev + 1)}
         >
           <source src={activeVideoSrc} type="video/mp4" />
@@ -335,6 +334,7 @@ export default function Home() {
           src={activeVideoSrc}
           alt="Hero background"
           className="hero-bg-media absolute inset-0 w-full h-full object-cover z-[0] opacity-0"
+          style={{ filter: isMobileViewport ? "none" : "blur(40px)" }}
           onError={(e) => {
             e.currentTarget.src = "/assets/homeImgFback.jpg";
             setVideoFallbackLevel(prev => prev + 1);
@@ -342,14 +342,18 @@ export default function Home() {
         />
       )}
 
-      <div className="absolute inset-0 z-[6]" style={{ backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.28)" }}></div>
-      <div ref={whiteOverlayRef} className={`absolute inset-0 bg-white z-[100] pointer-events-none ${isMobileViewport ? 'opacity-0' : 'opacity-100'}`}></div>
+      <div className="loading-gradient absolute inset-0 z-[6] pointer-events-none transition-opacity duration-1000" style={{ 
+        background: isDarkMode 
+          ? "radial-gradient(circle at center, rgba(0,20,40,0.4) 0%, rgba(0,0,0,0.8) 100%)" 
+          : "radial-gradient(circle at center, rgba(200,230,255,0.2) 0%, rgba(255,255,255,0.4) 100%)" 
+      }}></div>
+      
 
       <div className="relative z-[20] w-full h-full">
         <div className="relative w-full h-full overflow-hidden">
 
           {/* Logo Container (The Shield) */}
-          <div ref={logoWrapperRef} className="absolute flex flex-col items-center z-[110] pointer-events-none">
+          <div ref={logoWrapperRef} className="absolute flex flex-col items-center z-[300] pointer-events-none">
             <img
               ref={logoImgRef}
               src="/assets/synchores-logo-vertical.png"
@@ -359,7 +363,7 @@ export default function Home() {
           </div>
 
           {/* Content Stage */}
-          <div className="absolute inset-0 z-[50] pointer-events-none">
+          <div className="absolute inset-0 z-[100] pointer-events-none">
             
             {/* Left Mask Split (Phase 3 Only) */}
             <div className="left-mask-split absolute left-0 top-0 w-1/2 h-full overflow-hidden">
@@ -368,7 +372,10 @@ export default function Home() {
                   className="absolute left-full top-[45%] whitespace-nowrap">
                   <SplittingText text={text}
                     className="uppercase font-bold tracking-tighter text-white text-[40px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05]"
-                    style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                    style={{ 
+                      fontFamily: 'var(--font-outfit), sans-serif',
+                      filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))' 
+                    }}
                   />
                 </div>
               ))}
@@ -383,13 +390,18 @@ export default function Home() {
                     {i < 3 ? (
                       <SplittingText text={text}
                         className="uppercase font-bold tracking-tighter text-white text-[40px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05] inline-block"
-                        style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+                        style={{ 
+                          fontFamily: 'var(--font-outfit), sans-serif',
+                          filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))'
+                        }}
                       />
                     ) : (
                       <div className="flex justify-center md:justify-start w-full md:w-auto">
                         <TrueFocus sentence={text} manualMode={!startInnerAnimations}
                           blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
-                          className="text-[#0088ff] font-bold text-[40px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" />
+                          className="text-[#0088ff] font-bold text-[40px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" 
+                          style={{ filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.3))' }}
+                        />
                       </div>
                     )}
                   </div>
