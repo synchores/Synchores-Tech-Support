@@ -110,10 +110,11 @@ const ScrollStack = ({
           // Keep these instant for now (they're typically constant in this component).
           scale: target.scale,
           rotation: target.rotation,
-          blur: target.blur
+          blur: target.blur,
+          translateZ: target.translateZ
         };
 
-        const transform = `translate3d(0, ${next.translateY.toFixed(3)}px, 0) scale(${next.scale.toFixed(4)}) rotate(${next.rotation.toFixed(3)}deg)`;
+        const transform = `translate3d(0, ${next.translateY.toFixed(3)}px, ${next.translateZ}px) scale(${next.scale.toFixed(4)}) rotate(${next.rotation.toFixed(3)}deg)`;
         const filter = next.blur > 0 ? `blur(${next.blur.toFixed(3)}px)` : '';
 
         card.style.transform = transform;
@@ -144,35 +145,32 @@ const ScrollStack = ({
 
       const cardTop = cardPositionsRef.current[i];
       const isCompactViewport = containerHeight < 760;
-      const pinStep = containerHeight * (isCompactViewport ? 0.3 : 0.45);
-      const triggerLead = containerHeight * 0.1;
-      const settleFactor = 0.18;
+      // Further increased pinStep to ensure very distinct transitions
+      const pinStep = containerHeight * (isCompactViewport ? 0.35 : 0.55);
+      const triggerLead = containerHeight * 0.12;
+      // Tightened settleFactor for a snappier, more controlled settle
+      const settleFactor = 0.15;
       const effectiveStackDistance = itemStackDistance !== undefined ? itemStackDistance : 10;
 
-      // Ensure incoming cards paint above previous cards while stacking.
-      card.style.zIndex = String(1000 + i);
-      
       // All cards trigger their pin/stack relative to where the first card is
-      // We use a small offset so they don't all snap at once
       const triggerStart = firstCardTop - triggerLead;
       const stackAnchorTop = firstCardTop - triggerStart;
       
       const pinStart = triggerStart + (i * pinStep);
       const rawPinEnd = endElementTop - (containerHeight - stackAnchorTop);
-      const minPinDuration = isCompactViewport ? 0.18 : 0.3;
+      const minPinDuration = isCompactViewport ? 0.2 : 0.35;
       const pinEnd = Math.max(rawPinEnd, pinStart + containerHeight * minPinDuration);
 
       const settleEnd = pinStart + containerHeight * settleFactor;
       const settleProgress = calculateProgress(scrollTop, pinStart, settleEnd);
-      // Smoothstep easing for a softer, less jumpy settle into the stack.
+      // Precise smoothstep for settle transition
       const easedSettle = settleProgress * settleProgress * (3 - 2 * settleProgress);
-      const scale = 1; // All cards same size
+      const scale = 1; 
 
       let translateY = 0;
       const pinnedTranslate = scrollTop - cardTop + stackAnchorTop + (i * effectiveStackDistance);
 
       if (scrollTop >= pinStart && scrollTop <= settleEnd) {
-        // Interpolate from natural position to pinned position instead of snapping.
         translateY = easedSettle * pinnedTranslate;
       } else if (scrollTop > settleEnd) {
         translateY = pinnedTranslate;
@@ -186,7 +184,17 @@ const ScrollStack = ({
         translateY,
         scale,
         rotation: 0,
-        blur: 0
+        blur: 0,
+        // Physically move cards forward in Z space to guarantee stacking order
+        translateZ: i * 20
+      };
+
+      const newTransform = {
+        translateY,
+        scale,
+        rotation: 0,
+        blur: 0,
+        translateZ: i * 20
       };
 
       // Store the target transform; rAF loop will animate towards it.
@@ -195,7 +203,7 @@ const ScrollStack = ({
       // Initialize current transform to avoid a first-frame jump.
       if (!lastTransformsRef.current.has(i)) {
         lastTransformsRef.current.set(i, newTransform);
-        const transform = `translate3d(0, ${newTransform.translateY.toFixed(3)}px, 0) scale(${newTransform.scale.toFixed(4)}) rotate(${newTransform.rotation.toFixed(3)}deg)`;
+        const transform = `translate3d(0, ${newTransform.translateY.toFixed(3)}px, ${newTransform.translateZ}px) scale(${newTransform.scale.toFixed(4)}) rotate(${newTransform.rotation.toFixed(3)}deg)`;
         card.style.transform = transform;
         card.style.opacity = '1';
       }
