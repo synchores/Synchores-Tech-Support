@@ -1,18 +1,55 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 
 const THEME_PRIMARY = '#179cf9';
 const THEME_HOVER = '#1277d4';
 
+function useMediaQuery(query) {
+  const getInitial = () => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return false;
+    }
+
+    return window.matchMedia(query).matches;
+  };
+
+  const [matches, setMatches] = useState(getInitial);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    const mediaQueryList = window.matchMedia(query);
+    const handler = (event) => setMatches(event.matches);
+
+    setMatches(mediaQueryList.matches);
+
+    if (typeof mediaQueryList.addEventListener === 'function') {
+      mediaQueryList.addEventListener('change', handler);
+      return () => mediaQueryList.removeEventListener('change', handler);
+    }
+
+    mediaQueryList.addListener(handler);
+    return () => mediaQueryList.removeListener(handler);
+  }, [query]);
+
+  return matches;
+}
+
 export default function CTASection({ offering, currentIndex, nextOffering, onConsultation, onNextService }) {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   return (
     <section style={{ backgroundColor: 'var(--landing-bg-strong)', padding: 'clamp(48px, 10vh, 72px) clamp(16px, 5vw, 40px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '24px',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? '16px' : '24px',
+            width: '100%',
           }}
         >
           <motion.div
@@ -28,6 +65,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              minWidth: 0,
               backgroundColor: 'var(--landing-surface)',
             }}
           >
@@ -102,6 +140,7 @@ export default function CTASection({ offering, currentIndex, nextOffering, onCon
                 justifyContent: 'space-between',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
+                minWidth: 0,
                 backgroundColor: 'var(--landing-surface)',
                 borderColor: 'rgba(23, 156, 249, 0.3)',
               }}
