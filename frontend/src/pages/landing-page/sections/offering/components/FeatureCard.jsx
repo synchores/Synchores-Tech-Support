@@ -95,8 +95,8 @@ function CardLayout({ feature, index, isDarkMode }) {
       }}
     >
       {/* LEFT CONTENT */}
-      <div className="flex-[1.2] md:flex-1 p-5 sm:p-8 md:p-10 lg:p-12 xl:p-16 flex flex-col justify-between relative z-10">
-        <div className="flex flex-col gap-3 md:gap-5">
+      <div className="flex-[1.2] md:flex-1 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-10 flex flex-col justify-between relative z-10">
+        <div className="flex flex-col gap-3 md:gap-4">
           <div
             className="w-fit px-3 py-1 rounded-full text-[9px] md:text-[10px] font-black tracking-[0.2em] uppercase"
             style={{
@@ -109,7 +109,7 @@ function CardLayout({ feature, index, isDarkMode }) {
           </div>
 
           <h2
-            className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] uppercase"
+            className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-black tracking-tight leading-[1.1] uppercase"
             style={{ 
               color: isDarkMode ? '#fff' : '#052a4d',
               fontFamily: 'var(--font-outfit), sans-serif'
@@ -119,7 +119,7 @@ function CardLayout({ feature, index, isDarkMode }) {
           </h2>
 
           <p
-            className="text-sm sm:text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-xl opacity-80"
+            className="text-sm sm:text-base md:text-lg lg:text-lg font-medium leading-relaxed max-w-xl opacity-80"
             style={{ color: isDarkMode ? '#cbd5e1' : '#0d3f72' }}
           >
             {feature.description}
@@ -127,14 +127,14 @@ function CardLayout({ feature, index, isDarkMode }) {
 
           <div className="w-full h-px bg-[#0066ff]/10 my-1"></div>
 
-          <ul className="space-y-2 md:space-y-3">
+          <ul className="space-y-2 md:space-y-2">
             {feature.bullets.slice(0, 3).map((bullet, i) => {
               const words = bullet.split(' ');
               return (
                 <li key={i} className="flex items-start gap-2 md:gap-3">
                   {renderBulletIcon()}
                   <span
-                    className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl"
+                    className="text-xs sm:text-sm md:text-base lg:text-base"
                     style={{ color: isDarkMode ? '#cbd5e1' : '#0d3f72' }}
                   >
                     <span className="font-bold" style={{ color: isDarkMode ? '#fff' : '#052a4d' }}>
@@ -148,7 +148,7 @@ function CardLayout({ feature, index, isDarkMode }) {
           </ul>
         </div>
 
-        <div className="mt-4 md:mt-8">
+        <div className="mt-4 md:mt-6">
           <button
             onClick={() => navigate(`/offering/${feature.id}`)}
             className="px-6 py-3 md:px-10 md:py-4 bg-[#0066ff] hover:bg-[#0055ee] text-white rounded-xl font-black text-sm md:text-lg transition-all duration-300 shadow-lg shadow-blue-500/20 flex items-center gap-2 group pointer-events-auto"
