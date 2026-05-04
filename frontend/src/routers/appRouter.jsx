@@ -57,7 +57,7 @@ function AppRouter() {
 
   return (
     <Router>
-      <div style={{ minHeight: "100vh", width: "100%", overflowX: "hidden" }}>
+      <div style={{ minHeight: "100vh", width: "100%", overflowX: "clip" }}>
         <Routes>
           <Route
             path="/"
