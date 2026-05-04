@@ -189,14 +189,6 @@ const ScrollStack = ({
         translateZ: i * 20
       };
 
-      const newTransform = {
-        translateY,
-        scale,
-        rotation: 0,
-        blur: 0,
-        translateZ: i * 20
-      };
-
       // Store the target transform; rAF loop will animate towards it.
       targetTransformsRef.current.set(i, newTransform);
 
