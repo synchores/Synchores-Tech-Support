@@ -46,6 +46,17 @@ export default function OfferingSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    const syncTheme = () => setIsDarkMode(root.classList.contains('dark'));
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   const offeringsData = useMemo(() => {
     if (!services?.length) {
@@ -91,48 +102,51 @@ export default function OfferingSection() {
     });
   }, [services]);
 
-  const goTo = useCallback((index) => {
+  const next = useCallback(() => {
+    if (offeringsData.length <= 1) return;
     setIsTransitioning(true);
-    setActiveIndex(index);
     setProgress(0);
-    
-    // Reset transition state after animation
-    setTimeout(() => setIsTransitioning(false), 800);
-  }, []);
+    setTimeout(() => {
+      setActiveIndex((current) => (current + 1) % offeringsData.length);
+      setIsTransitioning(false);
+    }, 500);
+  }, [offeringsData.length]);
 
-  useEffect(() => {
-    if (!offeringsData.length) {
-      setActiveIndex(0);
-      return;
-    }
+  const prev = useCallback(() => {
+    if (offeringsData.length <= 1) return;
+    setIsTransitioning(true);
+    setProgress(0);
+    setTimeout(() => {
+      setActiveIndex((current) =>
+        current === 0 ? offeringsData.length - 1 : current - 1,
+      );
+      setIsTransitioning(false);
+    }, 500);
+  }, [offeringsData.length]);
 
-    if (activeIndex > offeringsData.length - 1) {
-      setActiveIndex(0);
-    }
-  }, [activeIndex, offeringsData.length]);
-
-  const prev = () => {
-    if (!offeringsData.length) return;
-    const newIndex = activeIndex === 0 ? offeringsData.length - 1 : activeIndex - 1;
-    goTo(newIndex);
-  };
-
-  const next = () => {
-    if (!offeringsData.length) return;
-    const newIndex = activeIndex === offeringsData.length - 1 ? 0 : activeIndex + 1;
-    goTo(newIndex);
-  };
+  const goTo = useCallback(
+    (index) => {
+      if (index === activeIndex || offeringsData.length <= 1) return;
+      setIsTransitioning(true);
+      setProgress(0);
+      setTimeout(() => {
+        setActiveIndex(index);
+        setIsTransitioning(false);
+      }, 500);
+    },
+    [activeIndex, offeringsData.length],
+  );
 
   // Auto-advance Engine with Progress Tracking
   useEffect(() => {
     if (offeringsData.length <= 1) return undefined;
 
-    const duration = 5000; // 5 seconds per slide
+    const duration = 7500; // 7.5 seconds per slide
     const interval = 50; // Update every 50ms
     const step = (interval / duration) * 100;
 
     const timer = setInterval(() => {
-      setProgress(prev => {
+      setProgress((prev) => {
         if (prev >= 100) {
           next();
           return 0;
@@ -142,7 +156,7 @@ export default function OfferingSection() {
     }, interval);
 
     return () => clearInterval(timer);
-  }, [activeIndex, offeringsData.length]);
+  }, [activeIndex, offeringsData.length, next]);
 
   const current = offeringsData[activeIndex] || offeringsData[0];
 
@@ -154,7 +168,10 @@ export default function OfferingSection() {
     <section id="offering" style={{ backgroundColor: "var(--landing-bg)", position: "relative" }} className="w-full">
       {/* Section Header */}
       <div className="py-12 px-4 sm:px-6">
-        <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-[#0055aa] text-center">
+        <h2 
+          className="text-3xl sm:text-4xl md:text-6xl font-bold text-center transition-colors duration-300"
+          style={{ color: isDarkMode ? "#ffffff" : "#0055aa" }}
+        >
           OFFERINGS
         </h2>
       </div>
