@@ -11,9 +11,10 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
         flexDirection: "column",
         justifyContent: "center",
         gap: "0",
+        zIndex: 1,
       }}
     >
-      {/* Fingerprint video watermark (replaces number watermark) */}
+      {/* Fingerprint video watermark */}
       <div
         style={{
           width: "clamp(170px, 26vw, 260px)",
@@ -21,16 +22,12 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
           marginBottom: "-8px",
           borderRadius: "4px",
           overflow: "hidden",
-          backgroundColor: "transparent",
-          opacity: 0.16,
-          pointerEvents: "none",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "flex-start",
+          mixBlendMode: "var(--watermark-blend, normal)",
+          isolation: "isolate",
         }}
       >
         <video
-          key={watermarkVideo.key}
+          src={watermarkVideo.src}
           autoPlay
           muted
           loop
@@ -40,19 +37,19 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
             height: "100%",
             objectFit: "contain",
             objectPosition: "left center",
-            display: "block",
+            filter: "var(--watermark-filter, none)",
+            opacity: 0.99,
+            transform: "translateZ(0)",
           }}
           aria-hidden="true"
-        >
-          <source src={watermarkVideo.src} type="video/mp4" />
-        </video>
+        />
       </div>
 
       <div
         style={{
           width: "40px",
           height: "2px",
-          background: "#1e7fd4",
+          background: "var(--landing-accent)",
           marginBottom: "20px",
         }}
       />
@@ -62,7 +59,7 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
           fontFamily: "'Inter', Arial, sans-serif",
           fontSize: "11px",
           fontWeight: 700,
-          color: "#1e7fd4",
+          color: "var(--landing-accent)",
           textTransform: "uppercase",
           letterSpacing: "0.15em",
           margin: "0 0 10px 0",
@@ -110,7 +107,7 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
               borderRadius: "3px",
               background:
                 i === activeIndex
-                  ? "#1e7fd4"
+                  ? "var(--landing-accent)"
                   : "var(--landing-border-strong)",
               border: "none",
               cursor: "pointer",
@@ -120,6 +117,7 @@ export function DeploymentDetails({ current, activeIndex, deployments, onGoTo })
           />
         ))}
       </div>
+
     </div>
   );
 }

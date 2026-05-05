@@ -3,7 +3,7 @@ import Lenis from 'lenis';
 
 export const ScrollStackItem = ({ children, itemClassName = '', style = {} }) => (
   <div
-    className={`scroll-stack-card relative overflow-hidden w-full h-[520px] sm:h-[560px] md:h-[560px] lg:h-[620px] xl:h-[700px] flex items-center justify-center my-0 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 rounded-2xl sm:rounded-3xl lg:rounded-[40px] shadow-[0_0_20px_rgba(0,0,0,0.08)] sm:shadow-[0_0_30px_rgba(0,0,0,0.1)] box-border origin-top will-change-transform ${itemClassName}`.trim()}
+    className={`scroll-stack-card relative overflow-hidden w-full h-[520px] sm:h-[560px] md:h-[560px] lg:h-[620px] xl:h-[700px] flex items-center justify-center my-0 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 rounded-2xl sm:rounded-3xl lg:rounded-[40px] box-border origin-top will-change-transform ${itemClassName}`.trim()}
     style={{
       backfaceVisibility: 'hidden',
       transformStyle: 'preserve-3d',
@@ -317,7 +317,14 @@ const ScrollStack = ({
     );
 
     cardsRef.current = cards;
+    
+    // CRITICAL: Reset transforms temporarily to measure natural document positions
+    // This ensures parallax math is correct even if page reloads in the middle of the section
+    const originalTransforms = cards.map(c => c.style.transform);
+    cards.forEach(card => card.style.transform = 'none');
     cardPositionsRef.current = cards.map((card) => getElementOffset(card));
+    cards.forEach((card, i) => card.style.transform = originalTransforms[i]);
+
     const transformsCache = lastTransformsRef.current;
     const targetsCache = targetTransformsRef.current;
 
