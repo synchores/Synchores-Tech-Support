@@ -90,8 +90,9 @@ function CardLayout({ feature, index, isDarkMode }) {
     <div
       className="w-full h-full flex flex-col md:flex-row overflow-hidden relative"
       style={{
-        backgroundColor: isDarkMode ? 'var(--card-bg)' : '#f0f9ff',
-        borderRadius: 'inherit'
+        backgroundColor: isDarkMode ? '#0c1e3b' : '#f0f9ff',
+        borderRadius: 'inherit',
+        opacity: 1
       }}
     >
       {/* LEFT CONTENT */}
@@ -227,8 +228,9 @@ export function FeatureCard({ offerings: dynamicOfferings }) {
         {features.map((feature, index) => (
           <ScrollStackItem 
             key={feature.id}
-            itemClassName="border border-blue-500/10"
+            itemClassName=""
             style={{
+              backgroundColor: isDarkMode ? '#0c1e3b' : '#ffffff',
               boxShadow: isDarkMode 
                 ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' 
                 : '0 25px 50px -12px rgba(0, 85, 170, 0.12)'

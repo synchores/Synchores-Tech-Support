@@ -210,11 +210,10 @@ export default function Home() {
         // --- PHASE 3: Symmetrical Centered Split (Anchored) ---
         tl.addLabel("split", "+=0.3")
           .to(".hero-bg-media", { filter: "blur(0px)", duration: 1.5 }, "split")
-          .set([leftSplitRefs.current, rightMainRefs.current.slice(2, 4)], { autoAlpha: 1 })
-          .to(leftSplitRefs.current[0], { xPercent: -100, x: `-${cfg.splitGap}`, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split")
-          .to(leftSplitRefs.current[1], { xPercent: -100, x: `-${cfg.splitGap}`, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.2")
-          .to(rightMainRefs.current[2], { xPercent: 0, x: cfg.splitGap, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.4")
-          .to(rightMainRefs.current[3], { xPercent: 0, x: cfg.splitGap, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.6")
+          .to(leftSplitRefs.current[0], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split")
+          .to(leftSplitRefs.current[1], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.2")
+          .to(rightMainRefs.current[2], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.4")
+          .to(rightMainRefs.current[3], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.6")
 
         // --- PHASE 4: The Portal Assembly ---
         tl.addLabel("portal", "+=1.5")

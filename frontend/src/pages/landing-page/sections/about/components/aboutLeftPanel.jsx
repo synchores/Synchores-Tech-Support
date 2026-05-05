@@ -100,26 +100,20 @@ export function AboutLeftPanel({
             fontFamily: "'Orbitron', Arial, sans-serif",
             fontSize: "clamp(2.4rem, 4.8vw, 3.6rem)",
             fontWeight: 900,
-            color: "#ffffff",
             lineHeight: 1.1,
             margin: "0 0 0 0",
             textTransform: "uppercase",
             letterSpacing: "0.03em",
+            WebkitTextStroke: "1px rgba(255,255,255,0.25)",
+            color: "transparent",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            backgroundImage: `linear-gradient(to right, ${BLUE_VIVID} 0%, #ffffff 10%, #ffffff 100%)`,
           }}
         >
           {headingTop}
           <br />
-          <span
-            style={{
-              WebkitTextStroke: "1px rgba(255,255,255,0.25)",
-              color: "transparent",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              backgroundImage: `linear-gradient(135deg, #ffffff 40%, ${BLUE_VIVID} 100%)`,
-            }}
-          >
-            {headingBottom}
-          </span>
+          {headingBottom}
         </motion.h2>
 
         <Separator />
