@@ -56,6 +56,9 @@
   --landing-overlay-mid: rgba(7, 35, 68, 0.08);
   --landing-overlay-side: rgba(10, 74, 136, 0.25);
   --card-bg: #ffffff;
+  --landing-accent: #1e7fd4;
+  --watermark-filter: sepia(1) saturate(5) hue-rotate(175deg);
+  --watermark-blend: screen;
 }
 
 .dark {
@@ -110,6 +113,9 @@
   --landing-overlay-mid: rgba(0, 0, 0, 0.2);
   --landing-overlay-side: rgba(0, 0, 0, 0.6);
   --card-bg: #0c1e3b;
+  --landing-accent: #1e7fd4;
+  --watermark-filter: invert(1) sepia(1) saturate(5) hue-rotate(175deg);
+  --watermark-blend: multiply;
 }
 
 @theme inline {

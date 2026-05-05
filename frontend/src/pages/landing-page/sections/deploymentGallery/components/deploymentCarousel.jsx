@@ -145,6 +145,35 @@ export function DeploymentCarousel() {
           Discover More
         </motion.button>
       </div>
+
+      {/* Surgical Alpha Masking Filters - Stable Rendering */}
+      <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }}>
+        {/* Filter for White-on-Black source (most common) */}
+        <filter id="surgical-alpha-blue">
+          <feColorMatrix 
+            type="matrix" 
+            values="
+              0 0 0 0 0.117
+              0 0 0 0 0.498
+              0 0 0 0 0.831
+              0.33 0.33 0.33 0 0
+            " 
+          />
+        </filter>
+
+        {/* Filter for Black-on-White source */}
+        <filter id="surgical-alpha-blue-inverted">
+          <feColorMatrix 
+            type="matrix" 
+            values="
+              0 0 0 0 0.117
+              0 0 0 0 0.498
+              0 0 0 0 0.831
+              -0.33 -0.33 -0.33 0 1
+            " 
+          />
+        </filter>
+      </svg>
     </section>
   );
 }
