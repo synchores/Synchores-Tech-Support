@@ -91,7 +91,7 @@ const ScrollStack = ({
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
 
-      const cardTop = cardPositionsRef.current[i];
+      const cardTop = cardPositionsRef.current[i] || 0;
       const isCompact = containerHeight < 760;
       const pinStep = containerHeight * (isCompact ? STACK_CONFIG.pinStepMobile : STACK_CONFIG.pinStepDesktop);
       const triggerLead = containerHeight * STACK_CONFIG.triggerLead;
@@ -99,15 +99,23 @@ const ScrollStack = ({
       const triggerStart = firstCardTop - triggerLead;
       const stackAnchorTop = firstCardTop - triggerStart;
       
+      // --- Normalized Timing ---
       const pinStart = triggerStart + (i * pinStep);
-      const rawPinEnd = endElementTop - (containerHeight - stackAnchorTop);
+      const settleDuration = containerHeight * STACK_CONFIG.settleFactor;
+      const settleEnd = pinStart + settleDuration;
+      
+      // --- Calculate End Point ---
+      // For the last card, we want a much longer hold time so it feels stable
+      const isLast = i === cardsRef.current.length - 1;
       const minPinDuration = isCompact ? STACK_CONFIG.minPinMobile : STACK_CONFIG.minPinDesktop;
-      const pinEnd = Math.max(rawPinEnd, pinStart + containerHeight * minPinDuration);
+      const basePinEnd = pinStart + containerHeight * (isLast ? minPinDuration * 1.5 : minPinDuration);
+      const rawPinEnd = endElementTop - (containerHeight - stackAnchorTop);
+      const pinEnd = Math.max(rawPinEnd, basePinEnd);
 
-      const settleEnd = pinStart + containerHeight * STACK_CONFIG.settleFactor;
       const settleProgress = calculateProgress(scrollTop, pinStart, settleEnd);
       const easedSettle = settleProgress * settleProgress * (3 - 2 * settleProgress);
 
+      // Normalize arrival: If card is far away, we move it to a 'starting gate' first
       const pinnedTranslate = scrollTop - cardTop + stackAnchorTop + (i * itemStackDistance);
       let translateY = 0;
 
@@ -172,7 +180,8 @@ const ScrollStack = ({
 
     const triggerStart = firstCardTop - triggerLead;
     const lastPinStart = triggerStart + ((cardsRef.current.length - 1) * pinStep);
-    const minPinEnd = lastPinStart + (containerHeight * minPinDuration);
+    // Include the same 1.5x duration for the last card as in updateCardTransforms
+    const minPinEnd = lastPinStart + (containerHeight * minPinDuration * 1.5);
 
     const endMarkerTop = getElementOffset(endMarkerRef.current);
     const maxScrollWithoutSpacer = endMarkerTop - containerHeight;
