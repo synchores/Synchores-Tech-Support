@@ -168,7 +168,6 @@ function CardLayout({ feature, index, isDarkMode }) {
         </div>
       </div>
 
-      {/* RIGHT MEDIA */}
       <div className="flex-[0.8] md:flex-1 relative overflow-hidden bg-black/5 border-t md:border-t-0 md:border-l border-[#0066ff]/10">
         <img
           src={feature.image}
