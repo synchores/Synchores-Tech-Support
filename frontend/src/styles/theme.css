@@ -114,7 +114,7 @@
   --landing-overlay-side: rgba(0, 0, 0, 0.6);
   --card-bg: #0c1e3b;
   --landing-accent: #1e7fd4;
-  --watermark-filter: invert(1) sepia(1) saturate(5) hue-rotate(175deg);
+  --watermark-filter: invert(1) brightness(1.1) contrast(1.2) sepia(1) saturate(5) hue-rotate(175deg);
   --watermark-blend: multiply;
 }
 
