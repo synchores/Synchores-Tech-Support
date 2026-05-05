@@ -144,7 +144,7 @@ export function AboutLeftPanel({
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
             fontSize: "clamp(15.6px, 1.44vw, 17.4px)",
-            color: "rgba(255,255,255,0.5)",
+            color: "rgba(255,255,255,0.82)",
             lineHeight: 1.75,
             margin: "0 0 36px 0",
           }}
