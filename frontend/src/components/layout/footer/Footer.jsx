@@ -427,8 +427,8 @@ export function Footer({ companyInfo }) {
       {/* Bottom Section */}
       <div
         style={{
-          backgroundColor: "#ffffff",
-          borderTop: "1px solid #e5e5e5",
+          backgroundColor: "var(--landing-surface)",
+          borderTop: "1px solid var(--landing-border)",
           padding: "clamp(24px, 3vw, 32px) clamp(16px, 3vw, 24px)",
           textAlign: "center",
         }}
@@ -437,7 +437,7 @@ export function Footer({ companyInfo }) {
           style={{
             fontFamily: "'Inter', Arial, sans-serif",
             fontSize: "clamp(12.25px, 3.025vw, 16.375px)",
-            color: "#666666",
+            color: "var(--landing-text-muted)",
             margin: 0,
             display: "flex",
             alignItems: "center",
