@@ -38,6 +38,14 @@ function isVideoSource(src = "") {
   return /\.(mp4|webm|ogg|mov)$/i.test(cleanSrc) || src.includes("video/upload");
 }
 
+function getVideoType(src = "") {
+  const cleanSrc = src.split("?")[0].split("#")[0].toLowerCase();
+  if (cleanSrc.endsWith(".webm")) return "video/webm";
+  if (cleanSrc.endsWith(".ogg")) return "video/ogg";
+  if (cleanSrc.endsWith(".mov")) return "video/quicktime";
+  return "video/mp4";
+}
+
 export default function Home() {
   const { hero } = useHeroSection();
   const navigate = useNavigate();
@@ -101,9 +109,29 @@ export default function Home() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const handleViewportChange = (e) => setIsMobileViewport(e.matches);
+    const handleViewportChange = (e) => {
+      setIsMobileViewport(e.matches);
+      // Force a re-calculation of the GSAP context on significant layout shifts
+      setStartInnerAnimations(prev => !prev);
+      setTimeout(() => setStartInnerAnimations(prev => !prev), 10);
+    };
+    
+    // Add a debounced resize listener for "Liquid Layout" safety
+    let resizeTimer;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // This triggers a re-render which causes GSAP matchMedia to re-evaluate
+        setVideoFallbackLevel(v => v); 
+      }, 250);
+    };
+
     mediaQuery.addEventListener("change", handleViewportChange);
-    return () => mediaQuery.removeEventListener("change", handleViewportChange);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      mediaQuery.removeEventListener("change", handleViewportChange);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   // Reset fallback on source change
@@ -148,25 +176,47 @@ export default function Home() {
     const ctx = gsap.context(() => {
       let mm = gsap.matchMedia();
 
-      // --- UNIFIED CINEMATIC ENGINE (Desktop & Tablet >= 768px) ---
-      mm.add("(min-width: 768px)", () => {
-        const isSmall = window.innerWidth < 1280;
-        
-        // Responsive Layout Config (Using Dynamic Units)
+      // --- UNIFIED CINEMATIC ENGINE ---
+      
+      // Desktop (Large Screens >= 1280px)
+      mm.add("(min-width: 1280px)", () => {
         const cfg = {
-          introLogoScale: isSmall ? 0.7 : 0.8,
-          splitGap: isSmall ? "7vw" : "8vw",
-          splitScale: isSmall ? 0.4 : 0.45,
-          splitY: isSmall ? "3.5vh" : "4vh",
-          portalLogoLeft: isSmall ? "20%" : "24%",
-          portalLogoScale: isSmall ? 1.35 : 1.8,
-          portalTextScale: isSmall ? 0.75 : 1.0,
-          portalTextX: isSmall ? "5vw" : "5vw",
-          portalTextYStep: isSmall ? 10 : 12, // Using raw numbers for JS math
-          portalTextYOffset: isSmall ? -20 : -24,
-          portalCtaY: isSmall ? 22 : 26
+          introLogoScale: 0.8,
+          splitGap: "8vw",
+          splitScale: 0.45,
+          splitY: "4vh",
+          portalLogoLeft: "25%",
+          portalLogoTop: "52%",
+          portalLogoScale: 1.25,
+          portalTextScale: 0.85,
+          portalTextX: "5vw",
+          portalTextYStep: 10.5,
+          portalTextYOffset: -21,
+          portalCtaY: 23
         };
+        runCinematicTimeline(cfg);
+      });
 
+      // Tablet / Small Desktop (768px - 1279px)
+      mm.add("(min-width: 768px) and (max-width: 1279px)", () => {
+        const cfg = {
+          introLogoScale: 0.55,
+          splitGap: "6vw",
+          splitScale: 0.32,
+          splitY: "2vh",
+          portalLogoLeft: "22%",
+          portalLogoTop: "54%",
+          portalLogoScale: 0.95,
+          portalTextScale: 0.95,
+          portalTextX: "6vw",
+          portalTextYStep: 7.0,
+          portalTextYOffset: -8,
+          portalCtaY: 18
+        };
+        runCinematicTimeline(cfg);
+      });
+
+      function runCinematicTimeline(cfg) {
         const tl = gsap.timeline({
           defaults: { ease: "power4.inOut" },
           onComplete: () => {
@@ -218,14 +268,15 @@ export default function Home() {
         if (rightMainRefs.current[2]) tl.to(rightMainRefs.current[2], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.4")
         if (rightMainRefs.current[3]) tl.to(rightMainRefs.current[3], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.6")
 
-        // --- PHASE 4: The Portal Assembly ---
+        // --- PHASE 4: The Portal Assembly (Centered Block) ---
         tl.addLabel("portal", "+=1.5")
-          .to(logoWrapperRef.current, { left: cfg.portalLogoLeft, scale: cfg.portalLogoScale, duration: 1.6, ease: "power3.inOut" }, "portal")
-        if (leftMaskRef.current) tl.to(leftMaskRef.current, { width: cfg.portalLogoLeft, duration: 1.6, ease: "power3.inOut" }, "portal")
+          .to(logoWrapperRef.current, { left: cfg.portalLogoLeft, top: cfg.portalLogoTop || "50%", scale: cfg.portalLogoScale, duration: 1.6, ease: "power3.inOut" }, "portal")
+        if (leftMaskRef.current) tl.to(leftMaskRef.current, { width: cfg.portalLogoLeft, opacity: 1, duration: 1.6, ease: "power3.inOut" }, "portal")
         if (rightMaskRef.current) {
+          const offset = cfg.portalLogoLeft === "25%" ? "13%" : "13%";
           tl.to(rightMaskRef.current, { 
-            left: `calc(${cfg.portalLogoLeft} + 12%)`, 
-            width: `calc(100% - ${cfg.portalLogoLeft} - 15%)`, 
+            left: `calc(${cfg.portalLogoLeft} + ${offset})`, 
+            width: `calc(100% - ${cfg.portalLogoLeft})`, 
             duration: 1.6, ease: "power3.inOut" 
           }, "portal")
         }
@@ -234,13 +285,14 @@ export default function Home() {
           .to(rightMainRefs.current.slice(0, 2), { autoAlpha: 1, opacity: 1, duration: 0.8 }, "portal+=0.4")
 
           .to(rightMainRefs.current, {
-            xPercent: 0, x: cfg.portalTextX, yPercent: 0,
+            xPercent: 0, left: 0, x: cfg.portalTextX, yPercent: 0,
             scale: cfg.portalTextScale,
+            top: "45%",
             y: (i) => (i * cfg.portalTextYStep + cfg.portalTextYOffset) + "vh", 
             duration: 1.6, stagger: 0.05, ease: "power3.inOut"
           }, "portal")
           
-          .to(ctaRef.current, { x: cfg.portalTextX, y: cfg.portalCtaY + "vh", duration: 1.6, ease: "power3.inOut" }, "portal")
+          .to(ctaRef.current, { left: 0, xPercent: 0, x: cfg.portalTextX, y: cfg.portalCtaY + "vh", duration: 1.6, ease: "power3.inOut" }, "portal")
 
         tl.addLabel("final", "-=0.2")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power2.out" }, "final")
@@ -251,7 +303,7 @@ export default function Home() {
           tl.progress(1);
           if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
         }
-      });
+      }
 
       mm.add("(max-width: 767px)", () => {
         // MOBILE ANIMATION
@@ -275,11 +327,11 @@ export default function Home() {
 
         if (leftMaskRef.current) gsap.set(leftMaskRef.current, { display: "none" });
         gsap.set(logoWrapperRef.current, { 
-          left: "50%", top: "32%", scale: 0.15, opacity: 0, xPercent: -50, yPercent: -50,
+          left: "50%", top: "28%", scale: 0.15, opacity: 0, xPercent: -50, yPercent: -50,
           clipPath: "inset(0% 0% 25% 0%)"
         });
         gsap.set(rightMainRefs.current, { 
-          left: "50%", top: "52%", opacity: 0, y: 40, xPercent: -50, yPercent: 0, x: 0,
+          left: "50%", top: "56%", opacity: 0, y: 40, xPercent: -50, yPercent: 0, x: 0,
           transformOrigin: "center center", autoAlpha: 1 
         });
         gsap.set(ctaRef.current, { 
@@ -329,7 +381,7 @@ export default function Home() {
           style={{ filter: isMobileViewport ? "none" : "blur(40px)" }}
           onError={() => setVideoFallbackLevel(prev => prev + 1)}
         >
-          <source src={activeVideoSrc} type="video/mp4" />
+          <source src={activeVideoSrc} type={getVideoType(activeVideoSrc)} />
           <source src={FALLBACK_BACKGROUND_WEBM} type="video/webm" />
         </video>
       ) : (
@@ -375,7 +427,7 @@ export default function Home() {
                 <div key={i} ref={el => leftSplitRefs.current[i] = el}
                   className="absolute left-full top-[45%] whitespace-nowrap">
                   <SplittingText text={text}
-                    className="uppercase font-bold tracking-tighter text-white text-[40px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05]"
+                    className="uppercase font-bold tracking-tighter text-white text-[clamp(24px,6vw,28px)] md:text-[clamp(38px,6vw,48px)] lg:text-[clamp(42px,5vw,58px)] xl:text-[82px] leading-[1.05]"
                     style={{ 
                       fontFamily: 'var(--font-outfit), sans-serif',
                       filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))' 
@@ -392,8 +444,8 @@ export default function Home() {
                   <div key={i} ref={el => rightMainRefs.current[i] = el}
                     className="absolute left-0 top-[45%] whitespace-nowrap md:whitespace-normal text-center md:text-left w-full md:w-auto px-4 md:px-0">
                     {i < 3 ? (
-                      <SplittingText text={text}
-                        className="uppercase font-bold tracking-tighter text-white text-[40px] md:text-[54px] lg:text-[68px] xl:text-[82px] leading-[1.05] inline-block"
+                        <SplittingText text={text}
+                          className="uppercase font-bold tracking-tighter text-white text-[clamp(24px,6vw,28px)] md:text-[clamp(38px,6vw,48px)] lg:text-[clamp(42px,5vw,58px)] xl:text-[82px] leading-[1.05] inline-block"
                         style={{ 
                           fontFamily: 'var(--font-outfit), sans-serif',
                           filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))'
@@ -403,7 +455,7 @@ export default function Home() {
                       <div className="flex justify-center md:justify-start w-full md:w-auto">
                         <TrueFocus sentence={text} manualMode={!startInnerAnimations}
                           blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
-                          className="text-[#0088ff] font-bold text-[40px] md:text-[68px] lg:text-[84px] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" 
+                          className="text-[#0088ff] font-bold text-[clamp(24px,7vw,28px)] md:text-[clamp(38px,7vw,48px)] lg:text-[clamp(42px,6vw,58px)] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" 
                           style={{ filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.3))' }}
                         />
                       </div>
