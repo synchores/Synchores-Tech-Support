@@ -60,6 +60,9 @@ export default function Home() {
   const rightMainRefs = useRef([]);
   const ctaRef = useRef(null);
   const videoRef = useRef(null);
+  const leftMaskRef = useRef(null);
+  const rightMaskRef = useRef(null);
+  const loadingGradientRef = useRef(null);
 
   // Data Resolution
   const headline = useMemo(() => hero?.headline?.trim() || FALLBACK_HEADLINE, [hero?.headline]);
@@ -179,8 +182,8 @@ export default function Home() {
         }
 
         // --- PHASE 0: INITIAL STATE (Reset for resilience) ---
-        gsap.set(blurOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1, zIndex: 100 });
-        gsap.set(".hero-bg-media", { opacity: 1, zIndex: 5 });
+        if (blurOverlayRef.current) gsap.set(blurOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1, zIndex: 100 });
+        if (videoRef.current) gsap.set(videoRef.current, { opacity: 1, zIndex: 5 });
         
         gsap.set(logoWrapperRef.current, {
           left: "50%", top: "50%", xPercent: -50, yPercent: -50,
@@ -209,23 +212,25 @@ export default function Home() {
 
         // --- PHASE 3: Symmetrical Centered Split (Anchored) ---
         tl.addLabel("split", "+=0.3")
-          .to(".hero-bg-media", { filter: "blur(0px)", duration: 1.5 }, "split")
-          .to(leftSplitRefs.current[0], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split")
-          .to(leftSplitRefs.current[1], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.2")
-          .to(rightMainRefs.current[2], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.4")
-          .to(rightMainRefs.current[3], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.6")
+        if (videoRef.current) tl.to(videoRef.current, { filter: "blur(0px)", duration: 1.5 }, "split");
+        if (leftSplitRefs.current[0]) tl.to(leftSplitRefs.current[0], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split")
+        if (leftSplitRefs.current[1]) tl.to(leftSplitRefs.current[1], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.2")
+        if (rightMainRefs.current[2]) tl.to(rightMainRefs.current[2], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.4")
+        if (rightMainRefs.current[3]) tl.to(rightMainRefs.current[3], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.6")
 
         // --- PHASE 4: The Portal Assembly ---
         tl.addLabel("portal", "+=1.5")
           .to(logoWrapperRef.current, { left: cfg.portalLogoLeft, scale: cfg.portalLogoScale, duration: 1.6, ease: "power3.inOut" }, "portal")
-          .to(".left-mask-split", { width: cfg.portalLogoLeft, duration: 1.6, ease: "power3.inOut" }, "portal")
-          .to(".right-mask-portal", { 
+        if (leftMaskRef.current) tl.to(leftMaskRef.current, { width: cfg.portalLogoLeft, duration: 1.6, ease: "power3.inOut" }, "portal")
+        if (rightMaskRef.current) {
+          tl.to(rightMaskRef.current, { 
             left: `calc(${cfg.portalLogoLeft} + 12%)`, 
             width: `calc(100% - ${cfg.portalLogoLeft} - 15%)`, 
             duration: 1.6, ease: "power3.inOut" 
           }, "portal")
+        }
           
-          .to(leftSplitRefs.current, { x: "20vw", opacity: 0, duration: 1.6, ease: "power3.inOut" }, "portal")
+        tl.to(leftSplitRefs.current, { x: "20vw", opacity: 0, duration: 1.6, ease: "power3.inOut" }, "portal")
           .to(rightMainRefs.current.slice(0, 2), { autoAlpha: 1, opacity: 1, duration: 0.8 }, "portal+=0.4")
 
           .to(rightMainRefs.current, {
@@ -240,11 +245,11 @@ export default function Home() {
         tl.addLabel("final", "-=0.2")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power2.out" }, "final")
           .to(ctaRef.current, { opacity: 1, duration: 1 }, "final+=0.5")
-          .set(".right-mask-portal", { overflow: "visible" });
+        if (rightMaskRef.current) tl.set(rightMaskRef.current, { overflow: "visible" });
 
         if (hasPlayedIntroRef.current) {
           tl.progress(1);
-          gsap.set(".hero-bg-media", { filter: "blur(0px)" });
+          if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
         }
       });
 
@@ -264,11 +269,11 @@ export default function Home() {
         }
 
         // --- PHASE 0: IMMEDIATE REVEAL (Mobile Only) ---
-        gsap.set(".hero-bg-media", { opacity: 1, zIndex: 10, filter: "blur(0px)" });
-        gsap.set(".loading-gradient", { opacity: 0 });
+        if (videoRef.current) gsap.set(videoRef.current, { opacity: 1, zIndex: 10, filter: "blur(0px)" });
+        if (loadingGradientRef.current) gsap.set(loadingGradientRef.current, { opacity: 0 });
         gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.6)" });
 
-        gsap.set(".left-mask-split", { display: "none" });
+        if (leftMaskRef.current) gsap.set(leftMaskRef.current, { display: "none" });
         gsap.set(logoWrapperRef.current, { 
           left: "50%", top: "32%", scale: 0.15, opacity: 0, xPercent: -50, yPercent: -50,
           clipPath: "inset(0% 0% 25% 0%)"
@@ -295,11 +300,11 @@ export default function Home() {
             ease: "power2.out"
           }, "reveal+=0.3")
           .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
-          .set(".hero-bg-media", { filter: "blur(0px)" });
+        if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
 
         if (hasPlayedIntroRef.current) {
           tl.progress(1);
-          gsap.set(".hero-bg-media", { filter: "blur(0px)" });
+          if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
         }
       });
 
@@ -341,7 +346,7 @@ export default function Home() {
         />
       )}
 
-      <div className="loading-gradient absolute inset-0 z-[6] pointer-events-none transition-opacity duration-1000" style={{ 
+      <div ref={loadingGradientRef} className="loading-gradient absolute inset-0 z-[6] pointer-events-none transition-opacity duration-1000" style={{ 
         background: isDarkMode 
           ? "radial-gradient(circle at center, rgba(0,20,40,0.4) 0%, rgba(0,0,0,0.8) 100%)" 
           : "radial-gradient(circle at center, rgba(200,230,255,0.2) 0%, rgba(255,255,255,0.4) 100%)" 
@@ -365,7 +370,7 @@ export default function Home() {
           <div className="absolute inset-0 z-[100] pointer-events-none">
             
             {/* Left Mask Split (Phase 3 Only) */}
-            <div className="left-mask-split absolute left-0 top-0 w-1/2 h-full overflow-hidden">
+            <div ref={leftMaskRef} className="left-mask-split absolute left-0 top-0 w-1/2 h-full overflow-hidden">
               {textGroups.slice(0, 2).map((text, i) => (
                 <div key={i} ref={el => leftSplitRefs.current[i] = el}
                   className="absolute left-full top-[45%] whitespace-nowrap">
@@ -381,7 +386,7 @@ export default function Home() {
             </div>
 
             {/* Right Mask Portal (Main Assembly) */}
-            <div className="right-mask-portal absolute left-0 md:left-1/2 w-full md:w-1/2 h-full overflow-hidden">
+            <div ref={rightMaskRef} className="right-mask-portal absolute left-0 md:left-1/2 w-full md:w-1/2 h-full overflow-hidden">
               <div className="relative w-full h-full">
                 {textGroups.map((text, i) => (
                   <div key={i} ref={el => rightMainRefs.current[i] = el}

@@ -71,14 +71,22 @@ const ScrollStack = ({
   }, [useWindowScroll]);
 
   const measurePositions = useCallback(() => {
-    if (!cardsRef.current.length) return;
-    const cards = cardsRef.current;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    // Refresh cards list to handle dynamic content/hydration
+    const cards = Array.from(scroller.querySelectorAll('.scroll-stack-card'));
+    cardsRef.current = cards;
+    
+    if (!cards.length) return;
     
     // TEMPORARY RESET for measurement
     const originalTransforms = cards.map(c => c.style.transform);
     cards.forEach(card => card.style.transform = 'none');
     cardPositionsRef.current = cards.map(card => getElementOffset(card));
-    cards.forEach((card, i) => card.style.transform = originalTransforms[i]);
+    cards.forEach((card, i) => {
+      card.style.transform = originalTransforms[i] || '';
+    });
   }, [getElementOffset]);
 
   const updateCardTransforms = useCallback(() => {
@@ -86,33 +94,32 @@ const ScrollStack = ({
     isUpdatingRef.current = true;
 
     const { scrollTop, containerHeight } = getScrollData();
-    const endElement = endMarkerRef.current || scrollerRef.current?.querySelector('.scroll-stack-end');
-    const endElementTop = getElementOffset(endElement);
     const firstCardTop = cardPositionsRef.current[0];
     const triggerStart = firstCardTop - (containerHeight * STACK_CONFIG.triggerLead);
     const stackAnchorTop = firstCardTop - triggerStart;
+
+    // Calculate a UNIFIED pin end for the whole stack
+    const lastCardIdx = cardsRef.current.length - 1;
+    const lastNaturalGap = cardPositionsRef.current[lastCardIdx] - firstCardTop;
+    const lastPinStart = triggerStart + lastNaturalGap;
+    const lastPinEnd = lastPinStart + (containerHeight * STACK_CONFIG.minPinDuration * STACK_CONFIG.lastCardBuffer);
+    
+    const endElement = endMarkerRef.current || scrollerRef.current?.querySelector('.scroll-stack-end');
+    const endElementTop = getElementOffset(endElement);
+    const rawPinEnd = endElementTop - (containerHeight - stackAnchorTop);
+    const universalPinEnd = Math.max(rawPinEnd, lastPinEnd);
 
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
 
       const cardTop = cardPositionsRef.current[i];
       
-      // DYNAMIC GAP CALCULATION:
-      // The 'pinStep' for each card is its actual distance from the first card in the DOM.
-      // This ensures arrival speed is perfectly uniform across all cards.
       const naturalGap = cardTop - firstCardTop;
       const pinStart = triggerStart + naturalGap;
       
       const settleDuration = containerHeight * STACK_CONFIG.settleFactor;
       const settleEnd = pinStart + settleDuration;
       
-      const isLast = i === cardsRef.current.length - 1;
-      const durationMult = isLast ? STACK_CONFIG.lastCardBuffer : 1;
-      const pinDuration = containerHeight * STACK_CONFIG.minPinDuration * durationMult;
-      
-      const rawPinEnd = endElementTop - (containerHeight - stackAnchorTop);
-      const pinEnd = Math.max(rawPinEnd, pinStart + pinDuration);
-
       const settleProgress = Math.max(0, Math.min(1, (scrollTop - pinStart) / settleDuration));
       const easedSettle = settleProgress * settleProgress * (3 - 2 * settleProgress);
 
@@ -125,8 +132,8 @@ const ScrollStack = ({
         translateY = pinnedTranslate;
       }
 
-      if (scrollTop > pinEnd) {
-        translateY = pinEnd - cardTop + stackAnchorTop + (i * itemStackDistance);
+      if (scrollTop > universalPinEnd) {
+        translateY = universalPinEnd - cardTop + stackAnchorTop + (i * itemStackDistance);
       }
 
       targetTransformsRef.current.set(i, { translateY, translateZ: i * 20 });
@@ -205,12 +212,20 @@ const ScrollStack = ({
 
     updateEndSpacer();
 
-    // DYNAMIC LAYOUT SUPPORT
+    // DYNAMIC LAYOUT SUPPORT: Watch for DOM changes (new cards)
+    const mo = new MutationObserver(() => {
+      measurePositions();
+      updateEndSpacer();
+    });
+    mo.observe(scroller, { childList: true, subtree: true });
+
     const ro = new ResizeObserver(() => {
       measurePositions();
       updateEndSpacer();
     });
     ro.observe(scroller);
+    
+    // Also observe initial cards
     cards.forEach(c => ro.observe(c));
 
     const handleLoad = () => {
@@ -222,10 +237,17 @@ const ScrollStack = ({
     return () => {
       window.removeEventListener('load', handleLoad);
       ro.disconnect();
+      mo.disconnect();
       cancelAnimationFrame(animationFrameRef.current);
       lenis.destroy();
     };
   }, [useWindowScroll, updateCardTransforms, animateCardTransforms, updateEndSpacer, measurePositions]);
+
+  // Separate effect for dynamic children updates to avoid re-initializing Lenis/RAF
+  useEffect(() => {
+    measurePositions();
+    updateEndSpacer();
+  }, [children, measurePositions, updateEndSpacer]);
 
   const containerClassName = useWindowScroll
     ? `relative w-full ${className}`.trim()
