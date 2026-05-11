@@ -88,7 +88,7 @@ export function AboutRightContentPanel({
             fontFamily: "'Inter', Arial, sans-serif",
             fontSize: "11px",
             fontWeight: 700,
-            color: BLUE_VIVID,
+            color: "#ffffff",
             textTransform: "uppercase",
             letterSpacing: "0.2em",
             margin: "0 0 14px 0",
@@ -111,11 +111,7 @@ export function AboutRightContentPanel({
             margin: "0 0 0 0",
             textTransform: "uppercase",
             letterSpacing: "0.03em",
-            WebkitTextStroke: "1px rgba(255,255,255,0.25)",
-            color: "transparent",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            backgroundImage: `linear-gradient(to right, ${BLUE_VIVID} 0%, #ffffff 10%, #ffffff 100%)`,
+            color: BLUE_VIVID,
           }}
         >
           {headingTop}
@@ -163,7 +159,7 @@ export function AboutRightContentPanel({
               fontFamily: "'Inter', Arial, sans-serif",
               fontSize: "10px",
               fontWeight: 700,
-              color: BLUE_VIVID,
+              color: "#ffffff",
               textTransform: "uppercase",
               letterSpacing: "0.18em",
               margin: "0 0 6px 0",
