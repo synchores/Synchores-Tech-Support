@@ -1,13 +1,13 @@
 export function OfferingTabs({ offerings, activeIndex, onTabClick, progress }) {
   return (
-    <div className="w-full flex flex-row gap-3 sm:gap-4 items-center justify-center max-w-6xl mx-auto flex-wrap px-4 sm:px-6 mb-8 mt-4">
+    <div className="w-full flex flex-col sm:flex-row gap-2 sm:gap-4 items-center justify-center max-w-6xl mx-auto px-4 sm:px-6 mb-8 mt-4">
       {offerings.map((offering, index) => {
         const isActive = activeIndex === index;
         return (
           <button
             key={offering.id}
             onClick={() => onTabClick(index)}
-            className="group relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold transition-all text-sm sm:text-base whitespace-nowrap overflow-hidden border-[1.5px]"
+            className="group relative w-full sm:w-auto sm:flex-none px-4 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold transition-all text-[12px] sm:text-base whitespace-nowrap overflow-hidden border-[1.5px] flex items-center justify-center"
             style={{
               background: "transparent",
               borderColor: isActive ? "#1e7fd4" : "var(--landing-border-strong)",
@@ -27,16 +27,13 @@ export function OfferingTabs({ offerings, activeIndex, onTabClick, progress }) {
 
             {/* PROGRESS LAYER (The 'Filled' Text Overlay) */}
             <div 
-              className="absolute left-0 top-0 h-full bg-[#1e7fd4] overflow-hidden pointer-events-none z-10"
+              className="absolute left-0 top-0 w-full h-full bg-[#1e7fd4] pointer-events-none z-10 flex items-center justify-center"
               style={{ 
-                width: isActive ? `${progress}%` : "0%",
-                transition: isActive ? "width 100ms linear" : "width 0.3s ease"
+                clipPath: isActive ? `inset(0 ${100 - progress}% 0 0)` : "inset(0 100% 0 0)",
+                transition: isActive ? "clip-path 100ms linear" : "clip-path 0.3s ease"
               }}
             >
-              {/* This span must have identical padding/size as the base to align perfectly */}
-              <span 
-                className="absolute left-0 top-0 h-full flex items-center px-6 sm:px-8 text-white font-bold whitespace-nowrap"
-              >
+              <span className="text-white font-bold whitespace-nowrap">
                 {offering.title}
               </span>
             </div>

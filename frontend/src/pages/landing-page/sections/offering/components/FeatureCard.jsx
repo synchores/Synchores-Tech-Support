@@ -106,7 +106,7 @@ function CardLayout({ feature, index, isDarkMode }) {
               border: '1px solid rgba(0,102,255,0.15)'
             }}
           >
-            Capability 0{index + 1}
+            SERVICES
           </div>
 
           <h2

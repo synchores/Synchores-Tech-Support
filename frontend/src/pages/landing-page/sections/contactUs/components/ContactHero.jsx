@@ -35,7 +35,7 @@ export default function ContactHero({ contactBg, contactBgAlt, eyebrow, heading 
           <motion.p
             style={{
               fontFamily: "'Inter', Arial, sans-serif",
-              fontSize: "12px",
+              fontSize: "14px",
               fontWeight: 700,
               color: "#1e7fd4",
               textTransform: "uppercase",
