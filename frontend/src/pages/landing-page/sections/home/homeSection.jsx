@@ -63,7 +63,6 @@ export default function Home() {
   const stageRef = useRef(null);
   const logoWrapperRef = useRef(null);
   const logoImgRef = useRef(null);
-  const blurOverlayRef = useRef(null);
   const leftSplitRefs = useRef([]);
   const rightMainRefs = useRef([]);
   const ctaRef = useRef(null);
@@ -80,7 +79,7 @@ export default function Home() {
 
   const activeVideoSrc = useMemo(() => {
     const cmsSrc = resolveMediaSource(hero?.backgroundImage?.trim());
-    
+
     // Tiered Priority (User Request):
     // 1. Official Local Fallback (Repo)
     // 2. CMS Background (Live)
@@ -115,14 +114,14 @@ export default function Home() {
       setStartInnerAnimations(prev => !prev);
       setTimeout(() => setStartInnerAnimations(prev => !prev), 10);
     };
-    
+
     // Add a debounced resize listener for "Liquid Layout" safety
     let resizeTimer;
     const handleResize = () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         // This triggers a re-render which causes GSAP matchMedia to re-evaluate
-        setVideoFallbackLevel(v => v); 
+        setVideoFallbackLevel(v => v);
       }, 250);
     };
 
@@ -162,9 +161,9 @@ export default function Home() {
     if (videoRef.current) {
       if (videoRef.current.tagName === "VIDEO") {
         videoRef.current.load();
-        videoRef.current.play().catch(() => {});
+        videoRef.current.play().catch(() => { });
       }
-      
+
       // Force visibility if animation already finished
       if (hasPlayedIntroRef.current) {
         gsap.set(videoRef.current, { opacity: 1 });
@@ -177,41 +176,45 @@ export default function Home() {
       let mm = gsap.matchMedia();
 
       // --- UNIFIED CINEMATIC ENGINE ---
-      
-      // Desktop (Large Screens >= 1280px)
-      mm.add("(min-width: 1280px)", () => {
-        const cfg = {
-          introLogoScale: 0.8,
-          splitGap: "8vw",
-          splitScale: 0.45,
-          splitY: "4vh",
-          portalLogoLeft: "25%",
-          portalLogoTop: "52%",
-          portalLogoScale: 1.25,
-          portalTextScale: 0.85,
-          portalTextX: "5vw",
-          portalTextYStep: 10.5,
-          portalTextYOffset: -21,
-          portalCtaY: 23
-        };
-        runCinematicTimeline(cfg);
-      });
 
-      // Tablet / Small Desktop (768px - 1279px)
-      mm.add("(min-width: 768px) and (max-width: 1279px)", () => {
+      // Tablet / Small Desktop (768px - 1023px)
+      mm.add("(min-width: 768px) and (max-width: 1023px)", () => {
         const cfg = {
           introLogoScale: 0.55,
           splitGap: "6vw",
           splitScale: 0.32,
           splitY: "2vh",
-          portalLogoLeft: "22%",
-          portalLogoTop: "54%",
-          portalLogoScale: 0.95,
-          portalTextScale: 0.95,
-          portalTextX: "6vw",
-          portalTextYStep: 7.0,
-          portalTextYOffset: -8,
-          portalCtaY: 18
+
+          // --- POST-ANIMATION (PHASE 5) SETTINGS ---
+          portalLogoLeft: "22%",    // Logo horizontal center
+          portalLogoTop: "54%",     // Logo vertical center
+          portalLogoScale: 0.95,    // Final logo size
+          portalTextScale: 0.95,    // Final text group size
+          portalTextX: "6vw",       // Horizontal offset for text from center
+          portalTextYStep: 7.0,     // Vertical gap between text lines
+          portalTextYOffset: -8,    // Vertical shift for entire text group
+          portalCtaGap: 10          // Increased to align with logo bottom (vh)
+        };
+        runCinematicTimeline(cfg);
+      });
+
+      // Desktop / Large Screens (>= 1024px)
+      mm.add("(min-width: 1024px)", () => {
+        const cfg = {
+          introLogoScale: 1.0,
+          splitGap: "8vw",
+          splitScale: 0.45,
+          splitY: "4vh",
+
+          // --- POST-ANIMATION (PHASE 5) SETTINGS ---
+          portalLogoLeft: "25%",    // Logo horizontal center
+          portalLogoTop: "52%",     // Logo vertical center
+          portalLogoScale: 1.4,    // Final logo size
+          portalTextScale: 0.85,    // Final text group size
+          portalTextX: "5vw",       // Horizontal offset for text from center
+          portalTextYStep: 10.5,    // Vertical gap between text lines
+          portalTextYOffset: -21,   // Vertical shift for entire text group
+          portalCtaGap: 14           // Increased to align with logo bottom (vh)
         };
         runCinematicTimeline(cfg);
       });
@@ -228,33 +231,32 @@ export default function Home() {
         // Forced Playback ignition
         if (videoRef.current && videoRef.current.tagName === "VIDEO") {
           videoRef.current.load();
-          videoRef.current.play().catch(() => {});
+          videoRef.current.play().catch(() => { });
         }
 
         // --- PHASE 0: INITIAL STATE (Reset for resilience) ---
-        if (blurOverlayRef.current) gsap.set(blurOverlayRef.current, { autoAlpha: hasPlayedIntroRef.current ? 0 : 1, zIndex: 100 });
         if (videoRef.current) gsap.set(videoRef.current, { opacity: 1, zIndex: 5 });
-        
+
         gsap.set(logoWrapperRef.current, {
           left: "50%", top: "50%", xPercent: -50, yPercent: -50,
           clipPath: "inset(0% 0% 25% 0%)", scale: 0.15, opacity: 0, zIndex: 110
         });
         gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.6)" });
-        
-        gsap.set(leftSplitRefs.current, { 
+
+        gsap.set(leftSplitRefs.current, {
           opacity: 0, autoAlpha: 0, left: "100%", xPercent: 0, x: 0, y: 0, yPercent: -50,
-          transformOrigin: "right center" 
+          transformOrigin: "right center"
         });
-        gsap.set(rightMainRefs.current, { 
+        gsap.set(rightMainRefs.current, {
           opacity: 0, autoAlpha: 0, left: "0%", xPercent: -100, x: 0, y: 0, yPercent: -50,
-          transformOrigin: "left center" 
+          transformOrigin: "left center"
         });
         gsap.set(ctaRef.current, { opacity: 0, x: 0, y: "20vh" });
-        
+
         // --- PHASE 1: The Intro ---
         tl.to(logoWrapperRef.current, { opacity: 1, duration: 0.8 })
           .to(logoWrapperRef.current, { scale: cfg.introLogoScale, duration: 1.5, ease: "expo.out" }, "-=0.4")
-          
+
         // --- PHASE 2: Color Reveal ---
         tl.addLabel("reveal", "+=0.2")
           .to(logoImgRef.current, { filter: "grayscale(0%) brightness(1)", duration: 1 }, "reveal")
@@ -262,7 +264,7 @@ export default function Home() {
 
         // --- PHASE 3: Symmetrical Centered Split (Anchored) ---
         tl.addLabel("split", "+=0.3")
-        if (videoRef.current) tl.to(videoRef.current, { filter: "blur(0px)", duration: 1.5 }, "split");
+        if (videoRef.current) tl.to(videoRef.current, { opacity: 1, duration: 1.5 }, "split");
         if (leftSplitRefs.current[0]) tl.to(leftSplitRefs.current[0], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split")
         if (leftSplitRefs.current[1]) tl.to(leftSplitRefs.current[1], { autoAlpha: 1, xPercent: -100, x: `-${cfg.splitGap}`, y: cfg.splitY, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.2")
         if (rightMainRefs.current[2]) tl.to(rightMainRefs.current[2], { autoAlpha: 1, xPercent: 0, x: cfg.splitGap, y: `-${cfg.splitY}`, opacity: 1, scale: cfg.splitScale, duration: 1.2, ease: "power3.out" }, "split+=0.4")
@@ -274,13 +276,13 @@ export default function Home() {
         if (leftMaskRef.current) tl.to(leftMaskRef.current, { width: cfg.portalLogoLeft, opacity: 1, duration: 1.6, ease: "power3.inOut" }, "portal")
         if (rightMaskRef.current) {
           const offset = cfg.portalLogoLeft === "25%" ? "13%" : "13%";
-          tl.to(rightMaskRef.current, { 
-            left: `calc(${cfg.portalLogoLeft} + ${offset})`, 
-            width: `calc(100% - ${cfg.portalLogoLeft})`, 
-            duration: 1.6, ease: "power3.inOut" 
+          tl.to(rightMaskRef.current, {
+            left: `calc(${cfg.portalLogoLeft} + ${offset})`,
+            width: `calc(100% - ${cfg.portalLogoLeft})`,
+            duration: 1.6, ease: "power3.inOut"
           }, "portal")
         }
-          
+
         tl.to(leftSplitRefs.current, { x: "20vw", opacity: 0, duration: 1.6, ease: "power3.inOut" }, "portal")
           .to(rightMainRefs.current.slice(0, 2), { autoAlpha: 1, opacity: 1, duration: 0.8 }, "portal+=0.4")
 
@@ -288,11 +290,15 @@ export default function Home() {
             xPercent: 0, left: 0, x: cfg.portalTextX, yPercent: 0,
             scale: cfg.portalTextScale,
             top: "45%",
-            y: (i) => (i * cfg.portalTextYStep + cfg.portalTextYOffset) + "vh", 
+            y: (i) => (i * cfg.portalTextYStep + cfg.portalTextYOffset) + "vh",
             duration: 1.6, stagger: 0.05, ease: "power3.inOut"
           }, "portal")
-          
-          .to(ctaRef.current, { left: 0, xPercent: 0, x: cfg.portalTextX, y: cfg.portalCtaY + "vh", duration: 1.6, ease: "power3.inOut" }, "portal")
+
+          .to(ctaRef.current, { 
+            left: 0, xPercent: 0, x: cfg.portalTextX, 
+            y: ((textGroups.length - 1) * cfg.portalTextYStep + cfg.portalTextYOffset + cfg.portalCtaGap) + "vh", 
+            duration: 1.6, ease: "power3.inOut" 
+          }, "portal")
 
         tl.addLabel("final", "-=0.2")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2, ease: "power2.out" }, "final")
@@ -301,12 +307,21 @@ export default function Home() {
 
         if (hasPlayedIntroRef.current) {
           tl.progress(1);
-          if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
+          if (videoRef.current) gsap.set(videoRef.current, { opacity: 1 });
         }
       }
 
       mm.add("(max-width: 767px)", () => {
-        // MOBILE ANIMATION
+        // --- MOBILE POST-ANIMATION CONFIG ---
+        const cfg = {
+          portalLogoTop: "35%",      // Logo vertical position
+          portalLogoScale: 1.3,      // Final logo size (1.0 = original)
+          portalTextTop: "57%",      // Text group vertical center
+          portalTextYStep: 42,       // Vertical gap between text lines (in pixels)
+          portalCtaTop: "57%",       // Anchored to same top as text group
+          portalCtaGap: 65           // Gap after the last text line (pixels)
+        };
+
         const tl = gsap.timeline({
           defaults: { ease: "power3.out" },
           onComplete: () => {
@@ -317,46 +332,50 @@ export default function Home() {
 
         if (videoRef.current && videoRef.current.tagName === "VIDEO") {
           videoRef.current.load();
-          videoRef.current.play().catch(() => {});
+          videoRef.current.play().catch(() => { });
         }
 
-        // --- PHASE 0: IMMEDIATE REVEAL (Mobile Only) ---
-        if (videoRef.current) gsap.set(videoRef.current, { opacity: 1, zIndex: 10, filter: "blur(0px)" });
-        if (loadingGradientRef.current) gsap.set(loadingGradientRef.current, { opacity: 0 });
+        // --- PHASE 0: INITIAL STATE (Mobile) ---
+        if (videoRef.current) gsap.set(videoRef.current, { opacity: 1, zIndex: 10 });
         gsap.set(logoImgRef.current, { filter: "grayscale(100%) brightness(0.6)" });
 
         if (leftMaskRef.current) gsap.set(leftMaskRef.current, { display: "none" });
-        gsap.set(logoWrapperRef.current, { 
-          left: "50%", top: "28%", scale: 0.15, opacity: 0, xPercent: -50, yPercent: -50,
+        gsap.set(logoWrapperRef.current, {
+          left: "50%", top: cfg.portalLogoTop, scale: 0.15, opacity: 0, xPercent: -50, yPercent: -50,
           clipPath: "inset(0% 0% 25% 0%)"
         });
-        gsap.set(rightMainRefs.current, { 
-          left: "50%", top: "56%", opacity: 0, y: 40, xPercent: -50, yPercent: 0, x: 0,
-          transformOrigin: "center center", autoAlpha: 1 
+        gsap.set(rightMainRefs.current, {
+          left: "50%", top: cfg.portalTextTop, opacity: 0, y: 40, xPercent: -50, yPercent: 0, x: 0,
+          transformOrigin: "center center", autoAlpha: 1
         });
-        gsap.set(ctaRef.current, { 
-          left: "50%", top: "88%", opacity: 0, y: 40, xPercent: -50, x: 0 
+        gsap.set(ctaRef.current, {
+          left: "50%", top: cfg.portalCtaTop, opacity: 0, y: 40, xPercent: -50, x: 0
         });
 
         tl.to(logoWrapperRef.current, { opacity: 1, scale: 0.8, duration: 1.2, ease: "expo.out" })
           .addLabel("reveal", "+=0.2")
           .to(logoImgRef.current, { filter: "grayscale(0%) brightness(1)", duration: 1 }, "reveal")
-          .to(logoWrapperRef.current, { scale: 1.1, duration: 1 }, "reveal")
+          .to(logoWrapperRef.current, { scale: cfg.portalLogoScale, duration: 1 }, "reveal")
           .to(logoWrapperRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2 }, "reveal+=0.5")
-          
+
           .to(rightMainRefs.current, {
             opacity: 1,
-            y: (i) => i * 42,
+            y: (i) => i * cfg.portalTextYStep,
             duration: 1.0,
             stagger: 0.1,
             ease: "power2.out"
           }, "reveal+=0.3")
-          .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
-        if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
+          .to(ctaRef.current, { 
+            opacity: 1, 
+            y: (textGroups.length - 1) * cfg.portalTextYStep + cfg.portalCtaGap, 
+            duration: 0.8 
+          }, "-=0.5")
+
+        if (videoRef.current) gsap.set(videoRef.current, { opacity: 1 });
 
         if (hasPlayedIntroRef.current) {
           tl.progress(1);
-          if (videoRef.current) gsap.set(videoRef.current, { filter: "blur(0px)" });
+          if (videoRef.current) gsap.set(videoRef.current, { opacity: 1 });
         }
       });
 
@@ -368,17 +387,17 @@ export default function Home() {
     <section id="home" ref={stageRef} className="relative w-full h-screen min-h-[100svh] flex items-center justify-center overflow-hidden bg-black">
 
       {isVideoSource(activeVideoSrc) ? (
-        <video 
-          ref={videoRef} 
+        <video
+          ref={videoRef}
           key={activeVideoSrc}
-          autoPlay 
-          muted 
-          loop 
-          playsInline 
+          autoPlay
+          muted
+          loop
+          playsInline
           preload="auto"
           poster="/assets/hero-bg-poster.jpg"
           className="hero-bg-media absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none z-[0]"
-          style={{ filter: isMobileViewport ? "none" : "blur(40px)" }}
+          style={{ filter: "none", transform: "scale(1.08)" }}
           onError={() => setVideoFallbackLevel(prev => prev + 1)}
         >
           <source src={activeVideoSrc} type={getVideoType(activeVideoSrc)} />
@@ -390,7 +409,7 @@ export default function Home() {
           src={activeVideoSrc}
           alt="Hero background"
           className="hero-bg-media absolute inset-0 w-full h-full object-cover z-[0] opacity-0"
-          style={{ filter: isMobileViewport ? "none" : "blur(40px)" }}
+          style={{ filter: "none", transform: "scale(1.08)" }}
           onError={(e) => {
             e.currentTarget.src = "/assets/homeImgFback.jpg";
             setVideoFallbackLevel(prev => prev + 1);
@@ -398,12 +417,12 @@ export default function Home() {
         />
       )}
 
-      <div ref={loadingGradientRef} className="loading-gradient absolute inset-0 z-[6] pointer-events-none transition-opacity duration-1000" style={{ 
-        background: isDarkMode 
-          ? "radial-gradient(circle at center, rgba(0,20,40,0.4) 0%, rgba(0,0,0,0.8) 100%)" 
-          : "radial-gradient(circle at center, rgba(200,230,255,0.2) 0%, rgba(255,255,255,0.4) 100%)" 
+      <div ref={loadingGradientRef} className="loading-gradient absolute inset-0 z-[6] pointer-events-none transition-opacity duration-1000" style={{
+        background: isDarkMode
+          ? "radial-gradient(circle at center, rgba(0,20,40,0.3) 0%, rgba(0,0,0,0.7) 100%)"
+          : "radial-gradient(circle at center, rgba(200,230,255,0.1) 0%, rgba(255,255,255,0.2) 100%)"
       }}></div>
-      
+
 
       <div className="relative z-[20] w-full h-full">
         <div className="relative w-full h-full overflow-hidden">
@@ -415,12 +434,13 @@ export default function Home() {
               src="/assets/synchores-logo-vertical.png"
               alt="Synchores"
               className="w-full max-w-[220px] md:max-w-[440px] lg:max-w-[520px] xl:max-w-[580px] object-contain"
+              style={{ filter: 'drop-shadow(0 35px 70px rgba(0,0,0,0.8)) drop-shadow(0 15px 30px rgba(0,0,0,0.6))' }}
             />
           </div>
 
           {/* Content Stage */}
           <div className="absolute inset-0 z-[100] pointer-events-none">
-            
+
             {/* Left Mask Split (Phase 3 Only) */}
             <div ref={leftMaskRef} className="left-mask-split absolute left-0 top-0 w-1/2 h-full overflow-hidden">
               {textGroups.slice(0, 2).map((text, i) => (
@@ -428,9 +448,9 @@ export default function Home() {
                   className="absolute left-full top-[45%] whitespace-nowrap">
                   <SplittingText text={text}
                     className="uppercase font-bold tracking-tighter text-white text-[clamp(24px,6vw,28px)] md:text-[clamp(38px,6vw,48px)] lg:text-[clamp(42px,5vw,58px)] xl:text-[82px] leading-[1.05]"
-                    style={{ 
+                    style={{
                       fontFamily: 'var(--font-outfit), sans-serif',
-                      filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))' 
+                      filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))'
                     }}
                   />
                 </div>
@@ -444,9 +464,9 @@ export default function Home() {
                   <div key={i} ref={el => rightMainRefs.current[i] = el}
                     className="absolute left-0 top-[45%] whitespace-nowrap md:whitespace-normal text-center md:text-left w-full md:w-auto px-4 md:px-0">
                     {i < 3 ? (
-                        <SplittingText text={text}
-                          className="uppercase font-bold tracking-tighter text-white text-[clamp(24px,6vw,28px)] md:text-[clamp(38px,6vw,48px)] lg:text-[clamp(42px,5vw,58px)] xl:text-[82px] leading-[1.05] inline-block"
-                        style={{ 
+                      <SplittingText text={text}
+                        className="uppercase font-bold tracking-tighter text-white text-[clamp(24px,6vw,28px)] md:text-[clamp(38px,6vw,48px)] lg:text-[clamp(42px,5vw,58px)] xl:text-[82px] leading-[1.05] inline-block"
+                        style={{
                           fontFamily: 'var(--font-outfit), sans-serif',
                           filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.4))'
                         }}
@@ -455,7 +475,7 @@ export default function Home() {
                       <div className="flex justify-center md:justify-start w-full md:w-auto">
                         <TrueFocus sentence={text} manualMode={!startInnerAnimations}
                           blurAmount={5} borderColor="#0088ff" glowColor="rgba(0, 136, 255, 0.6)"
-                          className="text-[#0088ff] font-bold text-[clamp(24px,7vw,28px)] md:text-[clamp(38px,7vw,48px)] lg:text-[clamp(42px,6vw,58px)] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap" 
+                          className="text-[#0088ff] font-bold text-[clamp(24px,7vw,28px)] md:text-[clamp(38px,7vw,48px)] lg:text-[clamp(42px,6vw,58px)] xl:text-[98px] uppercase tracking-tighter leading-[1.05] whitespace-nowrap"
                           style={{ filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.3))' }}
                         />
                       </div>
